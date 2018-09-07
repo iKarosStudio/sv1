@@ -1,0 +1,303 @@
+package vidar.game.map;
+
+import java.util.*;
+import java.util.concurrent.*;
+
+import vidar.config.*;
+import vidar.types.*;
+import vidar.game.model.*;
+
+/*
+ * 讀取的地圖實例
+ * 參照 MapTileBitStruct 
+ */
+public class VidarMap
+{
+	private byte[][] tile;
+	public  final int mapId;
+	private final int startX;
+	private final int endX;
+	private final int startY;
+	private final int endY;
+	
+	public final int sizeX;
+	public final int sizeY;
+	
+	private Random random = new Random (System.currentTimeMillis () ) ;
+	
+	/* 生怪控制器, 數量邏輯控制 */
+	//public MonsterGenerator mobGenerator = null;
+	
+	/* 傳送點列表 */
+	public ConcurrentHashMap<Integer, Location> tpLocation;
+	
+	/* 線上使用者實體 */
+	public ConcurrentHashMap<Integer, PcInstance> pcs;
+	
+	/* NPC實體 */
+	//public ConcurrentHashMap<Integer, NpcInstance> npcs;
+	
+	/* 地面道具實體 */
+	//public ConcurrentHashMap<Integer, ItemInstance> gndItems; //Items on ground
+	
+	/* 門的實體 */
+	//public ConcurrentHashMap<Integer, DoorInstance> doors; //Doors
+	
+	/* 怪物實體 */
+	//public ConcurrentHashMap<Integer, MonsterInstance> monsters;
+	//public MonsterAiDistributor aiDistributor;
+	
+	/* 寵物, 召喚怪物實體  */
+	//public ConcurrentHashMap<Integer, PetInstance> pets;
+	
+	public VidarMap (int id, int start_x, int end_x, int start_y, int end_y) {
+		mapId = id;
+		startX = start_x;
+		endX = end_x;
+		startY = start_y;
+		endY = end_y;
+		
+		sizeX = endX - startX + 1;
+		sizeY = endY - startY + 1;
+		tile = new byte[sizeX][sizeY];
+		for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) {
+				tile[x][y] = 0;
+			}
+		}
+		
+		tpLocation = new ConcurrentHashMap<Integer, Location> () ;
+		
+		pcs = new ConcurrentHashMap<Integer, PcInstance> () ;
+		//npcs = new ConcurrentHashMap<Integer, NpcInstance> () ;
+		//gndItems = new ConcurrentHashMap<Integer, ItemInstance> () ;
+		//doors = new ConcurrentHashMap<Integer, DoorInstance> () ;
+		//monsters = new ConcurrentHashMap<Integer, MonsterInstance> () ;
+		
+		//aiDistributor = new MonsterAiDistributor (this) ;
+		//aiDistributor.Start () ;
+	}
+	
+	public int spawnMonster () {
+		return 0;
+	}
+	
+	public void setAccessible (int x, int y, boolean passable) {
+		if (passable) {
+			tile[x-startX][y-startY] &= 0x7F;
+		} else {
+			tile[x-startX][y-startY] |= 0x80;
+		}
+	}
+	
+	public boolean isAccessible (int x, int y) {
+		byte t = getTile (x, y) ;
+		return (t & 0x80) > 0;
+	}
+	
+	/*
+	 * 檢查p(x, y)->heading p'(x', y')是否可通過
+	 */
+	public boolean isNextTileAccessible (int x, int y, int heading) {		
+		byte nextTile = getHeadingTile (x, y, heading) ;
+		
+		/*
+		 * 檢查動態物件佔有
+		 */
+		if ((nextTile & 0x80) > 0) {
+			return false;
+		}
+		
+		if ((nextTile & 0x03) > 0) {	
+			/*
+			 * 檢查方向單位是否可通行
+			 */
+			if (heading == 0) {
+				return isYAxisAccessible (nextTile) ;
+			} else if (heading == 2) { //
+				return isXAxisAccessible (nextTile) ;
+			} else if (heading == 4) {
+				return isYAxisAccessible (nextTile) ;
+			} else if (heading == 6) {
+				return isXAxisAccessible (nextTile) ;
+				
+			} else if (heading == 1) {
+				byte[] side = getHeadingSideTile (x, y, heading) ;
+				return isYAxisAccessible (side[0]) || isXAxisAccessible (side[1]) ;
+				
+			} else if (heading == 3) { //
+				byte[] side = getHeadingSideTile (x, y, heading) ;
+				return isYAxisAccessible (side[0]) || isXAxisAccessible (side[1]) ;
+	
+			} else if (heading == 5) {
+				byte[] side = getHeadingSideTile (x, y, heading) ;
+				return isYAxisAccessible (side[0]) || isXAxisAccessible (side[1]) ;
+	
+			} else if (heading == 7) {
+				byte[] side = getHeadingSideTile (x, y, heading) ;
+				return isYAxisAccessible (side[0]) || isXAxisAccessible (side[1]) ;
+	
+			} else {
+				//return false;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isNormalZone (int x, int y) {
+		return ((tile[x - startX][y - startY] & 0x30) == 0x00) ;
+	}
+	
+	public boolean isSafeZone (int x, int y) {
+		return ((tile[x - startX][y - startY] & 0x30) == 0x10) ;
+	}
+	 
+	public boolean isCombatZone (int x, int y) {
+		return ((tile[x - startX][y - startY] & 0x30) == 0x20) ;
+	}
+	
+	public void setTile (int x, int y, byte _tile) {
+		tile[x][y] = _tile;
+	}
+	
+	public byte getTile (int x, int y) {
+		byte tmpTile = 0;
+		try {
+			tmpTile = tile[x - startX][y - startY];
+		} catch (Exception e) {
+			System.out.printf ("(%d, %d) : %s\n", x, y, e.toString () ) ;
+			tmpTile = 0;
+		}
+		
+		return tmpTile;
+	}
+	
+	public byte getHeadingTile (int x, int y, int heading) {
+		if (heading == 0) {
+			if (y == startY) {
+				return 0;
+			}
+			return getTile (x, y-1) ;
+		} else if (heading == 1) {
+			if ((y == startY) || (x == endX)) {
+				return 0;
+			}
+			return getTile (x+1, y-1) ;
+		} else if (heading == 2) {
+			if (x == endX) {
+				return 0;
+			}
+			return getTile (x+1, y) ;
+		} else if (heading == 3) {
+			if ((x == endX) || (y == endX)) {
+				return 0;
+			}
+			return getTile (x+1, y+1) ;
+		} else if (heading == 4) {
+			if (y == endX) {
+				return 0;
+			}
+			return getTile (x, y+1) ;
+		} else if (heading == 5) {
+			if ((y == endY) || (x == startX)) {
+				return 0;
+			}
+			return getTile (x-1, y+1) ;
+		} else if (heading == 6) {
+			if (x == startX) {
+				return 0;
+			}
+			return getTile (x-1, y) ;
+		} else if (heading == 7) {
+			if ((x == startX) || (y == startY)) {
+				return 0;
+			}
+			return getTile (x-1, y-1) ;
+		} else {
+			return 0;
+		}
+	}
+	
+	public byte[] getHeadingSideTile (int x, int y, int heading) {
+		byte[] res = new byte[2];
+		
+		if (heading == 0) {
+			res[0] = getHeadingTile (x, y, 7) ;
+			res[1] = getHeadingTile (x, y, 1) ;
+		} else if (heading == 1) {
+			res[0] = getHeadingTile (x, y, 0) ;
+			res[1] = getHeadingTile (x, y, 2) ;
+		} else if (heading == 2) {
+			res[0] = getHeadingTile (x, y, 1) ;
+			res[1] = getHeadingTile (x, y, 3) ;
+		} else if (heading == 3) {
+			res[0] = getHeadingTile (x, y, 2) ;
+			res[1] = getHeadingTile (x, y, 4) ;
+		} else if (heading == 4) {
+			res[0] = getHeadingTile (x, y, 3) ;
+			res[1] = getHeadingTile (x, y, 5) ;
+		} else if (heading == 5) {
+			res[0] = getHeadingTile (x, y, 4) ;
+			res[1] = getHeadingTile (x, y, 6) ;
+		} else if (heading == 6) {
+			res[0] = getHeadingTile (x, y, 5) ;
+			res[1] = getHeadingTile (x, y, 7) ;
+		} else if (heading == 7) {
+			res[0] = getHeadingTile (x, y, 6) ;
+			res[1] = getHeadingTile (x, y, 0) ;
+		} else {
+			res[0] = 0;
+			res[1] = 0;
+		}
+		
+		return res;
+	}
+	
+	public boolean isXAxisAccessible (byte t) {
+		return (t & 0x01) > 0;
+	}
+	
+	public boolean isYAxisAccessible (byte t) {
+		return (t & 0x02) > 0;
+	}
+	
+	public Location getRandomLocation () {
+		Location dest = new Location (mapId, 0, 0);
+		
+		do {
+			dest.point.x = startX + random.nextInt (sizeX) ;
+			dest.point.y = startY + random.nextInt (sizeY) ;
+		} while (getTile (dest.point.x, dest.point.y) == 0) ;
+		
+		return dest;
+	}
+	
+	/*
+	 * 未來考慮取得視線內MonsterInstance物件改由MonsterSpawnList內登記的Mobs取得所有怪物物件的參考
+	 */
+	
+	public boolean isInTpLocation (int x, int y) {
+		int pos = (x << 16) | y;
+		
+		return tpLocation.containsKey (pos)	;	
+	}
+	
+	public Location getTpDestination (int src_x, int src_y) {
+		int src = (src_x << 16) | src_y;
+		return tpLocation.get (src) ;
+	}
+	
+	public void addTpLocation (int src_x, int src_y, Location dest) {
+		int src = (src_x << 16) | src_y;
+		tpLocation.put (src, dest) ;
+	}
+	
+	
+	public void addPc (PcInstance pc) {
+		pcs.putIfAbsent (pc.uuid, pc);
+	}
+	
+	public void removePc (PcInstance pc) {
+		pcs.remove (pc.uuid);
+	}
+}
