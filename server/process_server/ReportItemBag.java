@@ -15,7 +15,7 @@ public class ReportItemBag
 		packet.writeByte (ServerOpcodes.ITEM_LIST) ;
 		packet.writeByte (itemBag.size ());
 		
-		itemBag.forEach ((Integer uuid, ItemInstance item)->{
+		itemBag.forEach ((Integer uuid, ItemInstance item)->{			
 			packet.writeDoubleWord (uuid);
 			packet.writeByte (item.useType);
 			packet.writeByte (0);

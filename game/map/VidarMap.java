@@ -6,6 +6,7 @@ import java.util.concurrent.*;
 import vidar.config.*;
 import vidar.types.*;
 import vidar.game.model.*;
+import vidar.game.model.npc.*;
 
 /*
  * 讀取的地圖實例
@@ -35,7 +36,7 @@ public class VidarMap
 	public ConcurrentHashMap<Integer, PcInstance> pcs;
 	
 	/* NPC實體 */
-	//public ConcurrentHashMap<Integer, NpcInstance> npcs;
+	public ConcurrentHashMap<Integer, NpcInstance> npcs;
 	
 	/* 地面道具實體 */
 	//public ConcurrentHashMap<Integer, ItemInstance> gndItems; //Items on ground
@@ -69,7 +70,7 @@ public class VidarMap
 		tpLocation = new ConcurrentHashMap<Integer, Location> () ;
 		
 		pcs = new ConcurrentHashMap<Integer, PcInstance> () ;
-		//npcs = new ConcurrentHashMap<Integer, NpcInstance> () ;
+		npcs = new ConcurrentHashMap<Integer, NpcInstance> () ;
 		//gndItems = new ConcurrentHashMap<Integer, ItemInstance> () ;
 		//doors = new ConcurrentHashMap<Integer, DoorInstance> () ;
 		//monsters = new ConcurrentHashMap<Integer, MonsterInstance> () ;
@@ -289,9 +290,26 @@ public class VidarMap
 	
 	public void addTpLocation (int src_x, int src_y, Location dest) {
 		int src = (src_x << 16) | src_y;
-		tpLocation.put (src, dest) ;
+		tpLocation.put (src, dest);
 	}
 	
+	public List<PcInstance> getPcsInDistance (Coordinate _point, int _range) {
+		List<PcInstance> result = new ArrayList<PcInstance> ();
+		try {
+			pcs.forEach ((Integer uuid, PcInstance pc)->{
+				if (pc.getDistance (_point.x, _point.y) < _range) {
+					result.add (pc);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
+		return result;
+	}
+	
+	public List<PcInstance> getPcsInsight (Coordinate _point) {
+		return getPcsInDistance (_point, Configurations.SIGHT_RAGNE);
+	}
 	
 	public void addPc (PcInstance pc) {
 		pcs.putIfAbsent (pc.uuid, pc);
@@ -299,5 +317,31 @@ public class VidarMap
 	
 	public void removePc (PcInstance pc) {
 		pcs.remove (pc.uuid);
+	}
+	
+	public List<NpcInstance> getNpcsInDistance (Coordinate _point, int _range) {
+		List<NpcInstance> result = new ArrayList<NpcInstance> ();
+		try {
+			npcs.forEach ((Integer uuid, NpcInstance npc)->{
+				if (npc.getDistance (_point.x, _point.y) < _range) {
+					result.add (npc);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
+		return result;
+	}
+	
+	public List<NpcInstance> getNpcsInsight (Coordinate _point) {
+		return getNpcsInDistance (_point, Configurations.SIGHT_RAGNE) ;
+	}
+	
+	public void addNpc (NpcInstance npc) {
+		npcs.putIfAbsent (npc.uuid, npc);
+	}
+	
+	public void removeNpc (NpcInstance npc) {
+		npcs.remove (npc.uuid);
 	}
 }

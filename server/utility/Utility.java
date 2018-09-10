@@ -4,7 +4,6 @@ package vidar.server.utility;
 import java.util.Random;
 
 import vidar.config.*;
-import vidar.game.*;
 import vidar.types.*;
 
 /*
@@ -12,19 +11,7 @@ import vidar.types.*;
  */
 public class Utility
 {
-	private static Random random = new Random (System.currentTimeMillis () ) ;
-
-	public static String getItemNameById (int item_id) {
-		/*
-		if (CacheData.itemCache.containsKey (item_id) ) {
-			return CacheData.itemCache.get (item_id).Name;
-		} else if (CacheData.weaponCache.containsKey (item_id) ) {
-			return CacheData.weaponCache.get (item_id).Name;
-		} else if (CacheData.armorCache.containsKey (item_id) ) {
-			return CacheData.armorCache.get (item_id).Name;
-		}*/
-		return null;
-	}
+	private static Random random = new Random (System.currentTimeMillis ());
 	
 	/*
 	 * 給定起點座標及方向
@@ -46,9 +33,7 @@ public class Utility
 		default: break;
 		}
 		
-		//Location nextLocation = new Location (0, px, py, heading) ;
 		Location nextLocation = new Location (0, px, py) ;
-		
 		return nextLocation;
 	}
 	
@@ -56,7 +41,6 @@ public class Utility
 	 * 計算兩點間所有座標
 	 */
 	public static Point[] calcPointsOnPath (Point p1, Point p2) {
-	
 		return null;
 	}
 	

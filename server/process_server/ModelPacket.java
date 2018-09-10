@@ -3,6 +3,9 @@ package vidar.server.process_server;
 import vidar.server.opcodes.*;
 import vidar.server.packet.*;
 import vidar.game.model.*;
+import vidar.game.model.npc.*;
+import vidar.game.model.monster.*;
+import vidar.game.model.item.*;
 
 /*
  * S_OwnCharPack對比
@@ -35,7 +38,7 @@ public class ModelPacket
 		//Check FastMove
 		//Check Ghost
 		
-		packet.writeByte (ServerOpcodes.NODE_PACK);
+		packet.writeByte (ServerOpcodes.MODULE_PACK);
 		packet.writeWord (pc.location.point.x) ;
 		packet.writeWord (pc.location.point.y) ;
 		packet.writeDoubleWord (pc.uuid) ;
@@ -75,28 +78,27 @@ public class ModelPacket
 	/*
 	 * 報告NPC物件
 	 */
-	/*
-	public NodePacket (NpcInstance Npc) {
-		packet.writeByte (ServerOpcodes.NODE_PACK);
-		packet.writeWord (Npc.location.point.x) ;
-		packet.writeWord (Npc.location.point.y) ;
-		packet.writeDoubleWord (Npc.Uuid) ;
+	public ModelPacket (NpcInstance npc) {
+		packet.writeByte (ServerOpcodes.MODULE_PACK);
+		packet.writeWord (npc.location.point.x) ;
+		packet.writeWord (npc.location.point.y) ;
+		packet.writeDoubleWord (npc.uuid) ;
 		
-		packet.writeWord (Npc.Gfx) ; //get gfx
-		if (Npc.isDead () ) {
+		packet.writeWord (npc.gfx) ; //get gfx
+		if (npc.isDead) {
 			packet.writeByte (8) ;
 		} else {
 			packet.writeByte (0) ;//weapon 0:hand 4:sword
 		}
-		packet.writeByte (Npc.heading) ;
+		packet.writeByte (npc.heading) ;
 		packet.writeByte (10) ; //light
-		packet.writeByte (Npc.MoveSpeed) ; //move speed;
+		packet.writeByte (npc.moveSpeed) ; //move speed;
 		
 		packet.writeDoubleWord (0) ; //EXP
 		packet.writeWord (0) ; //Lawful
-		packet.writeString (Npc.NameId) ;
+		packet.writeString (npc.nameId) ;
 		packet.writeString (null) ;//title
-		packet.writeByte (Npc.Status) ; //status
+		packet.writeByte (npc.status) ; //status
 		packet.writeDoubleWord (0) ;
 		packet.writeString (null) ;
 		packet.writeString (null) ;
@@ -105,11 +107,11 @@ public class ModelPacket
 		packet.writeByte (0xFF) ; //血條百分比
 		
 		packet.writeByte (0x00) ;
-		packet.writeByte (Npc.Level) ;
+		packet.writeByte (npc.level) ;
 		packet.writeByte (0x00) ;
 		packet.writeByte (0xFF) ;
 		packet.writeByte (0xFF) ;
-	}*/
+	}
 	
 	/*
 	 * 報告地面物件

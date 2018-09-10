@@ -41,12 +41,11 @@ public class Model
 		try {
 			if (location.mapId != pos.mapId) {
 				return false;
+			} else {
+				return getDistance (pos.point.x, pos.point.y) < Configurations.SIGHT_RAGNE;
 			}
-			
-			return getDistance (pos.point.x, pos.point.y) < Configurations.SIGHT_RAGNE;
 		} catch (Exception e) {
-			return false;
-			
+			return false;	
 		}
 	}
 	
@@ -58,8 +57,8 @@ public class Model
 	 * 自身對p(x, y)的距離
 	 */
 	public int getDistance (int x, int y) {
-		int dx = Math.abs (x - location.point.x) ;
-		int dy = Math.abs (y - location.point.y) ;
+		int dx = Math.abs (x - location.point.x);
+		int dy = Math.abs (y - location.point.y);
 		
 		return (int) Math.sqrt (Math.pow (dx, 2) + Math.pow (dy, 2) );		
 	}

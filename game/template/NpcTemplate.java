@@ -7,16 +7,13 @@ import vidar.game.model.*;
  */
 public class NpcTemplate extends Model
 {
-	public int Gfx = 0;
-	public String Impl;
-	public String Name;
-	public String NameId;
-	public String Family;
-	public String Note;
-	public String NpcType;
-	public int Size; /* 0:small 1:large */
-	public int Exp;
+	public String nameId;
+	public String family;
+	public String impl;
+	public String note;
 	
+	public int exp;
+	public int size; //0:small 1:large
 	/*
 	 * 每 n ms執行一次
 	 */
@@ -26,68 +23,67 @@ public class NpcTemplate extends Model
 	public int MinorSkillInterval;
 	
 	//主動怪物
-	public boolean Agro;
+	public boolean agro;
 	
 	public NpcTemplate () {
 		System.out.println ("警告 不該被呼叫") ;
 	}
 	
 	public NpcTemplate (
-			int npc_id, //Template id
-			String name,
-			String name_id,
-			String note,
-			String impl, //NPC Type
-			int gfxid, //shape
-			int level, int hp, int mp, int ac,
-			int str, int con, int dex, int wis, int intel,
-			int mr, int exp, int lawful,
-			String size,
-			int weak_water, int weak_wind, int weak_fire, int weak_earth,
-			int ranged, boolean tamable,
-			int passispeed, int atkspeed, int atk_magic_speed, int sub_magic_speed,
-			int undead, int poison_atk, int paralysis_atk,
-			int agro, //主動被動設定
-			int agrososc, //看穿隱身
-			int agrocoi, //看穿變身
-			String family,
-			int argofamily, int pickupitem, int digestitem, int bravespeed,
-			int hprinterval, int hpr, int mprinterval, int mpr, 
-			int teleport,
-			int random_level, int random_hp, int random_mp, int random_ac, int random_exp, int random_lawful,
-			int damage_reduction, int hard, int doppel, int is_tu, int is_erase,
-			int bow_act_id, int karma, int transform_id, int light_size, int amount_fixed, int atkexspeed,
-			int att_status, int bow_use_id, int has_castle, int broad) 
+			int _npcId, //Template id
+			String _name,
+			String _nameId,
+			String _note,
+			String _impl, //NPC Type
+			int _gfx, //shape
+			int _level, int _hp, int _mp, int _ac,
+			int _str, int _con, int _dex, int _wis, int _intel,
+			int _mr, int _exp, int _lawful,
+			String _size,
+			int _weakWater, int _weakWind, int _weakFire, int _weakEarth,
+			int _ranged, boolean _isTamble,
+			int _moveSpeed, int _attackSpeed, int _attackSkillSpeed, int _attackSubSkillSpeed,
+			int _undead, int _poisonAttack, int _paralyseAttack,
+			int _agro, //主動被動設定
+			int _agrososc, //看穿隱身
+			int _agrocoi, //看穿變身
+			String _family,
+			int _argofamily, int _pickUpItem, int _digestItem, int _braveSpeed,
+			int _hprInterval, int _hpr, int _mprInterval, int _mpr, 
+			int _teleport,
+			int _randomLevel, int _randomHp, int _randomMp, int _randomAc, int _randomExp, int _randomLawful,
+			int _dmgReduction, int _isHard, int _doppel, int _isTu, int _isEarse,
+			int _bowActId, int _karma, int _transformId, int _lightSize, int _amountFixed, int _attackExSpeed,
+			int _attStatus, int _bowUseId, int _hasCastle, int _board) 
 	{
-		uuid = npc_id;
-		Name = name;
-		NameId = name_id;
-		Family = family;
-		Impl = impl;
-		Note = note;
-		NpcType = impl ;
-		Gfx = gfxid;
+		uuid = _npcId;
+		name = _name;
+		nameId = _nameId;
+		family = _family;
+		impl = _impl;
+		note = _note;
+		gfx = _gfx;
 		basicParameters = new AbilityParameter () ;
-		basicParameters.str = str; basicParameters.con = con; basicParameters.dex = dex;
-		basicParameters.wis = wis; basicParameters.cha = 0  ; basicParameters.intel = intel;
-		basicParameters.defWater = weak_water; basicParameters.defWind = weak_wind;
-		basicParameters.defEarth = weak_earth; basicParameters.defFire = weak_fire;
-		basicParameters.maxHp = hp; basicParameters.maxMp = mp;
-		basicParameters.ac = ac;
+		basicParameters.str = _str; basicParameters.con = _con; basicParameters.dex = _dex;
+		basicParameters.wis = _wis; basicParameters.cha = 0  ; basicParameters.intel = _intel;
+		basicParameters.defWater = _weakWater; basicParameters.defWind = _weakWind;
+		basicParameters.defEarth = _weakEarth; basicParameters.defFire = _weakFire;
+		basicParameters.maxHp = _hp; basicParameters.maxMp = _mp;
+		basicParameters.ac = _ac;
 		
-		this.level = level;
-		Exp = exp;
-		if (size.equalsIgnoreCase ("small") ) {
-			Size = 0;
+		this.level = _level;
+		exp = _exp;
+		if (_size.equalsIgnoreCase ("small") ) {
+			size = 0;
 		} else {
-			Size = 1;
+			size = 1;
 		}
 		
-		MoveInterval = passispeed;
-		AttackInterval = atkspeed;
-		MajorSkillInterval = atk_magic_speed;
-		MinorSkillInterval = sub_magic_speed;
+		MoveInterval = _moveSpeed;
+		AttackInterval = _attackSpeed;
+		MajorSkillInterval = _attackSkillSpeed;
+		MinorSkillInterval = _attackSubSkillSpeed;
 		
-		Agro = (agro > 0) ? true:false;
+		agro = (_agro > 0) ? true:false;
 	}
 }

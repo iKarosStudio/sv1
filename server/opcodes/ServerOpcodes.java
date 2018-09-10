@@ -29,10 +29,10 @@ public class ServerOpcodes
 	public static final int SYS_TICK = 69;
 	public static final int SYSTEM_MSG = 71;
 	public static final int SERVER_MSG = 72;
-	public static final int NODE_PACK = 74;
+	public static final int MODULE_PACK = 74;
 	public static final int SKILL_HASTE = 77;
 	public static final int SKILL_TABLE = 78;
-	public static final int SKILL_GFX = 80;
+	public static final int VISUAL_EFFECT = 80;
 	public static final int DOOR_DETAIL = 81;
 	public static final int ITEM_LIST = 82;
 	public static final int UPDATE_PC_GFX = 84;

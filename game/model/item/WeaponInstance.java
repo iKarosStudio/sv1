@@ -60,7 +60,7 @@ public class WeaponInstance extends ItemInstance
 		material = template.material;
 		majorType = 1;
 		minorType = template.minorType;
-		useType = template.useType;
+		useType = ItemTypeTable.TYPE_USE_WEAPON;//template.useType;
 		count = 1;
 		weight = template.weight;
 		isIdentified = _isIdentified;

@@ -6,24 +6,23 @@ import org.w3c.dom.*;
 
 import vidar.server.database.*;
 import vidar.game.template.*;
+import vidar.game.model.npc.*;
 
 public class CacheData
 {
 	private static CacheData instance;
 	
-	//public static ConcurrentHashMap<Integer, NpcTemplate> npcCache;
-	//public static ConcurrentHashMap<String, Document> npcActionCache;
-	//public static ConcurrentHashMap<Integer, NpcTalkData> npcTalkDataCache;
+	public static ConcurrentHashMap<Integer, NpcTemplate> npcs;
+	public static ConcurrentHashMap<String, Document> npcAction;
+	public static ConcurrentHashMap<Integer, NpcTalkData> npcTalkData;
 	//public static ConcurrentHashMap MonsterCache;
 	//public static ConcurrentHashMap MerchantCache;
 	//public static ConcurrentHashMap HousekeeperCache;
 	public static ConcurrentHashMap<Integer, ItemTemplate> item;
 	public static ConcurrentHashMap<Integer, WeaponTemplate> weapon;
 	public static ConcurrentHashMap<Integer, ArmorTemplate> armor;
-	
-	//public static ConcurrentHashMap<Integer, SkillTemplate> skillCache;
-	
-	//public static ConcurrentHashMap<Integer, NpcShop> shopCache;
+	public static ConcurrentHashMap<Integer, SkillTemplate> skill;
+	public static ConcurrentHashMap<Integer, NpcShop> npcShop;
 	
 	public static CacheData getInstance () {
 		if (instance == null) {
@@ -36,22 +35,22 @@ public class CacheData
 		System.out.print ("Load Game data...\n") ;
 		
 		System.out.print ("\t-> Load npc cache data...") ;
-		//loadNpcCache () ;
+		loadNpcCache () ;
 		
 		System.out.print ("\t-> Load npc action cache data...") ;
-		//loadNpcActionCache () ;
+		loadNpcActionCache () ;
 		
 		System.out.print ("\t-> Load npc talk cache data...") ;
-		//loadNpcTalkDataCache () ;
+		loadNpcTalkDataCache () ;
 		
 		System.out.print ("\t-> Load items cache data...") ;
 		loadItemCache () ;
 		
 		System.out.print ("\t-> Load skill cache data...") ;
-		//loadSkillCache () ;
+		loadSkillCache () ;
 		
 		System.out.print ("\t-> Load shop cache data...") ;
-		//loadShopCache () ;
+		loadShopCache () ;
 		
 		System.out.print ("\t-> Load weapons cache data...") ;
 		loadWeaponCache () ;
@@ -63,6 +62,151 @@ public class CacheData
 		//cache pets types
 		//cache monster types
 		//cache npc types
+	}
+	
+	public void loadNpcCache () {
+		npcs = new ConcurrentHashMap<Integer, NpcTemplate> ();
+		
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = HikariCP.getConnection().prepareStatement ("SELECT * FROM npc;");
+			rs = ps.executeQuery ();
+			
+			int validCounter = 0;
+			long timeStarts = System.currentTimeMillis ();
+			while (rs.next ()) {
+				NpcTemplate npcData = new NpcTemplate (
+						rs.getInt ("npcid"), 
+						rs.getString ("name"),
+						rs.getString ("nameid"),
+						rs.getString ("note"),
+						rs.getString ("impl"),
+						rs.getInt ("gfxid"), 
+						rs.getInt ("lvl"),
+						rs.getInt ("hp"),
+						rs.getInt ("mp"), 
+						rs.getInt ("ac"), 
+						rs.getInt ("str"),
+						rs.getInt ("con"),
+						rs.getInt ("dex"),
+						rs.getInt ("wis"),
+						rs.getInt ("intel"),
+						rs.getInt ("mr"),
+						rs.getInt ("exp"),
+						rs.getInt ("lawful"),
+						rs.getString ("size"),
+						rs.getInt ("weak_water"),
+						rs.getInt ("weak_wind"), 
+						rs.getInt ("weak_fire"),
+						rs.getInt ("weak_earth"), 
+						rs.getInt ("ranged"),
+						rs.getBoolean ("tamable"),
+						rs.getInt ("passispeed"),
+						rs.getInt ("atkspeed"),
+						rs.getInt ("atk_magic_speed"),
+						rs.getInt ("sub_magic_speed"),
+						rs.getInt ("undead"),
+						rs.getInt ("poison_atk"),
+						rs.getInt ("paralysis_atk"),
+						rs.getInt ("agro"),
+						rs.getInt ("agrososc"),
+						rs.getInt ("agrocoi"),
+						rs.getString ("family"),
+						rs.getInt ("agrofamily"),
+						rs.getInt ("picupitem"), 
+						rs.getInt ("digestitem"),
+						rs.getInt ("bravespeed"),
+						rs.getInt ("hprinterval"), 
+						rs.getInt ("hpr"),
+						rs.getInt ("mprinterval"),
+						rs.getInt ("mpr"),
+						rs.getInt ("teleport"),
+						rs.getInt ("randomlevel"),
+						rs.getInt ("randomhp"),
+						rs.getInt ("randommp"),
+						rs.getInt ("randomac"),
+						rs.getInt ("randomexp"),
+						rs.getInt ("randomlawful"),
+						rs.getInt ("damage_reduction"),
+						rs.getInt ("hard"), 
+						rs.getInt ("doppel"),
+						rs.getInt ("IsTU"),
+						rs.getInt ("IsErase"),
+						rs.getInt ("bowActId"), 
+						rs.getInt ("karma"),
+						rs.getInt ("transform_id"),
+						rs.getInt ("light_size"),
+						rs.getInt ("amount_fixed"),
+						rs.getInt ("atkexspeed"),
+						rs.getInt ("attStatus"),
+						rs.getInt ("bowUseId"),
+						rs.getInt ("hascastle"),
+						rs.getInt ("broad"));
+				
+				npcs.put (npcData.uuid, npcData);
+				validCounter ++;
+			}
+			long timeEnds = System.currentTimeMillis ();
+			float usedTime = (float) (timeEnds - timeStarts) / 1000;
+			System.out.printf ("\t\t" + validCounter + " npc cached in\t%.3f s\n", usedTime) ;
+			
+		} catch (Exception e) {
+			e.printStackTrace () ;
+		} finally {
+			DatabaseUtil.close (rs) ;
+			DatabaseUtil.close (ps) ;
+			//DatabaseUtil.close (con) ;
+		}	
+	}
+	
+	public static void loadNpcActionCache () {
+		npcAction = new ConcurrentHashMap<String, Document> () ;
+		long t_starts = System.currentTimeMillis () ;
+		
+		NpcActionXmlLoader xmlActionFileLoader = new NpcActionXmlLoader (npcAction);
+		
+		long t_ends = System.currentTimeMillis ();
+		float used_time = (float) (t_ends - t_starts) / 1000;
+		System.out.printf ("\tnpc xml cached in\t%.3f s\n", used_time);
+	}
+	
+	public void loadNpcTalkDataCache () {
+		npcTalkData = new ConcurrentHashMap<Integer, NpcTalkData> ();
+		
+		Connection con = HikariCP.getConnection ();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement ("SELECT * FROM npcaction;") ;
+			rs = ps.executeQuery ();
+			
+			int validCounter = 0;
+			long timeStarts = System.currentTimeMillis ();
+			while (rs.next ()) {
+				NpcTalkData talkData = new NpcTalkData (
+						rs.getInt ("npcid"),
+						rs.getString ("normal_action"),
+						rs.getString ("caotic_action"),
+						rs.getString ("teleport_url"),
+						rs.getString ("teleport_urla"));
+				
+				npcTalkData.put (talkData.npcId, talkData);
+				
+				validCounter ++;
+			}
+			long timeEnds = System.currentTimeMillis ();
+			float usedTime = (float) (timeEnds - timeStarts) / 1000;
+			System.out.printf ("\t\t" + validCounter + " npc talk cached in\t%.3f s\n", usedTime) ;
+		} catch (Exception e) {
+			e.printStackTrace ();
+		} finally {
+			DatabaseUtil.close (rs);
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
+		}
 	}
 	
 	public void loadItemCache () {
@@ -116,6 +260,119 @@ public class CacheData
 			DatabaseUtil.close (rs) ;
 			DatabaseUtil.close (ps) ;
 			DatabaseUtil.close (con) ;
+		}
+	}
+	
+	public static void loadSkillCache () {
+		skill = new ConcurrentHashMap<Integer, SkillTemplate> () ;
+		
+		Connection con = HikariCP.getConnection () ;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement ("SELECT * FROM skills;");
+			rs = ps.executeQuery (); 
+					
+			int Counter = 0;
+			long timeStarts = System.currentTimeMillis ();
+			while (rs.next ()) {
+				SkillTemplate template = new SkillTemplate (
+					rs.getInt ("skill_id"),
+					rs.getString ("name"),
+					rs.getInt ("skill_level"),
+					rs.getInt ("skill_number"),
+					rs.getInt ("mpConsume"),
+					rs.getInt ("hpConsume"),
+					rs.getInt ("itemConsumeId"),
+					rs.getInt ("itemConsumeCount"),
+					rs.getInt ("reuseDelay"),
+					rs.getInt ("buffDuration"),
+					rs.getString ("target"),
+					rs.getInt ("target_to"),
+					rs.getInt ("damage_value"),
+					rs.getInt ("damage_dice"),
+					rs.getInt ("damage_dice_count"),
+					rs.getInt ("probability_value"),
+					rs.getInt ("probability_dice"),
+					rs.getInt ("attr"),
+					rs.getInt ("actid"),
+					rs.getInt ("type"),
+					rs.getInt ("lawful"),
+					rs.getInt ("ranged"),
+					rs.getInt ("area"),
+					rs.getInt ("through"),
+					rs.getInt ("id"),
+					rs.getString ("nameid"),
+					rs.getInt ("castgfx"),
+					rs.getInt ("sysmsgID_happen"),
+					rs.getInt ("sysmsgID_stop"),
+					rs.getInt ("sysmsgID_fail"),
+					rs.getInt ("arrowType")	) ;
+				
+				skill.put (template.SkillId, template);
+				Counter++;
+			}
+			long timeEnds = System.currentTimeMillis ();
+			float usedTime = (float) (timeEnds - timeStarts) / 1000;
+			System.out.printf ("\t\t" + Counter + " skills cached in\t%.3f s\n", usedTime) ;
+		} catch (Exception e) {
+			e.printStackTrace ();
+		} finally {
+			DatabaseUtil.close (rs);
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
+		}
+	}
+	
+	public static void loadShopCache () {
+		npcShop = new ConcurrentHashMap<Integer, NpcShop> ();
+		
+		Connection con = HikariCP.getConnection ();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement ("SELECT * FROM shop;");
+			rs = ps.executeQuery ();
+			
+			int Counter = 0;
+			long timeStarts = System.currentTimeMillis ();
+			while (rs.next ()) {
+				int npcId = rs.getInt ("npc_id");
+				int itemId = rs.getInt ("item_id");
+				int orderId = rs.getInt ("order_id");
+				int sellingPrice = rs.getInt ("selling_price");
+				int packCount = rs.getInt ("pack_count");
+				int purchasingPrice = rs.getInt ("purchasing_price");
+				
+				if (!npcShop.containsKey (npcId)) {
+					NpcShop npc_shop = new NpcShop (npcId);
+					npcShop.put (npcId, npc_shop);
+				}
+				
+				NpcShop ns = npcShop.get (npcId) ;
+				NpcShopMenu item = new NpcShopMenu (npcId, itemId, orderId, sellingPrice, packCount, purchasingPrice);
+				
+				ns.addMenuItem (item);
+				//Item _i = CacheData.ItemCache.get (item.ItemId) ;
+				//if (_i == null) {
+				//	System.out.printf ("no cache data : %d\n", item.ItemId) ;
+				//}
+				//System.out.println (_i.Name) ;
+				
+				Counter ++;
+			}
+			long timeEnds = System.currentTimeMillis () ;
+			float usedTime = (float) (timeEnds - timeStarts) / 1000;
+			System.out.printf ("\t\t" + Counter + " shop cached in\t%.3f s\n", usedTime) ;
+			
+		} catch (Exception e) {
+			e.printStackTrace ();
+		} finally {
+			DatabaseUtil.close (rs);
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
 		}
 	}
 	

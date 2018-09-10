@@ -38,7 +38,7 @@ public class PacketHandler
 			break;	
 			
 		case ClientOpcodes.MOVE :
-			//new Move (handle, packet) ;
+			new Move (handle, packet) ;
 			break;
 		
 		case ClientOpcodes.SKILL_USE:
@@ -69,15 +69,15 @@ public class PacketHandler
 			break;
 			
 		case ClientOpcodes.ACCESS_NPC:
-			//new NpcAccess (handle, packet) ;
+			new NpcAccess (handle, packet) ;
 			break;
 		
 		case ClientOpcodes.ACTION_NPC:
-			//new NpcAction (handle, packet) ;
+			new NpcAction (handle, packet) ;
 			break;
 		
 		case ClientOpcodes.REQUEST_NPC:
-			//new NpcRequest (handle, packet) ;
+			new NpcRequest (handle, packet) ;
 			break;
 		
 		case ClientOpcodes.SKILL_BUY:
@@ -129,7 +129,7 @@ public class PacketHandler
 			break;
 			
 		case ClientOpcodes.RESTART:
-			//handle.account.activePc.offline () ;
+			handle.account.activePc.offline () ;
 			break;
 		
 		case ClientOpcodes.WHO :
@@ -141,9 +141,9 @@ public class PacketHandler
 			break;
 			
 		case ClientOpcodes.RST : /*重新開始*/
-			//if (handle.account.activePc != null) {
-			//	handle.account.activePc.offline ();
-			//}
+			if (handle.account.activePc != null) {
+				handle.account.activePc.offline ();
+			}
 			break;
 			
 		case ClientOpcodes.EXIT_GAME :

@@ -85,7 +85,7 @@ public class ItemUse
 				/* 更新腳色武器外型 */
 				byte[] packet = new UpdateModelGfx (pc.uuid, pc.getWeaponGfx ()).getRaw ();
 				handle.sendPacket (packet) ;
-				pc.boardcastPcInsight (packet) ;
+				//pc.boardcastPcInsight (packet) ;
 			
 			/* 使用防具 */
 			} else if (item.majorType == 2) {

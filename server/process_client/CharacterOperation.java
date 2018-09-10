@@ -9,30 +9,28 @@ import vidar.server.database.*;
 import vidar.server.utility.*;
 import vidar.game.*;
 import vidar.game.model.*;
+import vidar.game.routine_task.*;
 
 public class CharacterOperation {	
 	public void login (SessionHandler handle, byte[] data) {
 		PacketReader packetReader = new PacketReader (data);
 		String charName = packetReader.readString ();
 		
-		/*
-		 * 載入角色
-		 */
+		/* 載入角色 */
 		PcInstance pc = new PcInstance (handle) ;
 		if (pc.load (charName)) {
 			/* 開始回報角色登入資料 */
 			handle.account.activePc = pc;
 			
-			new Unknown1 (handle) ;
-			new Unknown2 (handle) ;
+			new Unknown1 (handle);
+			new Unknown2 (handle);
 			//new RequestStart (Handle) ;  //active spell
 			/*
 			 * 載入角色記憶座標
 			 */
 			
 			pc.loadItemBag ();
-			//pc.applyEquipmentEffect () ;
-			pc.loadSkills () ;
+			pc.loadSkills ();
 			//pc.loadBuff () ;
 					
 			/* fix
@@ -69,12 +67,11 @@ public class CharacterOperation {
 			//pc.mpKeeper.Start () ;
 			
 			/* 視距物件更新服務 */
-			//pc.sightUpdate = new SightUpdate (pc) ;
-			//pc.sightUpdate.Start () ;
+			pc.sightUpdate = new SightUpdate (pc);
+			pc.sightUpdate.start ();
 			
 			pc.updateCurrentMap ();
-			handle.account.activePc = pc;
-			Vidar.getInstance ().addPc (pc) ;
+			Vidar.getInstance ().addPc (pc);
 			
 		} else {
 			/* 沒有角色ID, 非正常登入現象 */
@@ -146,18 +143,19 @@ public class CharacterOperation {
 			}
 			
 			//Done, Write to Database
-			CharacterInitializer ci = new CharacterInitializer (handle, charName, type, sex, str, dex, con, wis, cha, intel);
+			CharacterInitializer pcCreate = new CharacterInitializer (handle, charName, type, sex, str, dex, con, wis, cha, intel);
+			pcCreate.execute ();
 			System.out.printf ("Create Character:%s\t From Account:%s @ %s\n", charName, handle.account.userName, handle.getIP ());
 			
 		} catch (Exception e) {
 			e.printStackTrace ();
 			
 		} finally {
-			DatabaseUtil.close (rsAmount) ;
-			DatabaseUtil.close (rsIdRepeat) ;
-			DatabaseUtil.close (ps1) ;
-			DatabaseUtil.close (ps2) ;
-			DatabaseUtil.close (conn) ;
+			DatabaseUtil.close (rsAmount);
+			DatabaseUtil.close (rsIdRepeat);
+			DatabaseUtil.close (ps1);
+			DatabaseUtil.close (ps2);
+			DatabaseUtil.close (conn);
 		}
 		
 	}

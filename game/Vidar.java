@@ -12,6 +12,7 @@ import vidar.server.process_server.*;
 import vidar.server.utility.*;
 import vidar.game.map.*;
 import vidar.game.model.*;
+import vidar.game.model.npc.*;
 
 public class Vidar extends Thread
 {
@@ -75,7 +76,7 @@ public class Vidar extends Thread
 			new MapLoader (instance);
 			
 			/* Load npc */
-			//new NpcLoader (instance) ;
+			new NpcLoader (instance) ;
 			System.out.println ();
 			
 			/* Load Door */
@@ -118,8 +119,23 @@ public class Vidar extends Thread
 	}
 	
 	public void updateWeather () {
-		//boardcastToAll (new ReportWeather (weather).getRaw () ) ;
-		System.out.printf ("Update Weather:0x%02x\n", weather) ;
+		boardcastToAllPc (new ReportWeather (weather).getRaw ());
+		System.out.printf ("Update Weather:0x%02x\n", weather);
+	}
+	
+	public void boardcastToAllPc (byte[] packet) {
+		maps.forEach ((Integer mapId, VidarMap map)->{
+			boardcastToPcByMapId (mapId, packet);
+		});
+	}
+	
+	public void boardcastToPcByMapId (int mapId, byte[] packet) {
+		VidarMap map = getMap (mapId);
+		if (map != null) {
+			map.pcs.forEach ((Integer u, PcInstance p)->{
+				p.getHandler ().sendPacket (packet);
+			});
+		}
 	}
 	
 	public void addMap (VidarMap map) {
@@ -130,12 +146,36 @@ public class Vidar extends Thread
 		}
 	}
 	
-	public void addPc (PcInstance pc) {
-		VidarMap map = getMap (pc.location.mapId);
-		map.addPc (pc);
+	public synchronized void addPc (PcInstance pc) {
+		try {
+			maps.get (pc.location.mapId).addPc (pc);
+			pc.updateOnlineStatus (true);
+			onlinePlayers++;
+			System.out.printf ("角色:%s[0x%08X] 進入世界\n", pc.name, pc.uuid);
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
 	}
 	
-	public void removePc (PcInstance pc) {
+	public synchronized void removePc (PcInstance pc) {
+		try {
+			maps.get (pc.location.mapId).removePc (pc);
+			pc.updateOnlineStatus (false);
+			onlinePlayers--;
+			System.out.printf ("角色:%s[0x%08X] 離開世界\n", pc.name, pc.uuid);
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
+	}
+	
+	public void addNpc (NpcInstance npc) {
+		VidarMap map = getMap (npc.location.mapId);
+		map.addNpc (npc);
+	}
+	
+	public void removeNpc (NpcInstance npc) {
+		VidarMap map = getMap (npc.location.mapId);
+		map.removeNpc (npc);
 	}
 	
 	public VidarMap getMap (int id) {

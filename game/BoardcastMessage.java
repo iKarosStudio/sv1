@@ -13,7 +13,7 @@ public class BoardcastMessage extends Thread implements Runnable
 	public void run () {
 		String message = String.format ("循環廣播訊息測試") ;
 		//System.out.println ("[伺服器廣播]" + BoardcastMessage) ;
-		//vidar.boardcastToAll (new SystemMessage (message).getRaw () ) ;
+		vidar.boardcastToAllPc (new SystemMessage (message).getRaw ());
 	}
 	
 	public static BoardcastMessage getInstance () {

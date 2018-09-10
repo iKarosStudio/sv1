@@ -245,33 +245,33 @@ public class DatabaseCmds
 		//
 	}
 	
-	/*
+	
 	public static void insertItem (ItemInstance item) {
-		Connection con = HikariCP.getConnection () ;
+		Connection con = HikariCP.getConnection ();
 		PreparedStatement ps = null;
 		
 		try {
-			ps = con.prepareStatement ("INSERT INTO character_items SET id=?, item_id=?, char_id=?, item_name=?, count=?, is_equipped=?, enchantlvl=?, is_id=?, durability=? ,charge_count=?;") ;
-			ps.setInt (1, item.Uuid) ;
-			ps.setInt (2, item.ItemId) ;
-			ps.setInt (3, item.OwnerId) ;
-			ps.setString (4, item.Name) ;
-			ps.setInt (5, item.Count) ;
-			ps.setInt (6, (item.IsEquipped) ? 1:0) ;
-			ps.setInt (7, item.Enchant) ;
-			ps.setInt (8, (item.IsIdentified) ? 1:0) ;
-			ps.setInt (9, item.Durability) ;
-			ps.setInt (10,item.ChargeCount) ;
+			ps = con.prepareStatement ("INSERT INTO character_items SET id=?, item_id=?, char_id=?, item_name=?, count=?, is_equipped=?, enchantlvl=?, is_id=?, durability=? ,charge_count=?;");
+			ps.setInt (1, item.uuid);
+			ps.setInt (2, item.id);
+			ps.setInt (3, item.uuidOwner);
+			ps.setString (4, item.name);
+			ps.setInt (5, item.count);
+			ps.setInt (6, (item.isUsing) ? 1:0);
+			ps.setInt (7, item.enchant);
+			ps.setInt (8, (item.isIdentified) ? 1:0);
+			ps.setInt (9, item.durability);
+			ps.setInt (10,item.chargeCount);
+			ps.execute ();
 			
-			ps.execute () ;
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		} finally {
-			DatabaseUtil.close (ps) ;
-			DatabaseUtil.close (con) ;
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
 		}
 	}
-	*/
+	
 	public static void updateItem (ItemInstance item) {
 		Connection con = HikariCP.getConnection () ;
 		PreparedStatement ps = null;

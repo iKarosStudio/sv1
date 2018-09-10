@@ -23,14 +23,15 @@ public class CharacterInitializer
 	private static final int[] MALE_LIST = new int[] {0, 61, 138, 734, 2786};
 	private static final int[] FEMALE_LIST = new int[] {1, 48, 37, 1186, 2796};
 	
+	PcInstance pc = null;
+	
 	public CharacterInitializer (SessionHandler handle,
 		String name, int type, int sex,
 		int str, int dex, int con, int wis, int cha, int intel
 	) {
-		
-		PcInstance pc = new PcInstance () ;
-		pc.setHandler (handle) ;
-		pc.uuid = UuidGenerator.next () ;
+		pc = new PcInstance ();
+		pc.setHandler (handle);
+		pc.uuid = UuidGenerator.next ();
 		pc.name = name;
 		pc.title = "";
 		pc.clanName = "";
@@ -108,7 +109,9 @@ public class CharacterInitializer
 		}
 		pc.hp = pc.basicParameters.maxHp ;
 		pc.mp = pc.basicParameters.maxMp ;
-		
+	}
+	
+	public void execute () {
 		/*
 		 * 寫入資料庫
 		 */
@@ -116,37 +119,37 @@ public class CharacterInitializer
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement ("INSERT INTO characters SET account_name=?, objid=?, char_name=?, level=?, Exp=?, MaxHp=?, MaxMp=?, CurHp=?, CurMp=?, Ac=?, Str=?, Con=?, Dex=?, Cha=?, Intel=?, Wis=?, Status=?, Class=?, Sex=?, Type=?, Heading=?, LocX=?, LocY=?, MapID=?, Food=?, Lawful=?, Title=?, ClanID=?, Clanname=?;") ;
-			ps.setString (1, handle.account.userName) ;
-			ps.setInt (2, pc.uuid) ;
-			ps.setString (3, pc.name) ;
-			ps.setInt (4, pc.level) ;
-			ps.setInt (5, pc.exp) ;
-			ps.setInt (6, pc.basicParameters.maxHp) ;
-			ps.setInt (7, pc.basicParameters.maxMp) ;
-			ps.setInt (8, pc.hp) ;
-			ps.setInt (9, pc.mp) ;
-			ps.setInt (10, pc.basicParameters.ac) ;
-			ps.setInt (11, pc.basicParameters.str) ;
-			ps.setInt (12, pc.basicParameters.con) ;
-			ps.setInt (13, pc.basicParameters.dex) ;
-			ps.setInt (14, pc.basicParameters.cha) ;
-			ps.setInt (15, pc.basicParameters.intel) ;
+			ps.setString (1, pc.getHandler ().account.userName);
+			ps.setInt (2, pc.uuid);
+			ps.setString (3, pc.name);
+			ps.setInt (4, pc.level);
+			ps.setInt (5, pc.exp);
+			ps.setInt (6, pc.basicParameters.maxHp);
+			ps.setInt (7, pc.basicParameters.maxMp);
+			ps.setInt (8, pc.hp);
+			ps.setInt (9, pc.mp);
+			ps.setInt (10, pc.basicParameters.ac);
+			ps.setInt (11, pc.basicParameters.str);
+			ps.setInt (12, pc.basicParameters.con);
+			ps.setInt (13, pc.basicParameters.dex);
+			ps.setInt (14, pc.basicParameters.cha);
+			ps.setInt (15, pc.basicParameters.intel);
 			ps.setInt (16, pc.basicParameters.wis);
-			ps.setInt (17, pc.status) ;
-			ps.setInt (18, pc.gfx) ;
-			ps.setInt (19, pc.sex) ;
-			ps.setInt (20, pc.type) ;
-			ps.setInt (21, pc.heading) ;
-			ps.setInt (22, pc.location.point.x) ;
-			ps.setInt (23, pc.location.point.y) ;
-			ps.setInt (24, pc.location.mapId) ;
-			ps.setInt (25, pc.satiation) ;
-			ps.setInt (26, pc.lawful) ;
-			ps.setString (27, pc.title) ;
-			ps.setInt (28, pc.clanId) ;
-			ps.setString (29, pc.clanName) ;
+			ps.setInt (17, pc.status);
+			ps.setInt (18, pc.gfx);
+			ps.setInt (19, pc.sex);
+			ps.setInt (20, pc.type);
+			ps.setInt (21, pc.heading);
+			ps.setInt (22, pc.location.point.x);
+			ps.setInt (23, pc.location.point.y);
+			ps.setInt (24, pc.location.mapId);
+			ps.setInt (25, pc.satiation);
+			ps.setInt (26, pc.lawful);
+			ps.setString (27, pc.title);
+			ps.setInt (28, pc.clanId);
+			ps.setString (29, pc.clanName);
 			
-			ps.execute () ;
+			ps.execute ();
 			
 			/*
 			 * 給初始道具
@@ -164,7 +167,7 @@ public class CharacterInitializer
 		/*
 		 * 更新客戶端角色顯示		
 		 */
-		handle.sendPacket (new CharCreateResult (CharCreateResult.OK).getRaw ());
-		handle.sendPacket (new NewCharacterPack (pc).getRaw () ) ;
+		pc.getHandler().sendPacket (new CharCreateResult (CharCreateResult.OK).getRaw ());
+		pc.getHandler().sendPacket (new NewCharacterPack (pc).getRaw ());
 	}
 }

@@ -2,7 +2,6 @@ package vidar.server;
 
 import java.lang.Thread;
 import java.util.Calendar;
-import java.util.Date;
 
 public class ServerTime extends Thread implements Runnable
 {
@@ -31,7 +30,9 @@ public class ServerTime extends Thread implements Runnable
 				second  = t % 60;
 				//sleep (1000) ; //1s
 			//}
-		} catch (Exception e) {e.printStackTrace () ;}
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
 	}
 	
 	public ServerTime () {

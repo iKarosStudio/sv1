@@ -25,6 +25,9 @@ public class ArmorInstance extends ItemInstance
 	public int resistStan=0, resistStone=0, resistSleep=0, resistFreeze=0;
 	public boolean isHasteEffect; //加速效果
 	
+	public int dmgReduction;
+	public int weightReduction;
+	
 	public boolean isRoyalUsable;
 	public boolean isKnightUsable;
 	public boolean isElfUsable;
@@ -56,7 +59,7 @@ public class ArmorInstance extends ItemInstance
 		material = template.material;
 		majorType = 2;
 		minorType = template.minorType;
-		useType = template.useType;
+		useType = ItemTypeTable.ArmorMinorType2UseType (minorType);//template.useType;
 		count = 1;
 		weight = template.weight;
 		isIdentified = _isIdentified;
@@ -69,6 +72,7 @@ public class ArmorInstance extends ItemInstance
 		
 		minLevel = template.minLevel;
 		maxLevel = template.maxLevel;
+		ac = template.ac;
 		safeEnchant = template.safeEnchant;
 		enchant = _enchant;
 		str = template.str; con = template.con; dex = template.dex;
@@ -85,6 +89,8 @@ public class ArmorInstance extends ItemInstance
 		resistStone = template.resistStone;
 		resistSleep = template.resistSleep;
 		resistFreeze= template.resistFreeze;
+		dmgReduction= template.dmgReduction;
+		weightReduction=template.weightReduction;
 		isHasteEffect = template.isHasteItem;
 		isRoyalUsable = template.isRoyalUsable;
 		isKnightUsable= template.isKnightUsable;

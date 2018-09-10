@@ -8,15 +8,15 @@ import vidar.server.opcodes.*;
  */
 public class ModelHeading
 {
-	PacketBuilder Builder = new PacketBuilder () ;
-	public ModelHeading (int Uuid, int Heading) {
+	PacketBuilder packet = new PacketBuilder () ;
+	public ModelHeading (int _uuid, int _heading) {
 		
-		Builder.writeByte (ServerOpcodes.SET_HEADING) ;
-		Builder.writeDoubleWord (Uuid) ;
-		Builder.writeByte (Heading) ;
+		packet.writeByte (ServerOpcodes.SET_HEADING);
+		packet.writeDoubleWord (_uuid) ;
+		packet.writeByte (_heading);
 	}
 	
 	public byte[] getRaw () {
-		return Builder.getPacket () ;
+		return packet.getPacket ();
 	}
 }
