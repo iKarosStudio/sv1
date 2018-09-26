@@ -8,7 +8,6 @@ public class NpcActionCodeHandler
 	public NpcActionCodeHandler (SessionHandler handle, int npcId, String actionCode) {
 		
 		//System.out.printf ("npc code:%s\n", ActionCode) ;
-		
 		switch (actionCode) {
 		case "buy" :
 			ReportNpcShop result = new ReportNpcShop (npcId) ;

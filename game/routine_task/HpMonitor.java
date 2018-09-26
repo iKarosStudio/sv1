@@ -15,17 +15,13 @@ public class HpMonitor implements Runnable
 	private PcInstance pc;
 	private SessionHandler Handle;
 	
-	private int status = 0;
-	
 	public HpMonitor (PcInstance _pc) {
 		this.pc = _pc;
-		Handle = _pc.getHandler () ;
+		Handle = _pc.getHandle () ;
 		TaskInterval = 1000;
 	}
 	
 	public void run () {
-		
-		int div10 = 0;
 		
 		//System.out.printf ("%s hp\n", Pc.Name) ;
 		try {

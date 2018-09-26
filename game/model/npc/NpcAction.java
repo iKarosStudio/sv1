@@ -1,9 +1,11 @@
 package vidar.game.model.npc;
 
+/*
 import org.xml.*;
 import java.io.*;
 import javax.xml.*;
 import javax.xml.parsers.*;
+*/
 
 public class NpcAction
 {

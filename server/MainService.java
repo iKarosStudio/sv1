@@ -12,6 +12,7 @@ public class MainService extends Thread
 {
 	private static MainService instance;
 	private ServerSocket serviceSocket;
+	private boolean loginEnable;
 	
 	/*
 	 * 建立連接用session
@@ -19,18 +20,23 @@ public class MainService extends Thread
 	public void run () {		
 		while (true) {
 			try {
-				Socket clientSock = serviceSocket.accept () ;
-				
-				/* 敏感IP捕捉
-				String clientIP = clientSock.getInetAddress ().getHostAddress ();
-				if (ClientIp.equalsIgnoreCase ("127.0.0.1") ) {
-					System.out.printf ("捕捉目標IP:%s\n", ClientIp) ;
-				} 
-				*/
-				
-				SessionHandler clientSession = new SessionHandler (clientSock);
-				ServiceThreadPool.getInstance().execute (clientSession);
-				
+				if (loginEnable) {
+					Socket clientSock = serviceSocket.accept () ;
+					
+					/* 敏感IP 捕抓 */
+					/*
+					String clientIP = clientSock.getInetAddress ().getHostAddress ();
+					if (ClientIp.equalsIgnoreCase ("127.0.0.1") ) {
+						System.out.printf ("捕捉目標IP:%s\n", ClientIp) ;
+					}
+					*/ 
+					
+					/* 開始遊戲服務進程 */
+					SessionHandler clientSession = new SessionHandler (clientSock);
+					ServiceThreadPool.getInstance().execute (clientSession);
+				} else {
+					//
+				}
 			} catch (SocketTimeoutException e) {
 				//it's ok
 			} catch (Exception e) {
@@ -46,13 +52,9 @@ public class MainService extends Thread
 		return instance;
 	}
 	
-	/*
-	 * 建立伺服器socket
-	 */
+	/* 建立伺服器socket */
 	public MainService () {
-		/*
-		 * 初始化端口監聽
-		 */
+		/* 初始化端口監聽 */
 		System.out.printf ("Socket Port %d binding...", Configurations.SERVER_PORT) ;
 		try {
 			serviceSocket = new ServerSocket (Configurations.SERVER_PORT) ;
@@ -66,6 +68,8 @@ public class MainService extends Thread
 			ps.setInt (1, 0);
 			ps.setInt (2, 1);
 			ps.execute ();
+			
+			loginEnable = true;
 			
 		} catch (BindException e) {
 			System.out.printf ("bind Port:%d fail\n", Configurations.SERVER_PORT);

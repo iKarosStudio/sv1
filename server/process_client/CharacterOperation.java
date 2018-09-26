@@ -31,7 +31,7 @@ public class CharacterOperation {
 			
 			pc.loadItemBag ();
 			pc.loadSkills ();
-			//pc.loadBuff () ;
+			pc.skillBuffs.loadBuffs ();
 					
 			/* fix
 			byte[] config = new SendClientConfig (Handle).getRaw () ;
@@ -54,17 +54,13 @@ public class CharacterOperation {
 
 			handle.sendPacket (new NodeStatus (pc).getRaw ());
 			
-			/* 開始系統對時 */
-			//pc.tick.start () ;
-			
 			/* 固定循環工作 */
-			//pc.routineTasks.Start () ;
-			//pc.effectTimer.start () ;
+			pc.routineTasks.start ();
+			pc.skillBuffs.start ();
 			
-			/* 開始經驗值,生命,魔力監測 */
-			//pc.expKeeper.Start () ;
-			//pc.hpKeeper.Start () ;
-			//pc.mpKeeper.Start () ;
+			/* 開始經驗值監測 */
+			pc.expMonitor.start ();
+			
 			
 			/* 視距物件更新服務 */
 			pc.sightUpdate = new SightUpdate (pc);

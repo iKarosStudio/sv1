@@ -38,7 +38,7 @@ public class ModelPacket
 		//Check FastMove
 		//Check Ghost
 		
-		packet.writeByte (ServerOpcodes.MODULE_PACK);
+		packet.writeByte (ServerOpcodes.MODEL_PACK);
 		packet.writeWord (pc.location.point.x) ;
 		packet.writeWord (pc.location.point.y) ;
 		packet.writeDoubleWord (pc.uuid) ;
@@ -79,7 +79,7 @@ public class ModelPacket
 	 * 報告NPC物件
 	 */
 	public ModelPacket (NpcInstance npc) {
-		packet.writeByte (ServerOpcodes.MODULE_PACK);
+		packet.writeByte (ServerOpcodes.MODEL_PACK);
 		packet.writeWord (npc.location.point.x) ;
 		packet.writeWord (npc.location.point.y) ;
 		packet.writeDoubleWord (npc.uuid) ;
@@ -151,14 +151,14 @@ public class ModelPacket
 	/*
 	 * 報告門物件
 	 */
-	/*
-	public NodePacket (DoorInstance d) {
-		packet.writeByte (ServerOpcodes.NODE_PACK) ;
+	
+	public ModelPacket (DoorInstance d) {
+		packet.writeByte (ServerOpcodes.MODEL_PACK) ;
 		packet.writeWord (d.location.point.x) ;
 		packet.writeWord (d.location.point.y) ;
-		packet.writeDoubleWord (d.Uuid) ;
-		packet.writeWord (d.Gfx) ;
-		packet.writeByte (d.StatusActionCode) ;
+		packet.writeDoubleWord (d.uuid) ;
+		packet.writeWord (d.gfx) ;
+		packet.writeByte (d.actionCode) ;
 		packet.writeByte (0) ;
 		packet.writeByte (0) ;
 		packet.writeByte (0) ;
@@ -182,32 +182,31 @@ public class ModelPacket
 		packet.writeByte (0xFF) ;
 		packet.writeByte (0xFF) ;
 	}	
-	*/
+	
 	/*
 	 * 報告怪物物件
 	 */
-	/*
-	public NodePacket (MonsterInstance Npc) {
-		packet.writeByte (ServerOpcodes.NODE_PACK);
-		packet.writeWord (Npc.location.point.x) ;
-		packet.writeWord (Npc.location.point.y) ;
-		packet.writeDoubleWord (Npc.Uuid) ;
+	public ModelPacket (MonsterInstance monster) {
+		packet.writeByte (ServerOpcodes.MODEL_PACK);
+		packet.writeWord (monster.location.point.x) ;
+		packet.writeWord (monster.location.point.y) ;
+		packet.writeDoubleWord (monster.uuid) ;
 		
-		packet.writeWord (Npc.Gfx) ; //get gfx
-		if (Npc.isDead () ) {
+		packet.writeWord (monster.gfx) ; //get gfx
+		if (monster.isDead) {
 			packet.writeByte (8) ;
 		} else {
 			packet.writeByte (0) ;
 		}
-		packet.writeByte (Npc.heading) ;
+		packet.writeByte (monster.heading) ;
 		packet.writeByte (10) ; //light
-		packet.writeByte (Npc.MoveSpeed) ; //move speed;
+		packet.writeByte (monster.moveSpeed) ; //move speed;
 		
 		packet.writeDoubleWord (0) ; //EXP
 		packet.writeWord (0) ; //Lawful
-		packet.writeString (Npc.NameId) ;
+		packet.writeString (monster.nameId) ;
 		packet.writeString (null) ;//title
-		packet.writeByte (Npc.Status) ; //status
+		packet.writeByte (monster.status) ; //status
 		packet.writeDoubleWord (0) ;
 		packet.writeString (null) ;
 		packet.writeString (null) ;
@@ -216,12 +215,15 @@ public class ModelPacket
 		packet.writeByte (0xFF) ; //血條百分比
 		
 		packet.writeByte (0x00) ;
-		packet.writeByte (Npc.Level) ;
+		packet.writeByte (monster.level) ;
 		packet.writeByte (0x00) ;
 		packet.writeByte (0xFF) ;
 		packet.writeByte (0xFF) ;
 	}
-	*/
+	
+	public ModelPacket (ItemInstance item) {
+	}
+	
 	public byte[] getRaw () {
 		return packet.getPacketNoPadding () ;
 	}

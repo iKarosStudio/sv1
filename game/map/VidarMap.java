@@ -5,8 +5,12 @@ import java.util.concurrent.*;
 
 import vidar.config.*;
 import vidar.types.*;
+import vidar.game.*;
 import vidar.game.model.*;
+import vidar.game.model.item.*;
 import vidar.game.model.npc.*;
+import vidar.game.model.monster.*;
+import vidar.game.model.monster.ai.*;
 
 /*
  * 讀取的地圖實例
@@ -27,7 +31,7 @@ public class VidarMap
 	private Random random = new Random (System.currentTimeMillis () ) ;
 	
 	/* 生怪控制器, 數量邏輯控制 */
-	//public MonsterGenerator mobGenerator = null;
+	public MonsterGenerator monsterGenerator = null;
 	
 	/* 傳送點列表 */
 	public ConcurrentHashMap<Integer, Location> tpLocation;
@@ -39,24 +43,24 @@ public class VidarMap
 	public ConcurrentHashMap<Integer, NpcInstance> npcs;
 	
 	/* 地面道具實體 */
-	//public ConcurrentHashMap<Integer, ItemInstance> gndItems; //Items on ground
+	public ConcurrentHashMap<Integer, ItemInstance> items; //Items on ground
 	
 	/* 門的實體 */
-	//public ConcurrentHashMap<Integer, DoorInstance> doors; //Doors
+	public ConcurrentHashMap<Integer, DoorInstance> doors; //Doors
 	
 	/* 怪物實體 */
-	//public ConcurrentHashMap<Integer, MonsterInstance> monsters;
-	//public MonsterAiDistributor aiDistributor;
+	public ConcurrentHashMap<Integer, MonsterInstance> monsters;
+	public MonsterAiDistributor aiDistributor;
 	
 	/* 寵物, 召喚怪物實體  */
 	//public ConcurrentHashMap<Integer, PetInstance> pets;
 	
-	public VidarMap (int id, int start_x, int end_x, int start_y, int end_y) {
-		mapId = id;
-		startX = start_x;
-		endX = end_x;
-		startY = start_y;
-		endY = end_y;
+	public VidarMap (int _mapId, int _startX, int _endX, int _startY, int _endY) {
+		mapId = _mapId;
+		startX = _startX;
+		endX = _endX;
+		startY = _startY;
+		endY = _endY;
 		
 		sizeX = endX - startX + 1;
 		sizeY = endY - startY + 1;
@@ -69,14 +73,14 @@ public class VidarMap
 		
 		tpLocation = new ConcurrentHashMap<Integer, Location> () ;
 		
-		pcs = new ConcurrentHashMap<Integer, PcInstance> () ;
-		npcs = new ConcurrentHashMap<Integer, NpcInstance> () ;
-		//gndItems = new ConcurrentHashMap<Integer, ItemInstance> () ;
-		//doors = new ConcurrentHashMap<Integer, DoorInstance> () ;
-		//monsters = new ConcurrentHashMap<Integer, MonsterInstance> () ;
+		pcs = new ConcurrentHashMap<Integer, PcInstance> ();
+		npcs = new ConcurrentHashMap<Integer, NpcInstance> ();
+		items = new ConcurrentHashMap<Integer, ItemInstance> ();
+		doors = new ConcurrentHashMap<Integer, DoorInstance> ();
+		monsters = new ConcurrentHashMap<Integer, MonsterInstance> ();
 		
-		//aiDistributor = new MonsterAiDistributor (this) ;
-		//aiDistributor.Start () ;
+		aiDistributor = new MonsterAiDistributor (this);
+		aiDistributor.start ();
 	}
 	
 	public int spawnMonster () {
@@ -318,6 +322,7 @@ public class VidarMap
 	public void removePc (PcInstance pc) {
 		pcs.remove (pc.uuid);
 	}
+
 	
 	public List<NpcInstance> getNpcsInDistance (Coordinate _point, int _range) {
 		List<NpcInstance> result = new ArrayList<NpcInstance> ();
@@ -343,5 +348,59 @@ public class VidarMap
 	
 	public void removeNpc (NpcInstance npc) {
 		npcs.remove (npc.uuid);
+	}
+	
+	public List<DoorInstance> getDoorsInDistance (Coordinate _point, int _range) {
+		List<DoorInstance> result = new ArrayList<DoorInstance> ();
+		try {
+			doors.forEach ((Integer uuid, DoorInstance door)->{
+				if (door.getDistance (_point.x, _point.y) < _range) {
+					result.add (door);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
+		return result;
+	}
+	
+	public List<DoorInstance> getDoorsInsight (Coordinate _point) {
+		return getDoorsInDistance (_point, Configurations.SIGHT_RAGNE);
+	}
+	
+	
+	public List<MonsterInstance> getMonstersInDistance (Coordinate _point, int _range) {
+		List<MonsterInstance> result = new ArrayList<MonsterInstance> ();
+		try {
+			monsters.forEach ((Integer uuid, MonsterInstance monster)->{
+				if (monster.getDistance (_point.x, _point.y) < _range) {
+					result.add (monster);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
+		return result;
+	}
+	
+	public List<MonsterInstance> getMonstersInsight (Coordinate _point) {
+		return getMonstersInDistance (_point, Configurations.SIGHT_RAGNE);
+	}
+	
+	
+	public Model getModel (int uuid) {
+		Model result;
+		
+		if (pcs.containsKey (uuid)) {
+			result = pcs.get (uuid);
+		} else if (monsters.containsKey (uuid)) {
+			result = monsters.get (uuid);
+		} else if (npcs.containsKey (uuid)) {
+			result = npcs.get (uuid);
+		} else {
+			result = null;
+		}	
+		
+		return result;
 	}
 }

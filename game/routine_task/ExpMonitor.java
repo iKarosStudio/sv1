@@ -21,7 +21,7 @@ public class ExpMonitor extends Thread implements Runnable
 
 	public ExpMonitor (PcInstance _pc) {
 		this.pc = _pc;
-		handle = _pc.getHandler ();
+		handle = _pc.getHandle ();
 	}
 	
 	public void run () {
@@ -34,14 +34,14 @@ public class ExpMonitor extends Thread implements Runnable
 				
 				//升級事項
 				pc.basicParameters.maxHp += Utility.calcIncreaseHp (pc.type, pc.hp, pc.getBaseMaxHp (), pc.basicParameters.con);
-				pc.basicParameters.maxMp += Utility.calcIncreaseMp (pc.type, pc.mp, pc.getBaseMaxMp (), pc.basicParameters.wis) ;
-				pc.basicParameters.ac += Utility.calcAcBonusFromDex (pc.level, pc.basicParameters.dex) ;
+				pc.basicParameters.maxMp += Utility.calcIncreaseMp (pc.type, pc.mp, pc.getBaseMaxMp (), pc.basicParameters.wis);
+				pc.basicParameters.ac += Utility.calcAcBonusFromDex (pc.level, pc.basicParameters.dex);
 				pc.basicParameters.mr += Utility.calcMr (pc.type, pc.level, pc.basicParameters.wis);
-				pc.basicParameters.sp += Utility.calcSp (pc.type, pc.level, pc.basicParameters.intel) ;
+				pc.basicParameters.sp += Utility.calcSp (pc.type, pc.level, pc.basicParameters.intel);
 				
 				//重新計算SP/MR
 				
-				System.out.printf ("%s升到了%d等級\n", pc.name, pc.level) ;
+				System.out.printf ("%s升到了%d等級\n", pc.name, pc.level);
 				toggleSave = true;
 			}
 			
@@ -53,19 +53,17 @@ public class ExpMonitor extends Thread implements Runnable
 			}
 			
 		} catch (Exception e) {
-			System.out.printf ("%s ExpMonitor:%s\n", pc.name, e.toString () ) ;
+			System.out.printf ("%s ExpMonitor:%s\n", pc.name, e.toString ());
 			e.printStackTrace ();
-			
 		}
 	}
 	
 	public void Start () {
-		//t.scheduleAtFixedRate (this, 0, 300) ;
-		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 0, 300) ;
+		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 0, 300);
 	}
 	
 	public void Stop () {
-		schedulor.cancel (true) ;
+		schedulor.cancel (true);
 	}
 	
 	/* 

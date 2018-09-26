@@ -58,84 +58,84 @@ public class SkillTemplate
 	public boolean ArrowType;
 	
 	public SkillTemplate (
-		int skill_id,
-		String name,
-		int skill_level,
-		int skill_number,
-		int mp_cost,
-		int hp_cost,
-		int item_cost_id,
-		int item_cost_count,
-		int delay_time,
-		int remain_time,
-		String target,
-		int target_to,
-		int damage_value,
-		int damage_dice,
-		int damage_dice_count,
-		int properbility_value,
-		int properbility_dice,
-		int attr,
-		int actid,
-		int type,
-		int lawful,
-		int ranged,
-		int area,
-		int through,
-		int id,
-		String name_id,
-		int cast_gfx,
-		int msg_id_start,
-		int msg_id_stop,
-		int msg_id_fail,
-		int arrow_type) {
+		int _skillId,
+		String _name,
+		int _skillLevel,
+		int _skillNumber,
+		int _mpCost,
+		int _hpCost,
+		int _itemCostId,
+		int _itemCostCount,
+		int _delayTime,
+		int _remainTime,
+		String _target,
+		int _targetTo,
+		int _damageValue,
+		int _damageDice,
+		int _damageDiceCount,
+		int _properbilityValue,
+		int _properbilityDice,
+		int _attr,
+		int _actId,
+		int _type,
+		int _lawful,
+		int _ranged,
+		int _area,
+		int _through,
+		int _id,
+		String _nameId,
+		int _castGfx,
+		int _msgIdStart,
+		int _msgIdStop,
+		int _msgIdFail,
+		int _arrowType) {
 		
-		SkillId = skill_id;
-		Name = name;
-		SkillLv = skill_level;
-		SkillNumber = skill_number;
-		MpCost = mp_cost;
-		HpCost = hp_cost;
-		ItemCostId = item_cost_id;
-		ItemCostAmount = item_cost_count;
-		DelayTime = delay_time;
-		RemainTime = remain_time;
+		SkillId = _skillId;
+		Name = _name;
+		SkillLv = _skillLevel;
+		SkillNumber = _skillNumber;
+		MpCost = _mpCost;
+		HpCost = _hpCost;
+		ItemCostId = _itemCostId;
+		ItemCostAmount = _itemCostCount;
+		DelayTime = _delayTime;
+		RemainTime = _remainTime;
 		
 		//Target
-		if (target.contentEquals ("none")) {
+		if (_target.contentEquals ("none")) {
 			Target = 0;
-		} else if (target.contentEquals ("attack")) {
+		} else if (_target.contentEquals ("attack")) {
 			Target = 1;
-		} else if (target.contentEquals ("buff") ) {
+		} else if (_target.contentEquals ("buff") ) {
 			Target = 2;
 		}
 		
-		TargetTo = target_to;
-		DamageBase = damage_value;
-		DamageDice = damage_dice;
-		DamageDiceCount = damage_dice_count;
-		ProperbilityValue = properbility_value;
-		ProperbilityDice = properbility_dice;
-		Attr = attr;
-		ActId = actid;
-		Type = type;
-		Lawful = lawful;
-		Range = ranged;
-		Area = area;
+		TargetTo = _targetTo;
+		DamageBase = _damageValue;
+		DamageDice = _damageDice;
+		DamageDiceCount = _damageDiceCount;
+		ProperbilityValue = _properbilityValue;
+		ProperbilityDice = _properbilityDice;
+		Attr = _attr;
+		ActId = _actId;
+		Type = _type;
+		Lawful = _lawful;
+		Range = _ranged;
+		Area = _area;
 		//Through
-		if (through > 0) {
+		if (_through > 0) {
 			Through = true;
 		} else {
 			Through = false;
 		}
-		Id = id;
-		NameId = name_id;
-		GfxId = cast_gfx;
-		MsgIdStart = msg_id_start;
-		MsgIdStop = msg_id_stop;
-		MsgIdFail = msg_id_fail;
+		Id = _id;
+		NameId = _nameId;
+		GfxId = _castGfx;
+		MsgIdStart = _msgIdStart;
+		MsgIdStop = _msgIdStop;
+		MsgIdFail = _msgIdFail;
 		//Arrowtype
-		if (arrow_type > 0) {
+		if (_arrowType > 0) {
 			ArrowType = true;
 		} else {
 			ArrowType = false;

@@ -9,7 +9,7 @@ import vidar.game.model.*;
 public class Teleport
 {
 	public Teleport (PcInstance pc, Location dest, boolean useVirtualEffect) {
-		SessionHandler handle = pc.getHandler ();
+		SessionHandler handle = pc.getHandle ();
 		
 		if (pc.location.mapId != dest.mapId) {
 			pc.location.mapId = dest.mapId;
@@ -39,7 +39,7 @@ public class Teleport
 			}
 		}
 		
-		pc.removeAllInsight () ;
+		pc.removeAllInsight ();
 		
 		//update Skills
 		//Pc.SkillTimer.UpdateSkillEffects () ;

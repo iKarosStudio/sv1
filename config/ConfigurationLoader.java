@@ -41,6 +41,10 @@ public class ConfigurationLoader
 			Configurations.MAX_HP_DARKELF=Integer.valueOf (p.getProperty ("MAXHP_DARKELF"));
 			Configurations.MAX_MP_DARKELF=Integer.valueOf (p.getProperty ("MAXMP_DARKELF"));
 			
+			Configurations.ALLOW_DROP_ITEM=Boolean.valueOf(p.getProperty ("ALLOW_DROP_ITEM"));
+			Configurations.DISPLAY_CHAT=Boolean.valueOf(p.getProperty ("DISPLAY_CHAT"));
+			Configurations.LOG_CHAT=Boolean.valueOf(p.getProperty ("LOG_CHAT"));
+			
 			p.load (new FileInputStream ("configs/server.properties"));
 			Configurations.SERVER_PORT = Integer.valueOf (p.getProperty ("ServerPort"));
 			Configurations.MANAGE_PORT = Integer.valueOf (p.getProperty ("AdminPort"));

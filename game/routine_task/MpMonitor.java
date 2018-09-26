@@ -15,11 +15,9 @@ public class MpMonitor implements Runnable
 	private PcInstance pc;
 	private SessionHandler handle;
 	
-	private int status = 0;
-	
 	public MpMonitor (PcInstance _pc) {
 		this.pc = _pc;
-		handle = _pc.getHandler ();
+		handle = _pc.getHandle ();
 		taskInterval = 1000;
 	}
 	

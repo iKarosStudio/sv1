@@ -20,8 +20,9 @@ public class Configurations
 	public static int MONSTER_AI_UPDATE_RATE = 1000;
 	public static int DEFAULT_MOVEMENT_RANGE = 0;
 	
-	public static final boolean DISPLAY_CHAT = true;
-	public static final boolean LOG_CHAT = false;
+	public static boolean DISPLAY_CHAT = true;
+	public static boolean LOG_CHAT = false;
+	public static boolean ALLOW_DROP_ITEM = true;
 	
 	/* 遊戲倍率設定 */
 	public static int RateExp = 1;

@@ -273,75 +273,74 @@ public class DatabaseCmds
 	}
 	
 	public static void updateItem (ItemInstance item) {
-		Connection con = HikariCP.getConnection () ;
+		Connection con = HikariCP.getConnection ();
 		PreparedStatement ps = null;
 		
 		try {
-			ps = con.prepareStatement ("UPDATE character_items SET item_id=?, char_id=?, item_name=?, count=?, is_equipped=?, enchantlvl=?, is_id=?, durability=? ,charge_count=? where id=?;") ;
-			ps.setInt (1, item.id) ;
-			ps.setInt (2, item.uuidOwner) ;
-			ps.setString (3, item.name) ;
-			ps.setInt (4, item.count) ;
-			ps.setInt (5, (item.isUsing) ? 1:0) ;
-			ps.setInt (6, item.enchant) ;
-			ps.setInt (7, (item.isIdentified) ? 1:0) ;
-			ps.setInt (8, item.durability) ;
-			ps.setInt (9, item.chargeCount) ;
-			ps.setInt (10,item.uuid) ;
+			ps = con.prepareStatement ("UPDATE character_items SET item_id=?, char_id=?, item_name=?, count=?, is_equipped=?, enchantlvl=?, is_id=?, durability=? ,charge_count=? where id=?;");
+			ps.setInt (1, item.id);
+			ps.setInt (2, item.uuidOwner);
+			ps.setString (3, item.name);
+			ps.setInt (4, item.count);
+			ps.setInt (5, (item.isUsing) ? 1:0);
+			ps.setInt (6, item.enchant);
+			ps.setInt (7, (item.isIdentified) ? 1:0);
+			ps.setInt (8, item.durability);
+			ps.setInt (9, item.chargeCount);
+			ps.setInt (10,item.uuid);
 			
-			ps.execute () ;
+			ps.execute ();
 		} catch (Exception e) {
 			e.printStackTrace () ;
 		} finally {
-			DatabaseUtil.close (ps) ;
-			DatabaseUtil.close (con) ;
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
 		}
 	}
-	/*
+	
 	public static void deleteItem (ItemInstance item) {
-		Connection con = HikariCP.getConnection () ;
+		Connection con = HikariCP.getConnection ();
 		PreparedStatement ps = null;
 		
 		try {
-			ps = con.prepareStatement ("DELETE FROM character_items WHERE id=?;") ;
-			ps.setInt (1, item.Uuid) ;
-			ps.execute () ;
+			ps = con.prepareStatement ("DELETE FROM character_items WHERE id=?;");
+			ps.setInt (1, item.uuid);
+			ps.execute ();
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		} finally {
-			DatabaseUtil.close (ps) ;
-			DatabaseUtil.close (con) ;
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
 		}
 	}
-	*/
 	
 	public static void savePc (PcInstance p) {
-		Connection con = HikariCP.getConnection () ;
+		Connection con = HikariCP.getConnection ();
 		PreparedStatement ps = null;
 		
 		try {
-			ps = con.prepareStatement ("UPDATE characters SET level=?, Exp=?, MaxHp=?, CurHp=?, MaxMp=?, CurMp=?, Ac=?, Status=?, LocX=?, LocY=?, Heading=?, MapID=? WHERE objid=?;") ;
-			ps.setInt (1, p.level) ;
-			ps.setInt (2, p.exp) ;
-			ps.setInt (3, p.basicParameters.maxHp) ;
-			ps.setInt (4, p.hp) ;
-			ps.setInt (5, p.basicParameters.maxMp) ;
-			ps.setInt (6, p.mp) ;
+			ps = con.prepareStatement ("UPDATE characters SET level=?, Exp=?, MaxHp=?, CurHp=?, MaxMp=?, CurMp=?, Ac=?, Status=?, LocX=?, LocY=?, Heading=?, MapID=? WHERE objid=?;");
+			ps.setInt (1, p.level);
+			ps.setInt (2, p.exp);
+			ps.setInt (3, p.basicParameters.maxHp);
+			ps.setInt (4, p.hp);
+			ps.setInt (5, p.basicParameters.maxMp);
+			ps.setInt (6, p.mp);
 			ps.setInt (7, p.getBaseAc () + p.getEquipAc ());
-			ps.setInt (8, p.status) ;
-			ps.setInt (9, p.location.point.x) ;
-			ps.setInt (10, p.location.point.y) ;
-			ps.setInt (11, p.heading) ;
-			ps.setInt (12, p.location.mapId) ;
-			ps.setInt (13, p.uuid) ;
-			ps.execute () ;
+			ps.setInt (8, p.status);
+			ps.setInt (9, p.location.point.x);
+			ps.setInt (10, p.location.point.y);
+			ps.setInt (11, p.heading);
+			ps.setInt (12, p.location.mapId);
+			ps.setInt (13, p.uuid);
+			ps.execute ();
 			
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 			
 		} finally {
-			DatabaseUtil.close (ps) ;
-			DatabaseUtil.close (con) ;
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
 		}
 	}
 	

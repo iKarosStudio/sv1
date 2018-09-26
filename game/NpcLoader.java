@@ -34,16 +34,16 @@ public class NpcLoader
 				while (spawnlistRs.next ()) {
 					int uuid = spawnlistRs.getInt ("id") ;
 					String locationName = spawnlistRs.getString ("location") ;
-					int count = spawnlistRs.getInt ("count") ;
+					//int count = spawnlistRs.getInt ("count") ;
 					int npcTemplateId = spawnlistRs.getInt ("npc_templateid") ;
 					int posX = spawnlistRs.getInt ("locx") ;
 					int posY = spawnlistRs.getInt ("locy") ;
 					int mapId = spawnlistRs.getInt ("mapid") ;
 					int heading = spawnlistRs.getInt ("heading") ;
-					int randomX = spawnlistRs.getInt ("randomx") ;
-					int randomY = spawnlistRs.getInt ("randomy") ;
-					int respawnDelay = spawnlistRs.getInt ("respawn_delay") ;
-					int movementDistance = spawnlistRs.getInt ("movement_distance") ;
+					//int randomX = spawnlistRs.getInt ("randomx") ;
+					//int randomY = spawnlistRs.getInt ("randomy") ;
+					//int respawnDelay = spawnlistRs.getInt ("respawn_delay") ;
+					//int movementDistance = spawnlistRs.getInt ("movement_distance") ;
 
 					if (CacheData.npcs.containsKey (npcTemplateId) ) {
 						NpcTemplate npcData = CacheData.npcs.get (npcTemplateId);
@@ -79,7 +79,7 @@ public class NpcLoader
 		System.out.printf ("loaded in\t%.3f s\n", usedTime) ;
 		
 		if (errorList.size () > 0) {
-			System.out.printf ("[***WARN!***] %d NPC LOAD FAIL:\n", errorList.size ());
+			System.out.printf ("[WARNNING!] %d NPC LOAD FAIL:\n", errorList.size ());
 			for (String s : errorList) {
 				System.out.println (s) ;
 			}

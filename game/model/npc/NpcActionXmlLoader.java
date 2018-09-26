@@ -17,9 +17,13 @@ public class NpcActionXmlLoader
 	 */
 	private static int depth = 0;
 	
-	public NpcActionXmlLoader (ConcurrentHashMap<String, Document> _npcActionTable) {
-		File xmlFileFolder = new File (XML_PATH) ;
-		
+	
+	public NpcActionXmlLoader () {
+		//
+	}
+	
+	public void load (ConcurrentHashMap<String, Document> _npcActionTable) {
+		File xmlFileFolder = new File (XML_PATH);
 		try {
 			File[] xmlFiles = xmlFileFolder.listFiles ();
 			for (File xmlFile : xmlFiles) {

@@ -4,6 +4,9 @@ import java.sql.*;
 
 import vidar.server.database.*;
 
+/*
+ * 預定更新next配送規則
+ */
 public class UuidGenerator
 {
 	private static UuidGenerator instance;
@@ -55,7 +58,6 @@ public class UuidGenerator
 			DatabaseUtil.close (rs) ;
 			DatabaseUtil.close (ps) ;
 			DatabaseUtil.close (con) ;
-			
 		}
 	}
 }

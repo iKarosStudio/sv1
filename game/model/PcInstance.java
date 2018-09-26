@@ -11,8 +11,11 @@ import vidar.server.utility.*;
 import vidar.server.process_server.*;
 import vidar.game.*;
 import vidar.game.map.*;
+import vidar.game.skill.*;
 import vidar.game.model.item.*;
 import vidar.game.model.npc.*;
+import vidar.game.model.monster.*;
+import vidar.game.template.*;
 import vidar.game.routine_task.*;
 
 public class PcInstance extends Model
@@ -42,23 +45,25 @@ public class PcInstance extends Model
 	public AbilityParameter equipParameter;
 	
 	/* Buff/Debuff 效果計時 */
-	//public SkillEffectTimer SkillTimer = null;
+	public SkillEffectTimer skillBuffs = null;
 	
 	/* 藥水延遲  <K, V> = <道具編號, 上一個時間戳記> */
 	private ConcurrentHashMap<Integer, Long> itemDelay = null;
 	
 	/* 技能延遲  <K, V> = <技能編號, 上一個時間戳記> */
-	private ConcurrentHashMap<Integer, Long> skillCastDelay = null;
+	private ConcurrentHashMap<Integer, Long> skillDelay = null;
 	
 	public ConcurrentHashMap<Integer, PcInstance> pcsInsight;
 	public ConcurrentHashMap<Integer, NpcInstance> npcsInsight;
+	public ConcurrentHashMap<Integer, MonsterInstance> monstersInsight;
+	public ConcurrentHashMap<Integer, DoorInstance> doorsInsight;
+	public ConcurrentHashMap<Integer, ItemInstance> itemsInsight;
 	
 	public SightUpdate sightUpdate;
 	public PcRoutineTasks routineTasks;
-	//public SystemTick tick;
 	public ExpMonitor expMonitor;
-	public HpMonitor hpMonitor;
-	public MpMonitor mpMonitor;
+	//public HpMonitor hpMonitor;
+	//public MpMonitor mpMonitor;
 	
 	public PcInstance () {
 		//
@@ -70,11 +75,15 @@ public class PcInstance extends Model
 		location = new Location ();
 		equipment = new Equipment (handle);
 		
+		skillBuffs = new SkillEffectTimer (this);
 		itemDelay = new ConcurrentHashMap<Integer, Long> ();
-		skillCastDelay = new ConcurrentHashMap<Integer, Long> ();
+		skillDelay = new ConcurrentHashMap<Integer, Long> ();
 		
 		pcsInsight = new ConcurrentHashMap<Integer, PcInstance> ();
 		npcsInsight = new ConcurrentHashMap<Integer, NpcInstance> ();
+		monstersInsight = new ConcurrentHashMap<Integer, MonsterInstance> ();
+		doorsInsight = new ConcurrentHashMap<Integer, DoorInstance> ();
+		itemsInsight = new ConcurrentHashMap<Integer, ItemInstance> ();
 	}
 	
 	public boolean load (String charName) {
@@ -138,6 +147,7 @@ public class PcInstance extends Model
 				status = rs.getInt ("Status");
 				status |= 4;
 				
+				
 				hp = rs.getInt ("CurHp");
 				mp = rs.getInt ("CurMp");
 				basicParameters.maxHp = rs.getInt ("MaxHp");
@@ -145,9 +155,8 @@ public class PcInstance extends Model
 				
 				pkCount = rs.getInt ("PKcount");
 				
-				//Tick = new SystemTick (this) ;
-				//SkillTimer = new SkillEffectTimer (this) ;
-				//RoutineTask = new PcRoutineTasks (this) ;
+				routineTasks = new PcRoutineTasks (this);
+				expMonitor = new ExpMonitor (this);
 				//ExpKeeper = new ExpMonitor (this) ;		
 				///HpKeeper = new HpMonitor (this) ;
 				//MpKeeper = new MpMonitor (this) ;
@@ -184,20 +193,13 @@ public class PcInstance extends Model
 				boolean itemIsIdentified = rs.getBoolean ("is_id");
 				
 				//生成ItemInstace, WeaponInstance, ArmorInstance
-				if (CacheData.item.containsKey (itemId)) {
-					ItemInstance item = new ItemInstance (itemId, itemUuid, itemOwnerUuid, itemCount, itemDurability, itemChargeCount, itemIsUsing, itemIsIdentified);
-					itemBag.put (item.uuid, item);
-				} else if (CacheData.weapon.containsKey (itemId)) {
-					WeaponInstance weapon = new WeaponInstance (itemId, itemUuid, itemOwnerUuid, itemDurability, itemEnchant, itemIsUsing, itemIsIdentified);
-					
-					itemBag.put (weapon.uuid, weapon);
-					setWeapon (weapon.uuid);
-					
-				} else if (CacheData.armor.containsKey (itemId)) {
-					ArmorInstance armor = new ArmorInstance (itemId, itemUuid, itemOwnerUuid, itemDurability, itemEnchant, itemIsUsing, itemIsIdentified);
-					
-					itemBag.put (armor.uuid, armor);
-					setArmor (armor.uuid);
+				ItemInstance item = new ItemInstance (itemId, itemUuid, itemOwnerUuid, itemEnchant, itemCount, itemDurability, itemChargeCount, itemIsUsing, itemIsIdentified);
+				itemBag.put (item.uuid, item);
+				
+				if (item.isWeapon () && item.isUsing) {
+					setWeapon (item.uuid);
+				} else if (item.isArmor () && item.isUsing) {
+					setArmor (item.uuid);
 				}
 			}
 			
@@ -212,8 +214,74 @@ public class PcInstance extends Model
 	}
 	
 	public void loadSkills () {
+		ResultSet rs = null;
+		int[] skillValue = new int[25];
+		HashMap<Integer, Integer> skillTable = new HashMap<Integer, Integer> ();
+		try {
+			rs = DatabaseCmds.loadPcSkills (uuid);
+			while (rs.next ()) {
+				int skill_id = rs.getInt ("skill_id");
+				SkillTemplate skillTemplate = CacheData.skill.get (skill_id);
+				skillValue[skillTemplate.SkillLv] |= skillTemplate.Id;
+			}
+			
+			for (int i = 1; i <= 24; i++) {
+				skillTable.putIfAbsent (i, skillValue[i]);
+			}
+			
+			handle.sendPacket (new SkillTable (type, skillTable).getRaw ());
+		} catch (Exception e) {
+			e.printStackTrace ();
+		} finally {
+			DatabaseUtil.close (rs);
+		}
 	}
 	
+	public synchronized void attack (int _targetUuid, int _targetX, int _targetY) {
+		heading = getDirection (_targetX, _targetY);
+		battleCounter = 30;
+		
+		NormalAttack atk = new NormalAttack (this, _targetUuid, _targetX, _targetY);
+		
+		
+		/*
+		byte[] actionPacket = null;
+		if (map.monsters.containsKey (_targetUuid)) { //Attack monster
+			new CommonAttack (this, map.monsters.get (_targetUuid));
+			if (equipment.weapon != null && equipment.weapon.minorType == ItemTypeTable.WEAPON_TYPE_BOW) {
+				actionPacket = new ModelShootArrow (this, _targetUuid, _targetX, _targetY).getRaw();
+			} else {
+				actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
+			}
+			
+		} else if (map.pcs.containsKey (uuid)) { //Attack other pc
+			new CommonAttack (this, map.pcs.get (_targetUuid));
+			if (equipment.weapon != null && equipment.weapon.minorType == ItemTypeTable.WEAPON_TYPE_BOW) {
+				actionPacket = new ModelShootArrow (this, _targetUuid, _targetX, _targetY).getRaw();
+			} else {
+				actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
+			}
+			
+		}*/
+		
+		//表現攻擊動作
+		//handle.sendPacket (actionPacket);
+		//boardcastPcInsight (actionPacket);
+	}
+
+	synchronized public void takeAttack (NormalAttack _atk) {
+		battleCounter = 30; //戰鬥狀態秒數
+	}
+	
+	synchronized public void takeDamage (int dmg) {
+		if (hp > dmg) {
+			hp -= dmg;
+		} else {
+			hp = 0;
+			isDead = true;
+			System.out.printf ("%s 往生了!\n", name) ;
+		}
+	}
 	
 	public ItemInstance findItemByUuid (int uuid) {
 		return itemBag.get (uuid);
@@ -231,11 +299,20 @@ public class PcInstance extends Model
 		return result;
 	}
 	
+	public int getMoney () {
+		int money = 0;
+		List<ItemInstance> find = findItemByItemId (40308);
+		if (find.size () > 0) {
+			money = find.get (0).count;
+		}
+		return money;
+	}
+	
 	public void addItem (ItemInstance item) {
 		List<ItemInstance> foundItems = findItemByItemId (item.id);
 		
 		if (item.isStackable && (foundItems.size() > 0)) {
-			ItemInstance i = itemBag.get (foundItems.get (0).uuid) ;
+			ItemInstance i = itemBag.get (foundItems.get (0).uuid);
 			i.count += item.count;
 			DatabaseCmds.updateItem (i);
 			
@@ -250,24 +327,119 @@ public class PcInstance extends Model
 		}
 	}
 	
-	public void removeItem (ItemInstance i) {
+	public synchronized void removeItemByItemId (int _itemId, int _amount) {
+		List<ItemInstance> fountItem = findItemByItemId (_itemId);
+		if (fountItem.size () > 0) {
+			ItemInstance item = fountItem.get (0);
+			removeItem (item.uuid, _amount);
+		}
 	}
 	
-	public void deleteItem (ItemInstance i) {
+	public synchronized void removeItem (ItemInstance item) {
+		removeItem (item.uuid, item.count);
 	}
 	
-	public void dropItem (ItemInstance i) {
+	public synchronized void removeItem (int _uuid, int _amount) {
+		if (itemBag.containsKey (_uuid)) {
+			ItemInstance item = itemBag.get (_uuid);
+			
+			if (item.count > _amount) {
+				item.count -= _amount;
+				DatabaseCmds.updateItem (item) ;
+				handle.sendPacket (new UpdateItemAmount(item).getRaw ());
+				handle.sendPacket (new UpdateItemName(item).getRaw ());
+				handle.sendPacket (new UpdateItemStatus(item).getRaw ());
+			} else {
+				itemBag.remove (item.uuid);
+				DatabaseCmds.deleteItem (item);
+				handle.sendPacket (new ItemRemove (item).getRaw ());
+			}
+		}
+	}
+	
+	public void pickItem (int uuid, int count, int x, int y) {
+		ItemInstance pick = map.items.get (uuid);
+		if (pick != null) {
+			byte[] actionPacket = new ModelAction (ModelActionId.PICK_UP, uuid, heading).getRaw ();
+			
+			handle.sendPacket (actionPacket);
+			boardcastPcInsight (actionPacket);
+			
+			pick.uuidOwner = uuid;
+			addItem (pick);
+			map.items.remove (pick.uuid);
+		}
+	}
+	
+	public void dropItem (int _uuid, int _amount, int x, int y) {
+		if (itemBag.containsKey (_uuid)) {
+			ItemInstance item = itemBag.get (_uuid);
+			ItemInstance drop = null;
+			
+			if (item.count > _amount) { /* 丟出數量小於持有數量  */
+				item.count -= _amount;
+				drop = new ItemInstance (item.id, UuidGenerator.next (), 0, item.enchant, _amount, item.durability, item.chargeCount, false, false);
+				
+				DatabaseCmds.updateItem (item);
+				handle.sendPacket (new UpdateItemAmount(item).getRaw ());
+				handle.sendPacket (new UpdateItemName(item).getRaw ());
+				handle.sendPacket (new UpdateItemStatus(item).getRaw ());
+			} else {
+				drop = new ItemInstance (item.id, item.uuid, 0, item.enchant, item.count, item.durability, item.chargeCount, false, false);
+				
+				DatabaseCmds.deleteItem (item);
+				handle.sendPacket (new ItemRemove (item).getRaw ());
+
+				itemBag.remove (item.uuid);
+			}
+			
+			drop.location.point.x = x;
+			drop.location.point.y = y;
+			drop.location.mapId = location.mapId;
+			
+			map.items.put (drop.uuid, drop);
+		} else {
+			/* error */
+		}
+		
+		/* 更新負重 */
+		handle.sendPacket (new NodeStatus (this).getRaw ());
+	}
+	
+	public void addSkillEffect (int skillId, int remainTime) {
+		SkillEffect skillEffect = new SkillEffect (skillId, remainTime);
+		skillBuffs.effects.put (skillId, skillEffect);
+	}
+	
+	public void removeSkillEffect(int skillId) {
+		if (skillBuffs.effects.containsKey (skillId)) {
+			skillBuffs.effects.get(skillId).RemainTime = 0;
+		}
+	}
+	
+	public long getItemDelay (int item_id, long now_time) {
+		long res;
+		if (itemDelay.containsKey (item_id)) {
+			res = now_time - itemDelay.get (item_id);
+		} else {
+			res = Long.MAX_VALUE;
+		}
+		return res;
+	}
+	
+	public void setItemDelay (int item_id, long now_time) {
+		itemDelay.put (item_id, now_time);
 	}
 	
 	public void setWeapon (int uuid) {
-		WeaponInstance weapon = (WeaponInstance) findItemByUuid (uuid);
+		ItemInstance weapon = findItemByUuid (uuid);
 		if (weapon != null) {
 			equipment.setWeapon (weapon);
 		}
 	}
 	
 	public void setArmor (int uuid) {
-		ArmorInstance armor = (ArmorInstance) findItemByUuid (uuid);
+		ItemInstance armor = findItemByUuid (uuid);
 		if (armor != null) {
 			equipment.setEquipment (armor);
 			applyEquipmentEffects ();
@@ -276,8 +448,8 @@ public class PcInstance extends Model
 	
 	public void applyEquipmentEffects () {
 		AbilityParameter temp = new AbilityParameter ();
-		List<ArmorInstance> armorList = equipment.getArmorList ();
-		armorList.forEach ((ArmorInstance armor)->{
+		List<ItemInstance> armorList = equipment.getArmorList ();
+		armorList.forEach ((ItemInstance armor)->{
 			if (armor != null) {
 				temp.ac += armor.ac;
 				temp.str += armor.str; temp.dex += armor.dex; temp.con += armor.con;
@@ -379,6 +551,14 @@ public class PcInstance extends Model
 		return basicParameters.maxMp;
 	}
 	
+	public int getHitModify () {
+		return basicParameters.hitModify + skillParameters.hitModify + equipParameter.hitModify;
+	}
+	
+	public int getBowHitModify () {
+		return basicParameters.bowHitModify + skillParameters.bowHitModify + equipParameter.bowHitModify;
+	}
+	
 	public int getAc () {
 		return basicParameters.ac + skillParameters.ac + equipParameter.ac;
 	}
@@ -399,7 +579,7 @@ public class PcInstance extends Model
 		});
 		
 		for (ItemInstance i : allItemList) {
-			totalWeight += i.weight * i.count;
+			totalWeight += i.weight;
 		}
 		
 		return totalWeight;
@@ -434,6 +614,22 @@ public class PcInstance extends Model
 		npcsInsight.remove (_uuid);
 	}
 	
+	public void addMonstersInsight (MonsterInstance _monster) {
+		monstersInsight.put (_monster.uuid, _monster);
+	}
+	
+	public void removeMonstersInsight (int _uuid) {
+		monstersInsight.remove (_uuid);
+	}
+	
+	public void addDoorsInsight (DoorInstance _door) {
+		doorsInsight.put (_door.uuid, _door);
+	}
+	
+	public void removeDoorsInsight (int _uuid) {
+		doorsInsight.remove (_uuid);
+	}
+	
 	public void removeAllInsight () {
 		pcsInsight.clear ();
 		npcsInsight.clear ();
@@ -441,20 +637,16 @@ public class PcInstance extends Model
 	
 	public void boardcastPcInsight (byte[] packet) {
 		pcsInsight.forEach ((Integer u, PcInstance p)->{
-			p.getHandler ().sendPacket (packet);
+			p.getHandle ().sendPacket (packet);
 		});
 	}
 	
-	public void setHandler (SessionHandler handle) {
+	public void setHandle (SessionHandler handle) {
 		this.handle = handle;
 	}
 		
-	public SessionHandler getHandler () {
+	public SessionHandler getHandle () {
 		return handle;
-	}
-	
-	public void saveItem () {
-		//
 	}
 	
 	public void updateOnlineStatus (boolean isOnline) {
@@ -475,11 +667,15 @@ public class PcInstance extends Model
 	}
 	
 	public void offline () {
-		Vidar.getInstance ().removePc (this);
-		
 		sightUpdate.stop ();
+		routineTasks.stop ();
+		skillBuffs.stop ();
 		
+		Vidar.getInstance ().removePc (this);
+
 		sightUpdate = null;
+		routineTasks = null;
+		skillBuffs = null;
 		
 		DatabaseCmds.savePc (this);		
 	}

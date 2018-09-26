@@ -18,7 +18,7 @@ public class ServerOpcodes
 	public static final int BOOKMARK = 49;
 	public static final int MOVE_NODE = 55;
 	public static final int NPC_BUY_LIST = 57;
-	public static final int NODE_ACTION = 59;
+	public static final int MODEL_ACTION = 59;
 	public static final int ITEM_UPDATE_AMOUNT = 61;
 	public static final int PACKET_BOX = 62;
 	public static final int LOGIN_START = 62; //active spells
@@ -29,7 +29,7 @@ public class ServerOpcodes
 	public static final int SYS_TICK = 69;
 	public static final int SYSTEM_MSG = 71;
 	public static final int SERVER_MSG = 72;
-	public static final int MODULE_PACK = 74;
+	public static final int MODEL_PACK = 74;
 	public static final int SKILL_HASTE = 77;
 	public static final int SKILL_TABLE = 78;
 	public static final int VISUAL_EFFECT = 80;

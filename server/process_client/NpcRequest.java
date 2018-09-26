@@ -126,7 +126,7 @@ public class NpcRequest
 		}
 		/* 扣錢 */
 		/*
-		if (Pc.getMoney () < TotalPrice) {
+		if (Pc.getMoney () < totalPrice) {
 			Handle.SendPacket (new ServerMessage (189).getRaw () ) ; //金幣不足
 			return;
 		}
@@ -142,11 +142,11 @@ public class NpcRequest
 		/*
 		 * 更新資料庫
 		 */
-		pc.saveItem ();
+		//pc.saveItem ();
 		
 		/*
-		 *更新角色狀況
+		 * 更新角色狀況
 		 */
-		handle.sendPacket (new NodeStatus (pc).getRaw () ) ;
+		handle.sendPacket (new NodeStatus (pc).getRaw ());
 	}
 }

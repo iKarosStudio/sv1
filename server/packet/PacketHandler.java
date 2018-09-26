@@ -34,7 +34,7 @@ public class PacketHandler
 			
 		case ClientOpcodes.ATTACK:
 		case ClientOpcodes.REMOTE_ATTACK:
-			//new Attack (handle, packet) ;
+			new Attack (handle, packet);
 			break;	
 			
 		case ClientOpcodes.MOVE :
@@ -53,19 +53,19 @@ public class PacketHandler
 		//	break;
 				
 		case ClientOpcodes.ITEM_DROP :
-			//new ItemDrop (handle, packet) ;
+			new ItemDrop (handle, packet);
 			break;
 		
 		case ClientOpcodes.ITEM_PICK :
-			//new ItemPick (handle, packet) ;
+			new ItemPick (handle, packet);
 			break;
 		
 		case ClientOpcodes.ITEM_DELETE :
-			//new ItemDelete (handle, packet) ;
+			new ItemDelete (handle, packet);
 			break;
 			
 		case ClientOpcodes.TALK:
-			//new Talk (handle, packet) ;
+			new Talk (handle, packet) ;
 			break;
 			
 		case ClientOpcodes.ACCESS_NPC:
@@ -81,15 +81,17 @@ public class PacketHandler
 			break;
 		
 		case ClientOpcodes.SKILL_BUY:
-			//new SkillBuy (handle, packet) ;
+			System.out.println ("要求技能商店清單");
+			new SkillBuy (handle, packet) ;
 			break;
 		
 		case ClientOpcodes.SKILL_BUY_ORDER:
-			//new SkillBuyOrder (handle, packet) ;
+			System.out.println ("要求買技能");
+			new SkillBuyOrder (handle, packet) ;
 			break;
 		
 		case ClientOpcodes.DOOR_TOUCH:
-			//new DoorTouch(handle, packet) ;
+			new DoorTouch(handle, packet) ;
 			break;
 			
 		case ClientOpcodes.CLIENT_BEAT : //keep alive
@@ -113,7 +115,7 @@ public class PacketHandler
 			break;
 			
 		case ClientOpcodes.CREATE_CHARACTER :
-			//new CharacterOperation ().create (handle, packet) ;
+			new CharacterOperation ().create (handle, packet) ;
 			break;
 			
 		case ClientOpcodes.LOGIN_TO_SERVER : //選定登入角色
@@ -133,11 +135,11 @@ public class PacketHandler
 			break;
 		
 		case ClientOpcodes.WHO :
-			//handle.sendPacket (new SystemMessage ("WHO").getRaw () ) ;
+			handle.sendPacket (new SystemMessage ("WHO").getRaw () ) ;
 			break;
 			
 		case ClientOpcodes.TS : /* 神秘後門服務(Text Service) */ 
-			//new TS (handle, packet) ;
+			new TS (handle, packet) ;
 			break;
 			
 		case ClientOpcodes.RST : /*重新開始*/
@@ -147,7 +149,7 @@ public class PacketHandler
 			break;
 			
 		case ClientOpcodes.EXIT_GAME :
-			//new ExitGame (handle, packet) ;
+			new ExitGame (handle, packet) ;
 			break;
 			
 		default:

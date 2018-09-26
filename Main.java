@@ -1,15 +1,11 @@
 package vidar;
 
-import java.lang.management.ManagementFactory;
-
 import vidar.config.*;
 import vidar.server.*;
 import vidar.server.threadpool.*;
 import vidar.server.database.*;
 import vidar.game.*;
-//import vidar.gui.*;
-
-
+import vidar.gui.*;
 
 public class Main
 {
@@ -35,13 +31,18 @@ public class Main
 		}
 	}
 	
-	public static void main (String[] parameters) throws InterruptedException {
+	public static void main (String[] parameters) throws InterruptedException {		
 		//showSlog ();
 		System.out.printf ("KERNEL AUTHOR:%s\n", Configurations.AUTHOR);
 		System.out.printf ("SERVER OS:%s-%s\n", System.getProperty ("os.name"), System.getProperty ("os.arch"));
 		
 		/* 載入參數設定 */
 		ConfigurationLoader.getInstance ();
+		
+		/* 建立GUI管理介面 */
+		if (Configurations.USE_GUI) {
+			GuiMain.getInstance ();
+		}
 		
 		/* 建立資料庫連結 */
 		HikariCP.getInstance ();
@@ -62,10 +63,9 @@ public class Main
 		ManageService manageService = ManageService.getInstance ();
 		manageService.start ();
 		
-		/* 建立GUI管理介面 */
-		if (Configurations.USE_GUI) {
-			//System.out.println ("使用GUI管理介面");
-		}
+		SystemMonitor systemMonitor = SystemMonitor.getInstance ();
+		KernelThreadPool.getInstance ().ScheduleAtFixedRate (systemMonitor, 0, 1000);
+		
 		
 		/* 實作賭場系統 */
 		if (Configurations.CASINO) {
@@ -73,7 +73,10 @@ public class Main
 		
 		/* Display GameRate setting */
 		
-		System.out.printf ("system_pid:%s\n", ManagementFactory.getRuntimeMXBean().getName().split ("@")[0]);
+		System.out.printf ("cpu core  :%d\n", SystemMonitor.getInstance ().cpuCount);
+		System.out.printf ("system_pid:%s\n", SystemMonitor.getInstance ().pid);
+		
+		Runtime.getRuntime().addShutdownHook (new Shutdown ());
 		
 		/* 本地控制台 */
 		while (true) {

@@ -1,11 +1,9 @@
 package vidar.game;
 
 import java.lang.Thread;
-import java.util.*;
 import java.util.concurrent.*;
 
 import vidar.config.*;
-import vidar.types.*;
 import vidar.server.*;
 import vidar.server.threadpool.*;
 import vidar.server.process_server.*;
@@ -13,6 +11,7 @@ import vidar.server.utility.*;
 import vidar.game.map.*;
 import vidar.game.model.*;
 import vidar.game.model.npc.*;
+import vidar.game.model.monster.ai.*;
 
 public class Vidar extends Thread
 {
@@ -21,16 +20,12 @@ public class Vidar extends Thread
 	/* 管理的所有地圖 */
 	private static ConcurrentHashMap<Integer, VidarMap> maps;
 	
-	public MemoryMonitor memMonitor = null;
+	public SystemMonitor memMonitor = null;
 	public BoardcastMessage sysMessage = null;
 	
 	/* 全局等級狀態 */
-	private static int onlinePlayers = 0;
+	public static int onlinePlayers = 0;
 	public static ServerTime time = null;
-	
-	public int threadCount = 0;
-	public float cpuUsage = 0;
-	public float memUsage = 0;
 	
 	/* 世界天氣參數
 	 * Bit[8] :
@@ -70,9 +65,9 @@ public class Vidar extends Thread
 			UuidGenerator.getInstance () ;
 			
 			/* Load maps */
-			//MonsterAiQueue.getInstance () ;
-			//MonsterAiExecutor.getInstance () ;
 			MapInfo.getInstance ();
+			MonsterAiQueue.getInstance ();
+			MonsterAiExecutor.getInstance ();
 			new MapLoader (instance);
 			
 			/* Load npc */
@@ -80,17 +75,16 @@ public class Vidar extends Thread
 			System.out.println ();
 			
 			/* Load Door */
-			//DoorGenerator.getInstance () ;
+			DoorGenerator.getInstance ();
 			
 			/* Generate monster */
-			/*
 			System.out.printf ("Monster generator initialize interval:%.1f Sec...", (float)Configurations.MONSTER_GENERATOR_UPDATE_RATE/1000) ;
 			maps.forEach ((Integer map_id, VidarMap map)->{
-				map.mobGenerator = new MonsterGenerator (map) ;
-				KernelThreadPool.getInstance ().ScheduleAtFixedRate (map.mobGenerator, 1000, Configurations.MONSTER_GENERATOR_UPDATE_RATE) ;
+				map.monsterGenerator = new MonsterGenerator (map) ;
+				KernelThreadPool.getInstance ().ScheduleAtFixedRate (map.monsterGenerator, 1000, Configurations.MONSTER_GENERATOR_UPDATE_RATE) ;
 			}) ;
 			System.out.printf ("success\n") ;
-			*/
+			
 			
 			/* Generate Element Stone */
 			if (maps.containsKey (4) ) {
@@ -99,19 +93,16 @@ public class Vidar extends Thread
 			
 			/* Start server time */
 			time = ServerTime.getInstance () ;
-			KernelThreadPool.getInstance ().ScheduleAtFixedRate (time, 0, 1000) ;
+			KernelThreadPool.getInstance ().ScheduleAtFixedRate (time, 0, 1000);
 			
 			//load boss
 			
 			//load special system
 			
-			/* Server memory usage monitor */
-			memMonitor = MemoryMonitor.getInstance () ;
-			KernelThreadPool.getInstance ().ScheduleAtFixedRate (memMonitor, 0, 5000) ;
 			
 			/* Game boardcast message */
 			sysMessage = BoardcastMessage.getInstance () ;
-			KernelThreadPool.getInstance ().ScheduleAtFixedRate (sysMessage, 10000, 30000) ;
+			KernelThreadPool.getInstance ().ScheduleAtFixedRate (sysMessage, 10000, 30000);
 		} catch (Exception e) {
 			e.printStackTrace () ;
 			
@@ -133,7 +124,7 @@ public class Vidar extends Thread
 		VidarMap map = getMap (mapId);
 		if (map != null) {
 			map.pcs.forEach ((Integer u, PcInstance p)->{
-				p.getHandler ().sendPacket (packet);
+				p.getHandle ().sendPacket (packet);
 			});
 		}
 	}

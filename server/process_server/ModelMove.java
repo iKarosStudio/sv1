@@ -8,11 +8,11 @@ import vidar.server.opcodes.*;
  * 令UUID物件由位置(x,y)往Heading方向移動一單位
  * 發送封包後記得更新原物件(x,y)
  */
-public class ModuleMove
+public class ModelMove
 {
 	PacketBuilder packet = null;
 	
-	public ModuleMove (int uuid, int x, int y, int heading) {
+	public ModelMove (int uuid, int x, int y, int heading) {
 		packet = new PacketBuilder () ;
 
 		packet.writeByte (ServerOpcodes.MOVE_NODE) ;

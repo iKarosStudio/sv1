@@ -10,7 +10,7 @@ import vidar.game.model.*;
 	 */
 public class NodeStatus
 {
-	PacketBuilder packet = new PacketBuilder () ;
+	PacketBuilder packet = new PacketBuilder ();
 	
 	public NodeStatus (PcInstance pc) {
 		ServerTime serverTime = ServerTime.getInstance ();

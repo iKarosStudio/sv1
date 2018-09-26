@@ -3,14 +3,12 @@ package vidar.game.routine_task;
 import java.util.*;
 import java.util.concurrent.*;
 
-import vidar.config.*;
 import vidar.server.*;
 import vidar.server.threadpool.*;
 import vidar.server.process_server.*;
 import vidar.game.model.*;
 import vidar.game.model.npc.*;
 import vidar.game.model.monster.*;
-import vidar.game.map.*;
 
 public class SightUpdate implements Runnable
 {
@@ -20,17 +18,17 @@ public class SightUpdate implements Runnable
 
 	public SightUpdate (PcInstance pc) {
 		this.pc = pc;
-		handle = pc.getHandler () ;
+		handle = pc.getHandle () ;
 	}
 	
 	public void run () {
 		/* 更新視界各類物件 */
 		updatePcs ();
 		updateNpcs ();
-		//Monster () ;
-		//Npc () ;
-		//Item () ;
-		//Door () ;
+		updateMonsters ();
+		updateDoors ();
+		updateItems ();
+		
 	}
 	
 	private void updatePcs () {
@@ -66,6 +64,48 @@ public class SightUpdate implements Runnable
 				handle.sendPacket (new ModelPacket (eachNpc).getRaw());
 			}
 		}
+	}
+	
+	private void updateMonsters () {
+		List<MonsterInstance> monsters = pc.map.getMonstersInsight (pc.location.point);
+		for (MonsterInstance monster : monsters) {
+			if (!pc.monstersInsight.containsKey (monster.uuid) ) {
+				pc.addMonstersInsight (monster) ;
+				handle.sendPacket (new ModelPacket (monster).getRaw ());
+			}
+		}
+		monsters = null;
+		
+		pc.monstersInsight.forEach ((Integer u, MonsterInstance monster)->{
+			if (!pc.isInsight (monster.location)) {
+				pc.removeMonstersInsight (monster.uuid);
+				handle.sendPacket (new RemoveModel (monster.uuid).getRaw ());
+			} else {
+				monster.toggleAi ();
+			}
+		}) ;
+	}
+	
+	private void updateDoors () {
+		List<DoorInstance> doors = pc.map.getDoorsInsight (pc.location.point);
+		for (DoorInstance door : doors) {
+			if (!pc.doorsInsight.containsKey (door.uuid)) {
+				pc.addDoorsInsight (door);
+				handle.sendPacket (new ModelPacket (door).getRaw ());
+				handle.sendPacket (new DoorDetail (door).getRaw ());
+			}
+		}
+		doors = null;
+		
+		pc.doorsInsight.forEach ((Integer u, DoorInstance d)->{
+			if (!pc.isInsight (d.location) ) {
+				pc.removeDoorsInsight (d.uuid);
+				handle.sendPacket (new RemoveModel (d.uuid).getRaw ());
+			}
+		});
+	}
+	
+	private void updateItems () {
 	}
 	
 	/*

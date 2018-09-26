@@ -17,10 +17,10 @@ public class NpcTemplate extends Model
 	/*
 	 * 每 n ms執行一次
 	 */
-	public int MoveInterval;
-	public int AttackInterval;
-	public int MajorSkillInterval;
-	public int MinorSkillInterval;
+	public int moveInterval;
+	public int attackInterval;
+	public int majorSkillInterval;
+	public int minorSkillInterval;
 	
 	//主動怪物
 	public boolean agro;
@@ -79,10 +79,10 @@ public class NpcTemplate extends Model
 			size = 1;
 		}
 		
-		MoveInterval = _moveSpeed;
-		AttackInterval = _attackSpeed;
-		MajorSkillInterval = _attackSkillSpeed;
-		MinorSkillInterval = _attackSubSkillSpeed;
+		moveInterval = _moveSpeed;
+		attackInterval = _attackSpeed;
+		majorSkillInterval = _attackSkillSpeed;
+		minorSkillInterval = _attackSubSkillSpeed;
 		
 		agro = (_agro > 0) ? true:false;
 	}

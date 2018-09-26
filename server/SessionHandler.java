@@ -30,7 +30,7 @@ public class SessionHandler extends Thread implements Runnable
 	public void firstPacket () {
 		byte[] initPacket = new byte[18];
 		
-		initPacket[0] = (byte) (INIT_PACKET.length + 7) ;
+		initPacket[0] = (byte) (INIT_PACKET.length + 7);
 		initPacket[1] = (byte) 0;
 		initPacket[2] = (byte) 0x20;
 		initPacket[3] = (byte) 0xEC;
@@ -40,8 +40,8 @@ public class SessionHandler extends Thread implements Runnable
 		System.arraycopy (INIT_PACKET, 0, initPacket, 7, INIT_PACKET.length);
 		
 		try {
-			outStream.write (initPacket) ;
-			outStream.flush () ;
+			outStream.write (initPacket);
+			outStream.flush ();
 			
 		} catch (Exception e) {
 			e.printStackTrace ();
@@ -49,20 +49,18 @@ public class SessionHandler extends Thread implements Runnable
 		}
 	}
 	
-	/*
-	 * Recieve client side RAW data packet, return a Decoded packet
-	 */
+	/* 接收加密封包回傳已解密封包  */
 	public byte[] receivePacket () throws IOException {
 		try {
-			int sizeHi = inStream.read () ;
-			int sizeLo = inStream.read () ;
+			int sizeHi = inStream.read ();
+			int sizeLo = inStream.read ();
 			int size = ((sizeLo << 8) | sizeHi) - 2;
 			
 			byte[] data = new byte[size];	
 			
-			inStream.read (data) ;
-			packetCodec.decode (data, size) ;
-			packetCodec.updateDecodeKey (data) ;
+			inStream.read (data);
+			packetCodec.decode (data, size);
+			packetCodec.updateDecodeKey (data);
 			
 			return data;
 		} catch (IOException e) {
@@ -70,10 +68,10 @@ public class SessionHandler extends Thread implements Runnable
 		}
 	}
 	
-	public synchronized void sendPacket (byte[] Data)  {
+	public synchronized void sendPacket (byte[] data)  {
 		byte[] raw = null;
 		try {
-			raw = packetCodec.encode (Data) ;
+			raw = packetCodec.encode (data);
 			//Codec.UpdateEncodeKey (Data) ;
 			/*
 			System.out.printf ("[OUT:0x%08x, 0x%08x]:", Codec.EncodeKeyL[0], Codec.EncodeKeyL[1]) ;
@@ -82,20 +80,11 @@ public class SessionHandler extends Thread implements Runnable
 			}
 			System.out.print ("\n") ;
 			*/
-			outStream.write (raw) ;
-			outStream.flush () ;
+			outStream.write (raw);
+			outStream.flush ();
 			
 		} catch (Exception e) {	
-			try {
-				outStream.close () ;
-				System.out.printf ("Send Packet Exception! Close ") ;
-				System.out.print (outStream) ;
-				System.out.printf (" Output flow\n") ;
-				
-			} catch (Exception p) {
-				p.printStackTrace ();
-			}
-			//e.printStackTrace () ;
+			e.printStackTrace ();
 		}
 	}
 	
@@ -104,7 +93,7 @@ public class SessionHandler extends Thread implements Runnable
 	 */
 	public void run () {
 		firstPacket ();
-		packetCodec.initKey () ;
+		packetCodec.initKey ();
 		
 		while (true) {
 			try {
@@ -118,10 +107,10 @@ public class SessionHandler extends Thread implements Runnable
 				break;
 				
 			} catch (Exception e) {
-				e.printStackTrace () ;
+				e.printStackTrace ();
 				break;
 			}
-		} //while ture
+		} //while true
 		
 		/* 斷線後該做的事  */
 		if (account != null) {
@@ -153,15 +142,15 @@ public class SessionHandler extends Thread implements Runnable
 		try {
 			sock = _sock;
 			
-			inStream = sock.getInputStream () ;
-			outStream = new BufferedOutputStream(sock.getOutputStream () ) ;
+			inStream = sock.getInputStream ();
+			outStream = new BufferedOutputStream(sock.getOutputStream ());
 			
-			packetCodec = new PacketCodec () ;
+			packetCodec = new PacketCodec ();
 			packetHandle = new PacketHandler (this);
 			//Db = HikariCP.getInstance () ;
 			
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		}
 	}
 	
@@ -178,14 +167,14 @@ public class SessionHandler extends Thread implements Runnable
 	}
 	
 	public PcInstance getPc () {
-		PcInstance Pc = null;
+		PcInstance pc = null;
 		if (account != null) {
 			if (account.activePc != null) {
-				Pc = account.activePc;
+				pc = account.activePc;
 			}
 		}
 		
-		return Pc;
+		return pc;
 	}
 	
 	public PacketCodec getCodec () {
@@ -201,7 +190,7 @@ public class SessionHandler extends Thread implements Runnable
 	}
 	
 	public boolean isClosed () {
-		return sock.isClosed () ;
+		return sock.isClosed ();
 	}
 	
 	public void disconnect () {
@@ -209,7 +198,7 @@ public class SessionHandler extends Thread implements Runnable
 			sock.close ();
 			
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		}
 	}
 }

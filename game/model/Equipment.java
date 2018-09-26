@@ -13,27 +13,25 @@ public class Equipment
 {
 	private SessionHandler handle;
 	
-	public WeaponInstance weapon;
+	public ItemInstance weapon;
 	public ItemInstance arrow;
-	public ArmorInstance helmet;
-	public ArmorInstance armor;
-	public ArmorInstance tshirt;
-	public ArmorInstance cloak;
-	public ArmorInstance boots;
-	public ArmorInstance shield;
-	public ArmorInstance belt;
-	public ArmorInstance amulet;
-	public ArmorInstance ring1;
-	public ArmorInstance ring2;
-	public ArmorInstance earring;
-	
-	//public ArmorInstance temp = null;
+	public ItemInstance helmet;
+	public ItemInstance armor;
+	public ItemInstance tshirt;
+	public ItemInstance cloak;
+	public ItemInstance boots;
+	public ItemInstance shield;
+	public ItemInstance belt;
+	public ItemInstance amulet;
+	public ItemInstance ring1;
+	public ItemInstance ring2;
+	public ItemInstance earring;
 	
 	public Equipment (SessionHandler handle) {
 		this.handle = handle;
 	}
 	
-	public void setWeapon (WeaponInstance _weapon) {
+	public void setWeapon (ItemInstance _weapon) {
 		//加入檢查雙手武器及盾牌判定
 		
 		if (weapon == null) { //空手=>WEAPON
@@ -62,284 +60,274 @@ public class Equipment
 	}
 	
 	/* c_itemuse.java : 3498 (UseArmor)->4185 */
-	public void setEquipment (ArmorInstance _armor) {		
-		switch (_armor.minorType) {
+	public void setEquipment (ItemInstance item) {	
+		switch (item.minorType) {
 		case ARMOR_TYPE_HELM:
-			setHelmet (_armor);
+			setHelmet (item);
 			break;
 			
 		case ARMOR_TYPE_ARMOR:
-			setArmor (_armor);
+			setArmor (item);
 			break;
 			
 		case ARMOR_TYPE_T:
-			setTshirt (_armor);
+			setTshirt (item);
 			break;
 			
 		case ARMOR_TYPE_CLOAK:
-			setCloak (_armor);
+			setCloak (item);
 			break;
 			
 		case ARMOR_TYPE_BOOTS:
-			setBoots (_armor);
+			setBoots (item);
 			break;
 			
 		case ARMOR_TYPE_SHIELD:
-			setShield (_armor);
+			setShield (item);
 			break;
 			
 		case ARMOR_TYPE_BELT:
-			setBelt (_armor);
+			setBelt (item);
 			break;
 			
 		case ARMOR_TYPE_AMULET:
-			setAmulet (_armor);
+			setAmulet (item);
 			break;
 			
 		case ARMOR_TYPE_RING:
-			setRing1 (_armor);
+			setRing1 (item);
 			break;
 			
 		case ARMOR_TYPE_RING2:
-			setRing2 (_armor);
+			setRing2 (item);
 			break;
 			
 		case ARMOR_TYPE_EARRING:
-			setEarring (_armor);
+			setEarring (item);
 			break;
 			
 		default:
+			System.out.printf ("未知裝備minor type\n");
 			break;
 		}
 	}
 	
-	public void setHelmet (ArmorInstance _helmet) {
-		if (_helmet.minorType != ARMOR_TYPE_HELM) {
-			return;
-		}
-		
+	public void setHelmet (ItemInstance _helmet) {
 		if (helmet == null) {
 			helmet = _helmet;
-			updateUsingStatus (helmet, true);
+			helmet.isUsing = true;
+			updateItem (helmet);
 		} else {
 			if (helmet.uuid == _helmet.uuid) {
-				updateUsingStatus (helmet, false);
+				helmet.isUsing = false;
+				updateItem (helmet);
 				helmet = null;
 			} else {
-				updateUsingStatus (helmet, false);
-				
+				helmet.isUsing = false;
+				updateItem (helmet);
 				helmet = _helmet;
-				updateUsingStatus (helmet, true);
+				helmet.isUsing = true;
+				updateItem (helmet);
 			}
 		}
 	}
 	
-	public void setArmor (ArmorInstance _armor) {
-		if (_armor.minorType != ARMOR_TYPE_ARMOR) {
-			return;
-		}
-		
+	public void setArmor (ItemInstance _armor) {
 		if (armor == null) {
 			armor = _armor;
-			updateUsingStatus (armor, true);
+			armor.isUsing = true;
+			updateItem (armor);
 		} else {
 			if (armor.uuid == _armor.uuid) {
-				updateUsingStatus (armor, false);
+				armor.isUsing = false;
+				updateItem (armor);
 				armor = null;
 			} else {
-				updateUsingStatus (armor, false);
-				
+				armor.isUsing = false;
+				updateItem (armor);
 				armor = _armor;
-				updateUsingStatus (armor, true);
+				armor.isUsing = true;
+				updateItem (armor);
 			}
 		}
 	}
 	
-	public void setTshirt (ArmorInstance _tshirt) {
-		if (_tshirt.minorType != ARMOR_TYPE_T) {
-			return;
-		}
-		
+	public void setTshirt (ItemInstance _tshirt) {
 		if (tshirt == null) {
 			tshirt = _tshirt;
-			updateUsingStatus (tshirt, true);
+			tshirt.isUsing = true;
+			updateItem (tshirt);
 		} else {
 			if (tshirt.uuid == _tshirt.uuid) {
-				updateUsingStatus (tshirt, false);
+				tshirt.isUsing = false;
+				updateItem (tshirt);
 				tshirt = null;
 			} else {
-				updateUsingStatus (tshirt, false);
-				
+				tshirt.isUsing = false;
+				updateItem (tshirt);
 				tshirt = _tshirt;
-				updateUsingStatus (tshirt, true);
+				tshirt.isUsing = true;
+				updateItem (tshirt);
 			}
 		}
 	}
 	
-	public void setCloak (ArmorInstance _cloak) {
-		if (_cloak.minorType != ARMOR_TYPE_CLOAK) {
-			return;
-		}
-		
+	public void setCloak (ItemInstance _cloak) {
 		if (cloak == null) {
 			cloak = _cloak;
-			updateUsingStatus (cloak, true);
+			cloak.isUsing = true;
+			updateItem (cloak);
 		} else {
 			if (cloak.uuid == _cloak.uuid) {
-				updateUsingStatus (cloak, false);
+				cloak.isUsing = false;
+				updateItem (cloak);
 				cloak = null;
 			} else {
-				updateUsingStatus (cloak, false);
-				
+				cloak.isUsing = false;
+				updateItem (cloak);
 				cloak = _cloak;
-				updateUsingStatus (cloak, true);
+				cloak.isUsing = true;
+				updateItem (cloak);
 			}
 		}
 	}
 	
-	public void setBoots (ArmorInstance _boots) {
-		if (_boots.minorType != ARMOR_TYPE_BOOTS) {
-			return;
-		}
-		
+	public void setBoots (ItemInstance _boots) {
 		if (boots == null) {
 			boots = _boots;
-			updateUsingStatus (boots, true);
+			boots.isUsing = true;
+			updateItem (boots);
 		} else {
 			if (boots.uuid == _boots.uuid) {
-				updateUsingStatus (boots, false);
+				boots.isUsing = false;
+				updateItem (boots);
 				boots = null;
 			} else {
-				updateUsingStatus (boots, false);
-				
+				boots.isUsing = false;
+				updateItem (boots);
 				boots = _boots;
-				updateUsingStatus (boots, true);
+				boots.isUsing = true;
+				updateItem (boots);
 			}
 		}
 	}
 	
-	public void setShield (ArmorInstance _shield) {
-		if (_shield.minorType != ARMOR_TYPE_SHIELD) {
-			return;
-		}
-		
+	public void setShield (ItemInstance _shield) {
 		if (shield == null) {
 			shield = _shield;
-			updateUsingStatus (shield, true);
+			shield.isUsing = true;
+			updateItem (shield);
 		} else {
 			if (shield.uuid == _shield.uuid) {
-				updateUsingStatus (shield, false);
+				shield.isUsing = false;
+				updateItem (shield);
 				shield = null;
 			} else {
-				updateUsingStatus (shield, false);
-				
+				shield.isUsing = false;
+				updateItem (shield);
 				shield = _shield;
-				updateUsingStatus (shield, true);
+				shield.isUsing = true;
+				updateItem (shield);
 			}
 		}
 	}
 	
-	public void setBelt (ArmorInstance _belt) {
-		if (_belt.minorType != ARMOR_TYPE_BELT) {
-			return;
-		}
-		
+	public void setBelt (ItemInstance _belt) {
 		if (belt == null) {
 			belt = _belt;
-			updateUsingStatus (belt, true);
+			belt.isUsing = true;
+			updateItem (belt);
 		} else {
 			if (belt.uuid == _belt.uuid) {
-				updateUsingStatus (belt, false);
+				belt.isUsing = false;
+				updateItem (belt);
 				belt = null;
 			} else {
-				updateUsingStatus (belt, false);
-				
+				belt.isUsing = false;
+				updateItem (belt);
 				belt = _belt;
-				updateUsingStatus (belt, true);
+				belt.isUsing = true;
+				updateItem (belt);
 			}
 		}
 	}
 	
-	public void setAmulet (ArmorInstance _amulet) {
-		if (_amulet.minorType != ARMOR_TYPE_AMULET) {
-			return;
-		}
-		
+	public void setAmulet (ItemInstance _amulet) {
 		if (amulet == null) {
 			amulet = _amulet;
-			updateUsingStatus (amulet, true);
+			amulet.isUsing = true;
+			updateItem (amulet);
 		} else {
 			if (amulet.uuid == _amulet.uuid) {
-				updateUsingStatus (amulet, false);
+				amulet.isUsing = false;
+				updateItem (amulet);
 				amulet = null;
 			} else {
-				updateUsingStatus (amulet, false);
-				
+				amulet.isUsing = false;
+				updateItem (amulet);
 				amulet = _amulet;
-				updateUsingStatus (amulet, true);
+				amulet.isUsing = true;
+				updateItem (amulet);
 			}
 		}
 	}
 	
-	public void setRing1 (ArmorInstance _ring1) {
-		if (_ring1.minorType != ARMOR_TYPE_RING) {
-			return;
-		}
-		
+	public void setRing1 (ItemInstance _ring1) {
 		if (ring1 == null) {
 			ring1 = _ring1;
-			updateUsingStatus (ring1, true);
+			ring1.isUsing = true;
+			updateItem (ring1);
 		} else {
 			if (ring1.uuid == _ring1.uuid) {
-				updateUsingStatus (ring1, false);
+				ring1.isUsing = false;
+				updateItem (ring1);
 				ring1 = null;
 			} else {
-				updateUsingStatus (ring1, false);
-				
+				ring1.isUsing = false;
+				updateItem (ring1);
 				ring1 = _ring1;
-				updateUsingStatus (ring1, true);
+				ring1.isUsing = true;
+				updateItem (ring1);
 			}
 		}
 	}
 	
-	public void setRing2 (ArmorInstance _ring2) {
-		if (_ring2.minorType != ARMOR_TYPE_RING2) {
-			return;
-		}
-		
+	public void setRing2 (ItemInstance _ring2) {
 		if (ring2 == null) {
 			ring2 = _ring2;
-			updateUsingStatus (ring2, true);
+			ring2.isUsing = true;
+			updateItem (ring2);
 		} else {
 			if (ring2.uuid == _ring2.uuid) {
-				updateUsingStatus (ring2, false);
+				ring2.isUsing = false;
+				updateItem (ring2);
 				ring2 = null;
 			} else {
-				updateUsingStatus (ring2, false);
-				
+				ring2.isUsing = false;
+				updateItem (ring2);
 				ring2 = _ring2;
-				updateUsingStatus (ring2, true);
+				ring2.isUsing = true;
+				updateItem (ring2);
 			}
 		}
 	}
 	
-	public void setEarring (ArmorInstance _earring) {
-		if (_earring.minorType != ARMOR_TYPE_RING2) {
-			return;
-		}
-		
+	public void setEarring (ItemInstance _earring) {
 		if (earring == null) {
 			earring = _earring;
-			updateUsingStatus (earring, true);
+			earring.isUsing = true;
+			updateItem (earring);
 		} else {
 			if (earring.uuid == _earring.uuid) {
-				updateUsingStatus (earring, false);
+				earring.isUsing = false;
+				updateItem (earring);
 				earring = null;
 			} else {
-				updateUsingStatus (earring, false);
-				
+				earring.isUsing = false;
+				updateItem (earring);
 				earring = _earring;
-				updateUsingStatus (earring, true);
+				earring.isUsing = true;
+				updateItem (earring);
 			}
 		}
 	}
@@ -348,8 +336,7 @@ public class Equipment
 		//
 	}
 	
-	public void updateUsingStatus (ArmorInstance _item, boolean _isUsing) {
-		_item.isUsing = _isUsing;
+	public void updateItem (ItemInstance _item) {
 		handle.sendPacket (new UpdateItemName(_item).getRaw());
 		DatabaseCmds.updateItem (_item);
 	}
@@ -373,8 +360,8 @@ public class Equipment
 		return result;
 	}
 	
-	public List<ArmorInstance> getArmorList () {
-		List<ArmorInstance> result = new ArrayList<ArmorInstance> ();
+	public List<ItemInstance> getArmorList () {
+		List<ItemInstance> result = new ArrayList<ItemInstance> ();
 		result.add (helmet);
 		result.add (armor);
 		result.add (tshirt);

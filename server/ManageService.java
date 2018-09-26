@@ -2,8 +2,6 @@ package vidar.server;
 
 import java.net.*;
 import java.lang.Thread;
-import java.lang.management.*;
-import com.sun.management.OperatingSystemMXBean;
 
 import vidar.config.*;
 import vidar.game.*;
@@ -12,33 +10,26 @@ public class ManageService extends Thread
 {
 	private static ManageService instance;
 	private ServerSocket ServiceSocket;
+	private boolean remoteManageEnable;
 	
 	Vidar vidar;
-	
-	ThreadMXBean mana = ManagementFactory.getThreadMXBean();
-	OperatingSystemMXBean osmb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean () ;
 	
 	/*
 	 * 建立連接用session
 	 */
 	public void run () {		
 		while (true) {
-			vidar.cpuUsage = (float) osmb.getProcessCpuLoad () * 100;
-			vidar.threadCount = mana.getThreadCount ();
-			 //移出管理介面
-			String t = String.format ("CPU:%2.1f%% 執行緒:%d 使用記憶體:%1.1f MB",
-				osmb.getProcessCpuLoad () * 100,
-				mana.getThreadCount (),
-				(float) vidar.memUsage / (1024 * 1024)
-			) ;
 			try {
-				Socket sock = ServiceSocket.accept ();
-				//String ClientIp = Sock.getInetAddress ().getHostAddress ();
-				
-				/*
-				 * 開始管理服務程式
-				 */
-				
+				if (remoteManageEnable) {
+					Socket sock = ServiceSocket.accept ();
+					//String ClientIp = Sock.getInetAddress ().getHostAddress ();
+					
+					/*
+					 * 開始管理服務程式
+					 */
+				} else {
+					//
+				}
 			} catch (SocketTimeoutException e) {
 				//it's ok
 				
@@ -67,6 +58,7 @@ public class ManageService extends Thread
 			ServiceSocket.setSoTimeout (3000) ; //10s accept timeout
 			System.out.printf ("success\n") ;
 			
+			remoteManageEnable = true;
 			this.setName ("MANAGEMENT SERVICE");
 			
 		} catch (Exception e) {

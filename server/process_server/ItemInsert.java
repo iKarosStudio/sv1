@@ -21,9 +21,7 @@ public class ItemInsert
 		if (item.isIdentified) {
 			byte[] detail = item.getDetail ();
 			packet.writeByte (detail.length);
-			for (byte b : detail) {
-				packet.writeByte (b);
-			}
+			packet.writeByte (detail);
 		} else {
 			packet.writeByte (0);
 		}

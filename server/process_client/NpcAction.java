@@ -2,7 +2,6 @@ package vidar.server.process_client;
 
 import vidar.server.*;
 import vidar.server.packet.*;
-import vidar.game.model.*;
 import vidar.game.model.npc.*;
 
 public class NpcAction
@@ -13,6 +12,7 @@ public class NpcAction
 		int npcId = reader.readDoubleWord ();
 		String actionCode = reader.readString ();
 		
-		NpcActionCodeHandler actionCodeHandler = new NpcActionCodeHandler (handle, npcId, actionCode);
+		//NpcActionCodeHandler actionCodeHandler = new NpcActionCodeHandler (handle, npcId, actionCode);
+		new NpcActionCodeHandler (handle, npcId, actionCode);
 	}
 }

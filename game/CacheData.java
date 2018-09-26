@@ -165,7 +165,8 @@ public class CacheData
 		npcAction = new ConcurrentHashMap<String, Document> () ;
 		long t_starts = System.currentTimeMillis () ;
 		
-		NpcActionXmlLoader xmlActionFileLoader = new NpcActionXmlLoader (npcAction);
+		NpcActionXmlLoader xmlActionFileLoader = new NpcActionXmlLoader ();
+		xmlActionFileLoader.load (npcAction);
 		
 		long t_ends = System.currentTimeMillis ();
 		float used_time = (float) (t_ends - t_starts) / 1000;

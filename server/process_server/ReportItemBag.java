@@ -25,22 +25,12 @@ public class ReportItemBag
 			packet.writeByte (item.isIdentified);				
 			packet.writeString (item.getName ());
 			
-			if (item.isIdentified) {
-				byte[] itemDetail = null;
-				Object i = item.getClass ();
-				
-				if (i instanceof WeaponInstance) {
-					WeaponInstance w = (WeaponInstance) i;
-					itemDetail = w.getDetail ();
-				} else if (i instanceof ArmorInstance) {
-					ArmorInstance a = (ArmorInstance) i;
-					itemDetail = a.getDetail ();
-				} else {
-					itemDetail = item.getDetail ();
-				}
-				
-				packet.writeByte (itemDetail.length);
-				packet.writeByte (itemDetail);
+			if (item.isIdentified ) {
+				byte[] detail = null;
+				detail = item.getDetail ();
+
+				packet.writeByte (detail.length);
+				packet.writeByte (detail);
 			} else {
 				packet.writeByte (0);
 			}

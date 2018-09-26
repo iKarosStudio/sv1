@@ -5,6 +5,8 @@ import vidar.server.packet.*;
 import vidar.server.process_server.*;
 import vidar.game.model.*;
 import vidar.game.model.item.*;
+import vidar.game.model.item.potion.*;
+import vidar.game.model.item.scroll.*;
 import static vidar.game.template.ItemTypeTable.*;
 
 public class ItemUse
@@ -23,8 +25,8 @@ public class ItemUse
 		ItemInstance item = pc.findItemByUuid (itemUuid);
 		if (item != null) {			
 			/* 使用道具 */
-			System.out.printf ("使用道具-%s,major[%d],minor[%d],useType[%d]\n", item.name, item.majorType, item.minorType, item.useType);
-			if (item.majorType == 0) {
+			if (item.isItem ()) {
+				System.out.printf ("使用道具-%s,major[%d],minor[%d],useType[%d]\n", item.name, item.majorType, item.minorType, item.useType);
 				if (item.minorType == TYPE_ARROW) {
 					//
 				} else if (item.minorType == TYPE_WAND) {
@@ -38,7 +40,7 @@ public class ItemUse
 				} else if (item.minorType == TYPE_FIRECRACKER) {
 					//
 				} else if (item.minorType == TYPE_POTION) {
-					//new UsePotion (Pc, i) ;
+					new UsePotion (pc, item) ;
 					//Pc.removeItem (i.Uuid, 1) ;
 				} else if (item.minorType == TYPE_FOOD) {
 					//
@@ -79,16 +81,16 @@ public class ItemUse
 				}
 				
 			/* 使用武器 */
-			} else if (item.majorType == 1) {
+			} else if (item.isWeapon ()) {
 				pc.setWeapon (item.uuid);
 				
 				/* 更新腳色武器外型 */
 				byte[] packet = new UpdateModelGfx (pc.uuid, pc.getWeaponGfx ()).getRaw ();
 				handle.sendPacket (packet) ;
-				//pc.boardcastPcInsight (packet) ;
+				pc.boardcastPcInsight (packet) ;
 			
 			/* 使用防具 */
-			} else if (item.majorType == 2) {
+			} else if (item.isArmor ()) {
 				pc.setArmor (item.uuid);
 				
 			} else {

@@ -39,19 +39,11 @@ public class NpcShopMenu
 	}
 	
 	public ItemInstance getItem () {
-		ItemInstance obj = null;
-		
-		if (CacheData.item.containsKey (itemId)) {
-			obj = getItemInstance ();
-		} else if (CacheData.weapon.containsKey (itemId)) {
-			obj = getWeaponInstance ();
-		} else if (CacheData.armor.containsKey (itemId)) {
-			obj = getArmorInstance ();
-		}
-		
-		return obj;
+		ItemInstance item = new ItemInstance (itemId, UuidGenerator.next(), 0, 0, 1, 0, 100, false, true);
+		return item;
 	}
 	
+	/*
 	public ItemInstance getItemInstance () {
 		ItemInstance i = new ItemInstance (
 				itemId,
@@ -74,4 +66,5 @@ public class NpcShopMenu
 		ArmorInstance armor = new ArmorInstance (itemId, UuidGenerator.next(), 0, 0, 0, false, true);
 		return armor;
 	}
+	*/
 }

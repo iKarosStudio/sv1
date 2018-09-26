@@ -1,7 +1,6 @@
 package vidar.server.process_server;
 
 import java.util.*;
-import java.math.*;
 
 import vidar.server.packet.*;
 import vidar.server.opcodes.*;

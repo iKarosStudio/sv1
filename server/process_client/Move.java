@@ -11,15 +11,13 @@ public class Move {
 		PacketReader packetReader = new PacketReader (data);
 		PcInstance pc = handle.getPc ();
 		
-		int tmpX = packetReader.readWord () ; //pseudo
-		int tmpY = packetReader.readWord () ; //pseudo
+		packetReader.readWord ();//int tmpX = packetReader.readWord () ; //pseudo
+		packetReader.readWord ();//int tmpY = packetReader.readWord () ; //pseudo
 		int heading = packetReader.readByte () ;
 		
 		VidarMap map = pc.map;
 		
-		/*
-		 * Server config 參數為3的情況下, 使用腳色原本的座標操作, 封包的座標無效
-		 */
+		/* Server config 參數為3的情況下, 使用腳色原本的座標操作, 封包的座標無效 */
 		int x = pc.location.point.x;
 		int y = pc.location.point.y;
 		
@@ -79,23 +77,19 @@ public class Move {
 		/*
 		 * 廣播移動訊息
 		 */
-		//Pc.BoardcastPcInsightExceptSelf (new NodeMove (Pc.Uuid, Pc.location.x, Pc.location.y, Heading).getRaw () ) ;
-		pc.boardcastPcInsight (new ModuleMove (pc.uuid, pc.location.point.x, pc.location.point.y, heading).getRaw () ) ;
+		pc.boardcastPcInsight (new ModelMove (pc.uuid, pc.location.point.x, pc.location.point.y, heading).getRaw ());
 		
-		/*
-		 * 檢查是否需要傳送位置
-		 */
+		/* 檢查是否需要傳送位置 */
 		if (pc.map.isInTpLocation (x, y) ) {
-			new Teleport (pc, pc.map.getTpDestination (x, y), false) ;
+			pc.skillBuffs.saveBuffs ();
+			new Teleport (pc, pc.map.getTpDestination (x, y), false);
 			return ;
 		}
 		
-		/*
-		 * 更新自身位置
-		 */
+		/* 更新自身位置 */
 		pc.location.point.x = x;
 		pc.location.point.y = y;
 		pc.heading = heading;
-		map.setAccessible (pc.location.point.x, pc.location.point.y, false) ;
+		map.setAccessible (pc.location.point.x, pc.location.point.y, false);
 	}
 }

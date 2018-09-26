@@ -16,12 +16,15 @@ public class Model
 	public VidarMap map = null;
 	
 	/* 外型設定 */
+	public int size; //0:small 1:large
 	public int gfx;
 	public int gfxTemp;
 	public boolean isVisible = true;
 	
 	/* 狀態敘述 */
 	public int status;
+	public int battleCounter;
+	
 	public int moveSpeed;
 	public int braveSpeed;
 	public AbilityParameter basicParameters;
@@ -36,6 +39,10 @@ public class Model
 	public volatile int hp;
 	public volatile int mp;
 	public boolean isDead;
+	
+	public boolean isUndead = false;
+	public boolean isWolf   = false;
+	public boolean isOrc    = false;
 	
 	public boolean isInsight (Location pos) {
 		try {

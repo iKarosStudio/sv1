@@ -30,7 +30,7 @@ public class CharacterInitializer
 		int str, int dex, int con, int wis, int cha, int intel
 	) {
 		pc = new PcInstance ();
-		pc.setHandler (handle);
+		pc.setHandle (handle);
 		pc.uuid = UuidGenerator.next ();
 		pc.name = name;
 		pc.title = "";
@@ -119,7 +119,7 @@ public class CharacterInitializer
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement ("INSERT INTO characters SET account_name=?, objid=?, char_name=?, level=?, Exp=?, MaxHp=?, MaxMp=?, CurHp=?, CurMp=?, Ac=?, Str=?, Con=?, Dex=?, Cha=?, Intel=?, Wis=?, Status=?, Class=?, Sex=?, Type=?, Heading=?, LocX=?, LocY=?, MapID=?, Food=?, Lawful=?, Title=?, ClanID=?, Clanname=?;") ;
-			ps.setString (1, pc.getHandler ().account.userName);
+			ps.setString (1, pc.getHandle ().account.userName);
 			ps.setInt (2, pc.uuid);
 			ps.setString (3, pc.name);
 			ps.setInt (4, pc.level);
@@ -167,7 +167,7 @@ public class CharacterInitializer
 		/*
 		 * 更新客戶端角色顯示		
 		 */
-		pc.getHandler().sendPacket (new CharCreateResult (CharCreateResult.OK).getRaw ());
-		pc.getHandler().sendPacket (new NewCharacterPack (pc).getRaw ());
+		pc.getHandle().sendPacket (new CharCreateResult (CharCreateResult.OK).getRaw ());
+		pc.getHandle().sendPacket (new NewCharacterPack (pc).getRaw ());
 	}
 }
