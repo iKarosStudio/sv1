@@ -44,9 +44,6 @@ public class PcInstance extends Model
 	public Equipment equipment;
 	public AbilityParameter equipParameter;
 	
-	/* Buff/Debuff 效果計時 */
-	public SkillEffectTimer skillBuffs = null;
-	
 	/* 藥水延遲  <K, V> = <道具編號, 上一個時間戳記> */
 	private ConcurrentHashMap<Integer, Long> itemDelay = null;
 	
@@ -62,11 +59,12 @@ public class PcInstance extends Model
 	public SightUpdate sightUpdate;
 	public PcRoutineTasks routineTasks;
 	public ExpMonitor expMonitor;
-	//public HpMonitor hpMonitor;
+	public HpMonitor hpMonitor;
 	//public MpMonitor mpMonitor;
 	
 	public PcInstance () {
-		//
+		basicParameters = new AbilityParameter ();
+		location = new Location ();
 	}
 	
 	public PcInstance (SessionHandler handle) {
@@ -136,7 +134,7 @@ public class PcInstance extends Model
 				basicParameters.cha = rs.getInt ("Cha");
 				basicParameters.intel = rs.getInt ("Intel");
 				
-				//load bounes parameters
+				//load bonus parameters
 				basicParameters.ac = Utility.calcAcBonusFromDex (level, basicParameters.dex);
 				basicParameters.mr = Utility.calcMr (type, level, basicParameters.wis);
 				basicParameters.sp = Utility.calcSp (type, level, basicParameters.intel);
@@ -156,10 +154,8 @@ public class PcInstance extends Model
 				pkCount = rs.getInt ("PKcount");
 				
 				routineTasks = new PcRoutineTasks (this);
-				expMonitor = new ExpMonitor (this);
-				//ExpKeeper = new ExpMonitor (this) ;		
-				///HpKeeper = new HpMonitor (this) ;
-				//MpKeeper = new MpMonitor (this) ;
+				expMonitor = new ExpMonitor (this);	
+				hpMonitor = new HpMonitor (this);
 				
 				this.updateCurrentMap ();
 				
@@ -174,6 +170,10 @@ public class PcInstance extends Model
 		}
 		
 		return result;
+	}
+	
+	public void unload () {
+		//未來登出使用
 	}
 	
 	public void loadItemBag () {
@@ -200,6 +200,7 @@ public class PcInstance extends Model
 					setWeapon (item.uuid);
 				} else if (item.isArmor () && item.isUsing) {
 					setArmor (item.uuid);
+				} else if (item.isArrow ()) {
 				}
 			}
 			
@@ -238,35 +239,30 @@ public class PcInstance extends Model
 	}
 	
 	public synchronized void attack (int _targetUuid, int _targetX, int _targetY) {
+		if (isParalyzed ()) {
+			return;
+		}
+		
 		heading = getDirection (_targetX, _targetY);
 		battleCounter = 30;
 		
+		byte[] actionPacket;
+		
 		NormalAttack atk = new NormalAttack (this, _targetUuid, _targetX, _targetY);
 		
-		
-		/*
-		byte[] actionPacket = null;
-		if (map.monsters.containsKey (_targetUuid)) { //Attack monster
-			new CommonAttack (this, map.monsters.get (_targetUuid));
-			if (equipment.weapon != null && equipment.weapon.minorType == ItemTypeTable.WEAPON_TYPE_BOW) {
-				actionPacket = new ModelShootArrow (this, _targetUuid, _targetX, _targetY).getRaw();
+		if (atk.isHit) {
+			if (atk.isRemoteAttack) {
+				actionPacket = new ModelShootArrow (this, _targetUuid, _targetX, _targetY).getRaw ();
 			} else {
 				actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
 			}
-			
-		} else if (map.pcs.containsKey (uuid)) { //Attack other pc
-			new CommonAttack (this, map.pcs.get (_targetUuid));
-			if (equipment.weapon != null && equipment.weapon.minorType == ItemTypeTable.WEAPON_TYPE_BOW) {
-				actionPacket = new ModelShootArrow (this, _targetUuid, _targetX, _targetY).getRaw();
-			} else {
-				actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
-			}
-			
-		}*/
+		} else {
+			actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
+		}
 		
 		//表現攻擊動作
-		//handle.sendPacket (actionPacket);
-		//boardcastPcInsight (actionPacket);
+		handle.sendPacket (actionPacket);
+		boardcastPcInsight (actionPacket);		
 	}
 
 	synchronized public void takeAttack (NormalAttack _atk) {
@@ -276,10 +272,12 @@ public class PcInstance extends Model
 	synchronized public void takeDamage (int dmg) {
 		if (hp > dmg) {
 			hp -= dmg;
+			boardcastPcInsight (new ModelAction (ModelActionId.DAMAGE, uuid, heading).getRaw());
 		} else {
 			hp = 0;
 			isDead = true;
-			System.out.printf ("%s 往生了!\n", name) ;
+			System.out.printf ("%s 往生了!\n", name);
+			boardcastPcInsight (new ModelAction (ModelActionId.DIE, uuid, heading).getRaw());
 		}
 	}
 	
@@ -357,8 +355,8 @@ public class PcInstance extends Model
 		}
 	}
 	
-	public void pickItem (int uuid, int count, int x, int y) {
-		ItemInstance pick = map.items.get (uuid);
+	public void pickItem (int _uuid, int count, int x, int y) {
+		ItemInstance pick = map.items.get (_uuid);
 		if (pick != null) {
 			byte[] actionPacket = new ModelAction (ModelActionId.PICK_UP, uuid, heading).getRaw ();
 			
@@ -366,6 +364,9 @@ public class PcInstance extends Model
 			boardcastPcInsight (actionPacket);
 			
 			pick.uuidOwner = uuid;
+			pick.location.point.x = 0;
+			pick.location.point.y = 0;
+			pick.location.mapId = 0;
 			addItem (pick);
 			map.items.remove (pick.uuid);
 		}
@@ -435,6 +436,7 @@ public class PcInstance extends Model
 		ItemInstance weapon = findItemByUuid (uuid);
 		if (weapon != null) {
 			equipment.setWeapon (weapon);
+			applyEquipmentEffects ();
 		}
 	}
 	
@@ -443,6 +445,13 @@ public class PcInstance extends Model
 		if (armor != null) {
 			equipment.setEquipment (armor);
 			applyEquipmentEffects ();
+		}
+	}
+	
+	public void setArrow (int uuid) {
+		ItemInstance arrow = findItemByUuid (uuid);
+		if (arrow != null) {
+			equipment.setArrow (arrow);
 		}
 	}
 	
@@ -494,7 +503,7 @@ public class PcInstance extends Model
 	public boolean isDarkelf () {
 		return (type == 4);
 	}
-	
+			
 	public int getWeaponGfx () {
 		if (equipment.weapon == null) {
 			return 0;
@@ -573,9 +582,9 @@ public class PcInstance extends Model
 	
 	public int getWeight () {
 		int totalWeight = 0;
-		ArrayList<ItemInstance> allItemList = new ArrayList<ItemInstance> () ;
+		ArrayList<ItemInstance> allItemList = new ArrayList<ItemInstance> ();
 		itemBag.forEach ((Integer uuid, ItemInstance item)->{
-			allItemList.add (item) ;
+			allItemList.add (item);
 		});
 		
 		for (ItemInstance i : allItemList) {
@@ -586,12 +595,12 @@ public class PcInstance extends Model
 	}
 	
 	public int getMaxWeight () {
-		int max_wieght = 1500 + (((getStr () + getCon () - 18) >> 1) * 150) ;
+		int maxWeight = 1500 + (((getStr () + getCon () - 18) >> 1) * 150);
 		//apply skill effect
 		//apply equip effect
 		//apply doll effect
 		
-		return max_wieght * 1000;
+		return maxWeight * 1000;
 	}
 	
 	public int getWeightInScale30 () {
@@ -630,6 +639,14 @@ public class PcInstance extends Model
 		doorsInsight.remove (_uuid);
 	}
 	
+	public void addItemInsight (ItemInstance i) {
+		itemsInsight.put (i.uuid, i);
+	}
+	
+	public void removeItemInsight (int _uuid) {
+		itemsInsight.remove (_uuid);
+	}
+	
 	public void removeAllInsight () {
 		pcsInsight.clear ();
 		npcsInsight.clear ();
@@ -641,8 +658,8 @@ public class PcInstance extends Model
 		});
 	}
 	
-	public void setHandle (SessionHandler handle) {
-		this.handle = handle;
+	public void setHandle (SessionHandler _handle) {
+		handle = _handle;
 	}
 		
 	public SessionHandler getHandle () {

@@ -9,7 +9,7 @@ public class HikariCP
 {
 	private static HikariCP instance;
 	private static HikariDataSource datasource;
-	private static Connection backupCon;
+	private static Connection backupConnection;
 
 	public static HikariCP getInstance () {
 		if (instance == null) {
@@ -19,31 +19,31 @@ public class HikariCP
 	}
 	
 	public HikariCP () {
-		System.out.printf ("HikariCP Initializing...") ;
+		System.out.printf ("HikariCP Initializing...");
 
 		try {			
-			HikariConfig Config = new HikariConfig ("configs/hikari.properties") ;
+			HikariConfig hikariCpConfig = new HikariConfig ("configs/hikari.properties");
 			
-			datasource = new HikariDataSource (Config) ;
+			datasource = new HikariDataSource (hikariCpConfig);
 			
-			backupCon = datasource.getConnection () ;
-			if (backupCon.isValid (1000) ) {
-				System.out.println ("success") ;
+			backupConnection = datasource.getConnection ();
+			if (backupConnection.isValid (1000)) {
+				System.out.println ("success");
 			}			
 		} catch (Exception e) {
-			e.printStackTrace () ;
-			System.out.printf ("Database connect fail, Check hikariCP config\n") ;
-			System.exit (666) ;
+			e.printStackTrace ();
+			System.out.printf ("Database connect fail, Check hikariCP config\n");
+			System.exit (666);
 			
 		}
 	}
 	
 	public void Disconnect () {
 		try {
-			backupCon.close () ;
-			datasource.close () ;
+			backupConnection.close ();
+			datasource.close ();
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		}
 	}
 	
@@ -53,30 +53,30 @@ public class HikariCP
 		
 		do {
 			try {
-				con = datasource.getConnection () ;
+				con = datasource.getConnection ();
 			} catch (Exception e) {
-				System.out.printf ("[HikariCP] Connection used up\n") ;
+				System.out.printf ("[HikariCP] Connection used up\n");
 				if (retryCounter < 3) {
 					retryCounter++;
 				} else {
-					con = backupCon;
-					System.out.printf ("[HikariCP] Use backup connection\n") ;
+					con = backupConnection;
+					System.out.printf ("[HikariCP] Use backup connection\n");
 				}
 			}
-		} while (con == null) ;
+		} while (con == null);
 		
 		return con;
 	}
 	
 	public String getUrl () {
-		return datasource.getJdbcUrl () ;
+		return datasource.getJdbcUrl ();
 	}
 	
 	public String getUser () {
-		return datasource.getUsername () ;
+		return datasource.getUsername ();
 	}
 	
 	public String getPassword () {
-		return datasource.getPassword () ;
+		return datasource.getPassword ();
 	}
 }

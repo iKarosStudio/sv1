@@ -33,13 +33,14 @@ public class MonsterAiKernel extends TimerTask implements Runnable
 					byte[] die = new ModelAction (ModelActionId.DIE, monster.uuid, monster.heading).getRaw () ;
 					
 					//轉移經驗值與道具
-					monster.transferExp (monster.targetPc);
+					monster.transferExp ();
 					monster.transferItems ();
 					
 					monster.boardcastPcInsight (die);
 					
 					monster.isDead = true;
 					monster.actionStatus = MonsterInstance.ACTION_DEAD;
+					System.out.printf ("%s 死掉了\n", monster.name);
 				}
 			}
 			
@@ -49,9 +50,7 @@ public class MonsterAiKernel extends TimerTask implements Runnable
 			ai ();
 			
 		} catch (Exception e) {
-			System.out.printf ("ai uuid : %d\n", monster.uuid);
 			e.printStackTrace ();
-			
 		}
 	}
 	
@@ -71,9 +70,7 @@ public class MonsterAiKernel extends TimerTask implements Runnable
 				monster.moveToHeading (random.nextInt (8));
 				Thread.sleep (monster.moveInterval);
 				
-				/*
-				 * 0~3S隨機停頓
-				 */
+				/* 0~3S隨機停頓  */
 				Thread.sleep (random.nextInt (3000));
 				
 			} else if (monster.actionStatus == MonsterInstance.ACTION_ATTACK) {

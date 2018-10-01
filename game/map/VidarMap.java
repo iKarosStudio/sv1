@@ -387,6 +387,24 @@ public class VidarMap
 		return getMonstersInDistance (_point, Configurations.SIGHT_RAGNE);
 	}
 	
+	public List<ItemInstance> getItemsInDistance (Coordinate _point, int _range) {
+		List<ItemInstance> result = new ArrayList<ItemInstance> ();
+		try {
+			items.forEach ((Integer uuid, ItemInstance item)->{
+				if (item.getDistance (_point.x, _point.y) < _range) {
+					result.add (item);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
+		
+		return result;
+	}
+	
+	public List<ItemInstance> getItemsInsight (Coordinate _point) {
+		return getItemsInDistance (_point, Configurations.SIGHT_RAGNE);
+	}
 	
 	public Model getModel (int uuid) {
 		Model result;

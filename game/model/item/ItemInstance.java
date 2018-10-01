@@ -236,6 +236,7 @@ public class ItemInstance
 			if (count > 1) {
 				veiwName.append (" (" + count + ")");
 			}
+			
 		} else if (isWeapon ()) {
 			if (isIdentified) {
 				veiwName.insert (0, "+" + enchant + " ") ;
@@ -243,6 +244,7 @@ public class ItemInstance
 			if (isUsing) {
 				veiwName.append (" ($9)") ;
 			}
+			
 		} else if (isArmor ()) {
 			if (isIdentified) {
 				veiwName.insert (0, "+" + enchant + " ") ;
@@ -250,6 +252,7 @@ public class ItemInstance
 			if (isUsing) {
 				veiwName.append (" ($117)") ;
 			}
+			
 		}
 		
 		return veiwName.toString ();
@@ -534,6 +537,10 @@ public class ItemInstance
 		return majorType == 2;
 	}
 	
+	public boolean isArrow () {
+		return (majorType == 0) && (minorType == TYPE_ARROW);
+	}
+	
 	public boolean isItem () {
 		return majorType == 0;
 	}
@@ -548,5 +555,15 @@ public class ItemInstance
 	
 	public boolean isOriharukon () {
 		return material == MATERIAL_ORIHARUKON;
+	}
+	
+	/*
+	 * 自身對p(x, y)的距離
+	 */
+	public int getDistance (int x, int y) {
+		int dx = Math.abs (x - location.point.x);
+		int dy = Math.abs (y - location.point.y);
+		
+		return (int) Math.sqrt (Math.pow (dx, 2) + Math.pow (dy, 2) );		
 	}
 }

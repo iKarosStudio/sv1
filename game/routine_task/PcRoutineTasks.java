@@ -24,7 +24,6 @@ public class PcRoutineTasks implements Runnable
 	
 	public void run () {
 		try {
-			System.out.println ("pc routine tasks") ;
 			hpResume ();
 			mpResume ();
 			tick ();

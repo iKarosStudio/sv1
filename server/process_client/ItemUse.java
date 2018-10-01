@@ -9,13 +9,16 @@ import vidar.game.model.item.potion.*;
 import vidar.game.model.item.scroll.*;
 import static vidar.game.template.ItemTypeTable.*;
 
+//無法使用 server_id=74
+//e.g. handle.sendPacket (new ServerMessage (74, new String[] {item.name}).getRaw ());
+
 public class ItemUse
 {
 	PcInstance pc;
 	SessionHandler handle;
 	
 	public ItemUse (SessionHandler handle, byte[] data) {
-		PacketReader packetReader = new PacketReader (data) ;
+		PacketReader packetReader = new PacketReader (data);
 		
 		this.handle = handle;
 		pc = handle.getPc ();
@@ -27,8 +30,10 @@ public class ItemUse
 			/* 使用道具 */
 			if (item.isItem ()) {
 				System.out.printf ("使用道具-%s,major[%d],minor[%d],useType[%d]\n", item.name, item.majorType, item.minorType, item.useType);
+				
 				if (item.minorType == TYPE_ARROW) {
-					//
+					pc.setArrow (item.uuid);
+					
 				} else if (item.minorType == TYPE_WAND) {
 					//
 				} else if (item.minorType == TYPE_LIGHT) {
@@ -45,8 +50,8 @@ public class ItemUse
 				} else if (item.minorType == TYPE_FOOD) {
 					//
 				} else if (item.minorType == TYPE_SCROLL) {
-					int targetUuid = packetReader.readDoubleWord () ;
-					//new UseScroll (Pc, i, target_uuid) ;
+					new UseScroll (packetReader, pc, item);
+					
 				} else if (item.minorType == TYPE_QUEST_ITEM) {
 					//
 				} else if (item.minorType == TYPE_SPELL_BOOK) {
@@ -68,7 +73,7 @@ public class ItemUse
 					}
 					
 					if (item.id >= 40373 && item.id <= 40390) { //使用地圖
-						//handle.sendPacket (new MapUse (item.uuid, item.id).getRaw () ) ;
+						handle.sendPacket (new MapUse (item.uuid, item.id).getRaw ());
 					}
 				} else if (item.minorType == TYPE_MATERIAL) {
 					//

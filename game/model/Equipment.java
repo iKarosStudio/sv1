@@ -333,7 +333,23 @@ public class Equipment
 	}
 	
 	public void setArrow (ItemInstance _arrow) {
-		//
+		if (arrow == null) {
+			arrow = _arrow;
+			arrow.isUsing = true;
+			updateItem (arrow);
+		} else {
+			if (arrow.uuid == _arrow.uuid) {
+				arrow.isUsing = false;
+				updateItem (arrow);
+				arrow = null;
+			} else {
+				arrow.isUsing = false;
+				updateItem (arrow);
+				arrow = _arrow;
+				arrow.isUsing = true;
+				updateItem (arrow);
+			}
+		}
 	}
 	
 	public void updateItem (ItemInstance _item) {
@@ -348,7 +364,7 @@ public class Equipment
 		result.add (helmet);
 		result.add (armor);
 		result.add (tshirt);
-		result.add (cloak);
+		result.add (arrow);
 		result.add (boots);
 		result.add (shield);
 		result.add (belt);
@@ -365,7 +381,7 @@ public class Equipment
 		result.add (helmet);
 		result.add (armor);
 		result.add (tshirt);
-		result.add (cloak);
+		result.add (arrow);
 		result.add (boots);
 		result.add (shield);
 		result.add (belt);

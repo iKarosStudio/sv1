@@ -29,7 +29,7 @@ public class PacketHandler
 		switch (opcode) {
 		
 		case ClientOpcodes.ITEM_USE : 
-			new ItemUse (handle, packet) ;
+			new ItemUse (handle, packet);
 			break;
 			
 		case ClientOpcodes.ATTACK:
@@ -38,15 +38,15 @@ public class PacketHandler
 			break;	
 			
 		case ClientOpcodes.MOVE :
-			new Move (handle, packet) ;
+			new Move (handle, packet);
 			break;
 		
 		case ClientOpcodes.SKILL_USE:
-			//new SkillUse (handle, packet) ;
+			new SkillUse (handle, packet);
 			break;
 			
 		case ClientOpcodes.CHANGE_HEADING : 
-			new UpdateHeading (handle, packet) ;
+			new UpdateHeading (handle, packet);
 			break;
 			
 		//case ClientOpcodes.ATTR : 
@@ -69,29 +69,29 @@ public class PacketHandler
 			break;
 			
 		case ClientOpcodes.ACCESS_NPC:
-			new NpcAccess (handle, packet) ;
+			new NpcAccess (handle, packet);
 			break;
 		
 		case ClientOpcodes.ACTION_NPC:
-			new NpcAction (handle, packet) ;
+			new NpcAction (handle, packet);
 			break;
 		
 		case ClientOpcodes.REQUEST_NPC:
-			new NpcRequest (handle, packet) ;
+			new NpcRequest (handle, packet);
 			break;
 		
 		case ClientOpcodes.SKILL_BUY:
 			System.out.println ("要求技能商店清單");
-			new SkillBuy (handle, packet) ;
+			new SkillBuy (handle, packet);
 			break;
 		
 		case ClientOpcodes.SKILL_BUY_ORDER:
 			System.out.println ("要求買技能");
-			new SkillBuyOrder (handle, packet) ;
+			new SkillBuyOrder (handle, packet);
 			break;
 		
 		case ClientOpcodes.DOOR_TOUCH:
-			new DoorTouch(handle, packet) ;
+			new DoorTouch(handle, packet);
 			break;
 			
 		case ClientOpcodes.CLIENT_BEAT : //keep alive
@@ -99,7 +99,7 @@ public class PacketHandler
 			break;
 		
 		case ClientOpcodes.CLIENT_VERSION : //1.進入輸入帳號密碼畫面
-			new ServerVersion (handle) ;
+			new ServerVersion (handle);
 			break;
 		
 		case ClientOpcodes.CLIENT_CONFIG:
@@ -107,19 +107,19 @@ public class PacketHandler
 			break;
 		
 		case ClientOpcodes.LOGIN_PACKET : //2.帳號密碼
-			new AccountOperation().login (handle, packet) ;
+			new AccountOperation().login (handle, packet);
 			break;
 			
 		case ClientOpcodes.LIST_CHARACTER : //3.要求列出帳號的腳色清單 (CommonClick.java)
-			new AccountOperation().getCharacterData (handle, packet) ; 
+			new AccountOperation().getCharacterData (handle, packet); 
 			break;
 			
 		case ClientOpcodes.CREATE_CHARACTER :
-			new CharacterOperation ().create (handle, packet) ;
+			new CharacterOperation ().create (handle, packet);
 			break;
 			
 		case ClientOpcodes.LOGIN_TO_SERVER : //選定登入角色
-			new CharacterOperation().login (handle, packet) ;
+			new CharacterOperation().login (handle, packet);
 			break;
 			
 		case ClientOpcodes.DELETE_CHARACTER :
@@ -131,15 +131,15 @@ public class PacketHandler
 			break;
 			
 		case ClientOpcodes.RESTART:
-			handle.account.activePc.offline () ;
+			handle.account.activePc.offline ();
 			break;
 		
 		case ClientOpcodes.WHO :
-			handle.sendPacket (new SystemMessage ("WHO").getRaw () ) ;
+			handle.sendPacket (new SystemMessage ("WHO").getRaw ());
 			break;
 			
 		case ClientOpcodes.TS : /* 神秘後門服務(Text Service) */ 
-			new TS (handle, packet) ;
+			new TS (handle, packet);
 			break;
 			
 		case ClientOpcodes.RST : /*重新開始*/
@@ -149,15 +149,15 @@ public class PacketHandler
 			break;
 			
 		case ClientOpcodes.EXIT_GAME :
-			new ExitGame (handle, packet) ;
+			new ExitGame (handle, packet);
 			break;
 			
 		default:
-			System.out.println ("UNKNOWN OPCODE : " + opcode + " Length : " + packet.length) ;
+			System.out.println ("UNKNOWN OPCODE : " + opcode + " Length : " + packet.length);
 			for (byte b : packet) {
-				System.out.printf ("0x%02X, ", b) ;
+				System.out.printf ("0x%02X, ", b);
 			}
-			System.out.println () ;
+			System.out.println ();
 			/*
 			try {
 				Handle.Disconnect () ;

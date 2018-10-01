@@ -12,7 +12,7 @@ import vidar.game.model.*;
 /*
  * 經驗值需求量參考server/datatables/ExpTables.java
  */
-public class ExpMonitor extends Thread implements Runnable
+public class ExpMonitor implements Runnable
 {
 	//private final Timer t = new Timer () ;
 	ScheduledFuture<?> schedulor;
@@ -20,7 +20,7 @@ public class ExpMonitor extends Thread implements Runnable
 	private SessionHandler handle;
 
 	public ExpMonitor (PcInstance _pc) {
-		this.pc = _pc;
+		pc = _pc;
 		handle = _pc.getHandle ();
 	}
 	
@@ -28,7 +28,7 @@ public class ExpMonitor extends Thread implements Runnable
 		boolean toggleSave = false;
 		
 		try {
-			//System.out.printf ("%s Level:%d Exp:%d/%d\n", Pc.Name, Pc.Level, Pc.Exp, EXP_REQUEST_TABLE[Pc.Level]) ;
+			//System.out.printf ("%s Level:%d Exp:%d/%d\n", pc.name, pc.level, pc.exp, EXP_REQUEST_TABLE[pc.level]);
 			while (pc.exp >= EXP_REQUEST_TABLE[pc.level] ) {
 				pc.level ++;
 				
@@ -58,11 +58,11 @@ public class ExpMonitor extends Thread implements Runnable
 		}
 	}
 	
-	public void Start () {
-		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 0, 300);
+	public void start () {
+		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 0, 1000);
 	}
 	
-	public void Stop () {
+	public void stop () {
 		schedulor.cancel (true);
 	}
 	

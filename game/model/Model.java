@@ -4,6 +4,8 @@ import vidar.config.*;
 import vidar.types.*;
 import vidar.game.*;
 import vidar.game.map.*;
+import vidar.game.skill.*;
+import static vidar.game.skill.SkillId.*;
 
 public class Model
 {
@@ -29,6 +31,9 @@ public class Model
 	public int braveSpeed;
 	public AbilityParameter basicParameters;
 	public AbilityParameter skillParameters;
+	
+	/* Buff/Debuff 效果計時 */
+	public SkillEffectTimer skillBuffs = null;
 	
 	public String name;
 	public String title;
@@ -94,4 +99,45 @@ public class Model
 		//}
 		return directionFace & 0x0FF;
 	}
+	
+	public boolean hasSkillEffect (int skillId) {
+		return skillBuffs.effects.containsKey (skillId);
+	}
+	
+	public boolean isParalyzed () {
+		return hasSkillEffect (STATUS_POISON_PARALYZED) || hasSkillEffect (STATUS_CURSE_PARALYZED);
+	}
+	
+	public boolean isPoison () {
+		return (status & 0x01) > 0;
+	}
+	
+	public boolean isInvisible () {
+		return (status & 0x02) > 0;
+	}
+	
+	public boolean isPc () {
+		return (status & 0x04) > 0;
+	}
+	
+	public boolean isFreeze () {
+		return (status & 0x08) > 0;
+	}
+	
+	public boolean isBraveSpeed () { //x2
+		return (status & 0x10) > 0;
+	}
+	
+	public boolean isElfBraveSpeed () { //x1.5
+		return (status & 0x20) > 0;
+	}
+	
+	public boolean isFastMove () {
+		return (status & 0x40) > 0;
+	}
+	
+	public boolean isGhost () {
+		return (status & 0x80) > 0;
+	}
+	
 }

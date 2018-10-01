@@ -6,7 +6,9 @@ import java.lang.Thread;
 import java.util.logging.*;
 
 import vidar.server.packet.*;
+import vidar.server.opcodes.*;
 import vidar.game.model.*;
+
 
 public class SessionHandler extends Thread implements Runnable
 {
@@ -92,6 +94,8 @@ public class SessionHandler extends Thread implements Runnable
 	 * 使用者Session主要工作迴圈
 	 */
 	public void run () {
+		boolean isLineageClient = false;
+		
 		firstPacket ();
 		packetCodec.initKey ();
 		
@@ -131,7 +135,7 @@ public class SessionHandler extends Thread implements Runnable
 				e.printStackTrace () ;
 			}
 			account = null;
-		}
+		}		
 	}
 	
 	public SessionHandler () {

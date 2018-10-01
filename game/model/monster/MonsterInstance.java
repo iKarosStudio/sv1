@@ -130,12 +130,11 @@ public class MonsterInstance extends Model
 	}
 	
 	public void attackPc (PcInstance pc) {
-		System.out.printf ("%s 嘗試攻擊 %s, ", name, targetPc.name) ;
-		heading = getDirection (pc.location.point.x, pc.location.point.y) ;
+		heading = getDirection (pc.location.point.x, pc.location.point.y);
 		
-		/* 更新攻擊距離 */
+		/* 嘗試接近攻擊目標 */
 		if (getDistance (pc.location.point.x, pc.location.point.y) > 1) {
-			moveToHeading (heading) ;
+			moveToHeading (heading);
 			return;
 		}
 		
@@ -143,20 +142,23 @@ public class MonsterInstance extends Model
 		byte[] actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
 		boardcastPcInsight (actionPacket);
 		
-		/*
-		 * 命中與傷害運算
-		 */
+		/* 命中與傷害運算 */
 		if (isInsight (pc.location)) {
-			new CommonAttack (this, pc) ;
+			NormalAttack atk = new NormalAttack (this, pc);
 		}
 	}
 	
 	public void attackPet () {
+		//
 	}
 	
 	synchronized public void takeDamage (int dmg) {		
 		if (hp > dmg) {
 			hp -= dmg;
+			
+			//挨打動作
+			boardcastPcInsight (new ModelAction (ModelActionId.DAMAGE, uuid, heading).getRaw());
+			
 		} else {
 			/*
 			try {
@@ -164,13 +166,17 @@ public class MonsterInstance extends Model
 			} catch (Exception e) {e.printStackTrace () ; }
 			*/
 			hp = 0;
-			isDead = true;
-			actionStatus = ACTION_DEAD;
-			System.out.printf ("%s 死了!\n", name) ;
+			//isDead = true;
+			//actionStatus = ACTION_DEAD;
+			
+			//往生動作
+			//boardcastPcInsight (new ModelAction (ModelActionId.DIE, uuid, heading).getRaw());
 		}
+		
+		
 	}
 	
-	public void transferExp (PcInstance p) {
+	public void transferExp () {
 		int MonsterExp = exp * Configurations.RateExp;
 		
 		System.out.printf ("%s 經驗值轉移:\n", name) ;
@@ -187,18 +193,18 @@ public class MonsterInstance extends Model
 	public void transferItems () {
 		System.out.printf ("%s 道具轉移(Total:%d):\n", name, hateListSize) ;
 		
-		itemBag.forEach ((Integer itemId, ItemInstance i)->{
-			hateList.forEach ((Integer pcUuid, Integer h)->{
+		itemBag.forEach ((Integer itemId, ItemInstance dropItem)->{
+			hateList.forEach ((Integer pcUuid, Integer hatePoint)->{
 				PcInstance recv = map.pcs.get (pcUuid);
 				
-				System.out.printf ("\t%s hit:%d 分到 %s\n", recv.name, h, i.getName ());
+				System.out.printf ("\t%s hit:%d 分到 %s\n", recv.name, hatePoint, dropItem.getName ());
 				
 				/* 道具真實UUID */
-				i.uuid = UuidGenerator.next ();
-				i.uuidOwner = recv.uuid;
-				recv.addItem (i);
+				dropItem.uuid = UuidGenerator.next ();
+				dropItem.uuidOwner = recv.uuid;
+				recv.addItem (dropItem);
 				
-				String[] serverMessage = {name, i.getName ()};
+				String[] serverMessage = {name, dropItem.getName ()};
 				byte[] msgPacket = new ServerMessage (143, serverMessage).getRaw ();
 				//超過20E金幣丟msgid:166
 				recv.getHandle ().sendPacket (msgPacket);

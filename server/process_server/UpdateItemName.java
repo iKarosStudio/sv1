@@ -14,9 +14,7 @@ public class UpdateItemName
 		packet.writeString (item.getName ());
 	}
 	
-	/*
-	 * 更新為指定名稱
-	 */
+	/* 更新為指定名稱 */
 	public UpdateItemName (ItemInstance item, String name) {
 		packet.writeByte (ServerOpcodes.ITEM_UPDATE_NAME);
 		packet.writeDoubleWord (item.uuid);

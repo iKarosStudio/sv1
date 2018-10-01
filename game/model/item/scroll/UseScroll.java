@@ -2,43 +2,51 @@ package vidar.game.model.item.scroll;
 
 import vidar.types.*;
 import vidar.server.*;
+import vidar.server.packet.*;
 import vidar.server.process_server.*;
 import vidar.game.model.*;
 import vidar.game.model.item.*;
+import static vidar.game.template.ItemTypeTable.*;
 
 public class UseScroll
 {
 	PcInstance pc;
-	SessionHandler Handle;
-	public UseScroll (PcInstance _pc, ItemInstance i, int _targetUuid) {
+	SessionHandler handle;
+	public UseScroll (PacketReader packetReader, PcInstance _pc, ItemInstance scroll) {
 		pc = _pc;
-		Handle = _pc.getHandle ();
+		handle = _pc.getHandle ();
+		
+		
+		switch (scroll.minorType) {
+		case TYPE_USE_NTELE:
+			TeleportScroll (scroll);
+			break;
 			
-		if (i.id == 40100) { //順捲
-			while (!checkScrollDelay (i) ) {
-				try {
-					Thread.sleep (500);
-				} catch (Exception e) {
-					e.printStackTrace ();
-				} 
+		case TYPE_USE_SOSC:
+			//變形類道具
+			String s = packetReader.readString ();
+			break;
+		case TYPE_USE_BLANK: //空的魔法卷軸
+			int skill = packetReader.readByte ();
+			break;
+			
+		case TYPE_USE_IDENTIFY:
+			System.out.printf ("鑑定卷軸\n");
+			int uuid = packetReader.readDoubleWord ();
+			ItemInstance identifyItem = pc.findItemByUuid (uuid);
+			if (identifyItem != null) {
+				//顯示文字
 			}
-			TeleportScroll ();
 			
-		} else if (i.id== 40079) { //回捲 
+			break;
+		case TYPE_USE_RES: //復活卷軸
+			int target = packetReader.readDoubleWord ();
+			break;
 			
-		} else if (i.id == 40088) { //變形卷軸
-			
-		} else if (i.id == 40126) { //鑑定卷軸
-			ItemInstance t = pc.findItemByUuid (_targetUuid) ;
-			if (t != null) {
-				//byte[] packet = new ItemIdentify (t).getRaw () ;
-				//fix
-				//Handle.SendPacket (packet) ;
-			}
-
-						
-		} else {
-			System.out.printf ("對%d使用卷軸:%s %d\n", _targetUuid, i.getName (), i.id) ;
+		default:
+			handle.sendPacket (new ServerMessage (74).getRaw ());
+			System.out.printf ("未知種類的捲軸或還沒有處理:%d %s\n", scroll.id, scroll.name);
+			break;
 		}
 	}
 	
@@ -56,10 +64,24 @@ public class UseScroll
 		return res;
 	}
 	
-	private void TeleportScroll () {
+	/* 順移卷軸 */
+	private void TeleportScroll (ItemInstance scroll) {
+		//麻痺時不能順移
+		//
+		
+		if (pc.isFreeze ()) {
+		}
+		
+		while (!checkScrollDelay (scroll) ) {
+			try {
+				Thread.sleep (500);
+			} catch (Exception e) {
+				e.printStackTrace ();
+			} 
+		}
+		
 		Location dest;
 		dest = pc.map.getRandomLocation ();		
 		new Teleport (pc, dest, true);
-		dest = null;
 	}
 }

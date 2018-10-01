@@ -9,6 +9,7 @@ import vidar.server.process_server.*;
 import vidar.game.model.*;
 import vidar.game.model.npc.*;
 import vidar.game.model.monster.*;
+import vidar.game.model.item.*;
 
 public class SightUpdate implements Runnable
 {
@@ -28,7 +29,6 @@ public class SightUpdate implements Runnable
 		updateMonsters ();
 		updateDoors ();
 		updateItems ();
-		
 	}
 	
 	private void updatePcs () {
@@ -106,6 +106,21 @@ public class SightUpdate implements Runnable
 	}
 	
 	private void updateItems () {
+		List<ItemInstance> Items = pc.map.getItemsInsight (pc.location.point);
+		for (ItemInstance i : Items) {
+			if (!pc.itemsInsight.containsKey (i.uuid)) {
+				pc.addItemInsight (i);
+				handle.sendPacket (new ModelPacket (i).getRaw ());
+			}
+		}
+		Items = null;
+		
+		pc.itemsInsight.forEach ((Integer u, ItemInstance i)->{
+			if (!pc.isInsight (i.location)) {
+				pc.removeItemInsight (i.uuid);
+				handle.sendPacket (new RemoveModel (i.uuid).getRaw ());
+			}
+		});
 	}
 	
 	/*

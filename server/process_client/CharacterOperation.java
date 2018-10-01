@@ -57,6 +57,7 @@ public class CharacterOperation {
 			/* 固定循環工作 */
 			pc.routineTasks.start ();
 			pc.skillBuffs.start ();
+			pc.hpMonitor.start ();
 			
 			/* 開始經驗值監測 */
 			pc.expMonitor.start ();
@@ -76,9 +77,7 @@ public class CharacterOperation {
 		}
 	}
 	
-	/*
-	 * 參考C_CreateChar.java
-	 */
+	/* 參考C_CreateChar.java */
 	public void create (SessionHandler handle, byte[] data) {
 		PacketReader packetReader = new PacketReader (data) ;
 		String charName = packetReader.readString () ;

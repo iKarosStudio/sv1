@@ -222,6 +222,35 @@ public class ModelPacket
 	}
 	
 	public ModelPacket (ItemInstance item) {
+		packet.writeByte (ServerOpcodes.MODEL_PACK);
+		packet.writeWord (item.location.point.x);
+		packet.writeWord (item.location.point.y);
+		packet.writeDoubleWord (item.uuid);
+		packet.writeWord (item.gfxOnGround);
+		packet.writeByte (0);
+		packet.writeByte (0);
+		packet.writeByte (1);
+		packet.writeByte (0);
+		packet.writeDoubleWord (item.count);
+		packet.writeByte (0);
+		packet.writeByte (0);
+		if (item.count > 1) {
+			packet.writeString (item.getName ());
+		} else {
+			packet.writeString (item.name);
+		}
+		packet.writeByte (0);
+		packet.writeDoubleWord (0);
+		packet.writeDoubleWord (0);
+		packet.writeByte (0xFF);
+		packet.writeByte (0);
+		packet.writeByte (0);
+		packet.writeByte (0);
+		packet.writeWord (0xFFFF); 
+		packet.writeDoubleWord (0);
+		packet.writeByte (0);
+		packet.writeByte (0);
+		
 	}
 	
 	public byte[] getRaw () {

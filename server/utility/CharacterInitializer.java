@@ -112,9 +112,7 @@ public class CharacterInitializer
 	}
 	
 	public void execute () {
-		/*
-		 * 寫入資料庫
-		 */
+		/* 寫入資料庫 */
 		Connection conn = HikariCP.getConnection ();
 		PreparedStatement ps = null;
 		try {

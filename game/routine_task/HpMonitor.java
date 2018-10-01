@@ -11,35 +11,33 @@ public class HpMonitor implements Runnable
 {
 	//private final Timer t = new Timer () ;
 	ScheduledFuture<?> schedulor;
-	private int TaskInterval = 0;
+	private int taskInterval = 0;
 	private PcInstance pc;
-	private SessionHandler Handle;
+	private SessionHandler handle;
+	private int prevHp;
 	
 	public HpMonitor (PcInstance _pc) {
 		this.pc = _pc;
-		Handle = _pc.getHandle () ;
-		TaskInterval = 1000;
+		handle = _pc.getHandle () ;
+		prevHp = pc.hp;
+		taskInterval = 33; //30hz updating
 	}
 	
 	public void run () {
 		
 		//System.out.printf ("%s hp\n", Pc.Name) ;
 		try {
-			//if (Pc.getHp < Pc.getMaxHp () ) {
-				//Pc.Hp++;
-				//Handle.SendPacket (new NodeStatus (Pc).getRaw () ) ;
-				Handle.sendPacket (new UpdateHp (pc.hp, pc.getMaxHp ()).getRaw ());
-			//}
+			if (prevHp != pc.hp) {
+				handle.sendPacket (new UpdateHp (pc.hp, pc.getMaxHp ()).getRaw ());
+			}
+			prevHp = pc.hp;
 		} catch (Exception e) {
-			//s.cancel (true) ;
-			//e.printStackTrace () ;
-			//e.printStackTrace () ;
-			//System.out.printf ("HP Monitor %s\n", e.toString () ) ;
+			e.printStackTrace ();
 		}
 	}
 	
 	public void start () {
-		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 1000, TaskInterval);
+		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 500, taskInterval);
 		//t.scheduleAtFixedRate (this, 1000, TaskInterval) ;
 	}
 	

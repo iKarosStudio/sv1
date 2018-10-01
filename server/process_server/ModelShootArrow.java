@@ -29,7 +29,7 @@ public class ModelShootArrow
 		packet.writeDoubleWord (sequentialNumber.getAndIncrement ());
 		
 		//Skill GFX
-		packet.writeWord (167); //66
+		packet.writeWord (167); //ARROW=66
 		
 		//unknown
 		packet.writeByte (127);
