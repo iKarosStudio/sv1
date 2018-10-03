@@ -21,7 +21,7 @@ public class NpcAccess
 		PcInstance pc = handle.account.activePc;
 		int npcUuid = packetReader.readDoubleWord ();
 		
-		System.out.printf ("%s 訪問NPC(%d)\n", pc.name, npcUuid);
+		System.out.printf ("%s access npc(%d)\n", pc.name, npcUuid);
 		
 		if (npcUuid == 70522) { //甘特
 			String htmlKey = null;
@@ -68,10 +68,11 @@ public class NpcAccess
 		if (CacheData.npcTalkData.containsKey (npcUuid) ) {
 			NpcTalkData talkData = CacheData.npcTalkData.get (npcUuid);
 			NpcAccessResult result;
+			
 			if (pc.lawful < 0) {//邪惡
-				result = new NpcAccessResult (npcUuid, talkData.caoticAction) ;
+				result = new NpcAccessResult (npcUuid, talkData.caoticAction);
 			} else {//中立, 正義
-				result = new NpcAccessResult (npcUuid, talkData.normalAction) ;
+				result = new NpcAccessResult (npcUuid, talkData.normalAction);
 			}
 			
 			handle.sendPacket (result.getRaw ());

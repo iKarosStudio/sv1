@@ -124,11 +124,11 @@ public class Model
 		return (status & 0x08) > 0;
 	}
 	
-	public boolean isBraveSpeed () { //x2
+	public boolean isBraveSpeed () { //x1.33
 		return (status & 0x10) > 0;
 	}
 	
-	public boolean isElfBraveSpeed () { //x1.5
+	public boolean isElfBraveSpeed () { //x1.15
 		return (status & 0x20) > 0;
 	}
 	
@@ -138,6 +138,10 @@ public class Model
 	
 	public boolean isGhost () {
 		return (status & 0x80) > 0;
+	}
+	
+	public boolean isPoly () { //在變身狀態
+		return hasSkillEffect (SHAPE_CHANGE);
 	}
 	
 }

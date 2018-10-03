@@ -5,7 +5,9 @@ import java.util.*;
 import vidar.server.packet.*;
 import vidar.server.opcodes.*;
 import vidar.game.*;
+import vidar.game.model.*;
 import vidar.game.model.npc.*;
+import vidar.game.model.item.*;
 import vidar.game.template.*;
 
 public class ReportNpcShop
@@ -18,7 +20,7 @@ public class ReportNpcShop
 	}
 	
 	public void buyList () {
-		NpcShop shop = CacheData.npcShop.get (npcId) ;
+		NpcShop shop = CacheData.npcShop.get (npcId);
 		HashMap<Integer, NpcShopMenu> menu = shop.menu;
 		
 		packet.writeByte (ServerOpcodes.NPC_SELL_LIST);
@@ -83,8 +85,32 @@ public class ReportNpcShop
 		} //Each of menu
 	}
 	
-	public void sellList () {
-		packet.writeByte (ServerOpcodes.NPC_BUY_LIST);
+	public void sellList (PcInstance pc) {
+		NpcShop shop = CacheData.npcShop.get (npcId);
+		if (shop == null) {
+			return;
+		}
+		
+		List<ItemInstance> sellList = new ArrayList<ItemInstance> ();
+		
+		pc.itemBag.forEach ((Integer uuid, ItemInstance item)->{
+			if (shop.isExistItem (item.id)) { //可以賣掉的東西
+				sellList.add (item);
+			}
+		});
+		
+		if (sellList.size() < 1) {
+			packet.writeByte (new NpcNothingForSell (npcId).getRaw());
+			
+		} else {
+			packet.writeByte (ServerOpcodes.NPC_BUY_LIST);
+			packet.writeDoubleWord (npcId);
+			packet.writeWord (sellList.size ());
+			for (int index = 0; index < sellList.size (); index++) {
+				packet.writeDoubleWord (sellList.get (index).uuid); //item
+				packet.writeDoubleWord (50); //顯示售價
+			}
+		}
 	}
 	
 	public byte[] getRaw () {

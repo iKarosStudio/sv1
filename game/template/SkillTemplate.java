@@ -2,26 +2,26 @@ package vidar.game.template;
 
 public class SkillTemplate
 {
-	public int SkillLv;
-	public int SkillId;
-	public int SkillNumber;
-	public String Name;
-	public String NameId;
-	public int Id;
-	public int GfxId;
+	public int skillLevel;
+	public int skillId;
+	public int skillNumber;
+	public String name;
+	public String nameId;
+	public int id;
+	public int gfx;
 	
-	public int MpCost;
-	public int HpCost;
-	public int ItemCostId;
-	public int ItemCostAmount;
+	public int costMp;
+	public int costHp;
+	public int costItemId;
+	public int costItemAmount;
 	
-	public int DelayTime;
-	public int RemainTime;
+	public int delayTime;
+	public int remainTime;
 	
 	/*
 	 *  0:none(自身) 1:attack(攻擊) 2:buff(輔助)
 	 */
-	public int Target;
+	public int target;
 	
 	/*
 	 * 0:自己
@@ -32,30 +32,41 @@ public class SkillTemplate
 	 * 16:寵物
 	 * 32:場所
 	 */
-	public int TargetTo;
+	public int targetTo;
 	
-	public int DamageBase;
-	public int DamageDice;
-	public int DamageDiceCount;
+	public int damageBase;
+	public int damageDice;
+	public int damageDiceCount;
 	
-	public int ProperbilityValue;
-	public int ProperbilityDice;
+	public int properbilityValue;
+	public int properbilityDice;
 	
 	/* Element 0:none 1:Earth 2:Fire 4:Water 8:Wind */
-	public int Attr;
-	public int ActId;
+	public int attr;
+	public int actId;
 	
-	public int Type;
-	public int Lawful;
-	public int Range;
-	public int Area;
+	/*
+	 * bit
+	 * 0:特殊debuff
+	 * 1:對目標/道具 buff
+	 * 2:對目標debuff
+	 * 3:x
+	 * 4:回復技能
+	 * 5:復活技能
+	 * 6:攻擊技能
+	 * 7:特殊技能(teleport, 召喚)
+	 */
+	public int type;
+	public int lawful;
+	public int range;
+	public int area;
 	
-	public int MsgIdStart;
-	public int MsgIdStop;
-	public int MsgIdFail;
+	public int msgIdStart;
+	public int msgIdStop;
+	public int msgIdFail;
 	
-	public boolean Through;
-	public boolean ArrowType;
+	public boolean through;
+	public boolean arrowType;
 	
 	public SkillTemplate (
 		int _skillId,
@@ -90,55 +101,55 @@ public class SkillTemplate
 		int _msgIdFail,
 		int _arrowType) {
 		
-		SkillId = _skillId;
-		Name = _name;
-		SkillLv = _skillLevel;
-		SkillNumber = _skillNumber;
-		MpCost = _mpCost;
-		HpCost = _hpCost;
-		ItemCostId = _itemCostId;
-		ItemCostAmount = _itemCostCount;
-		DelayTime = _delayTime;
-		RemainTime = _remainTime;
+		skillId = _skillId;
+		name = _name;
+		skillLevel = _skillLevel;
+		skillNumber = _skillNumber;
+		costMp = _mpCost;
+		costHp = _hpCost;
+		costItemId = _itemCostId;
+		costItemAmount = _itemCostCount;
+		delayTime = _delayTime;
+		remainTime = _remainTime;
 		
 		//Target
 		if (_target.contentEquals ("none")) {
-			Target = 0;
+			target = 0;
 		} else if (_target.contentEquals ("attack")) {
-			Target = 1;
+			target = 1;
 		} else if (_target.contentEquals ("buff") ) {
-			Target = 2;
+			target = 2;
 		}
 		
-		TargetTo = _targetTo;
-		DamageBase = _damageValue;
-		DamageDice = _damageDice;
-		DamageDiceCount = _damageDiceCount;
-		ProperbilityValue = _properbilityValue;
-		ProperbilityDice = _properbilityDice;
-		Attr = _attr;
-		ActId = _actId;
-		Type = _type;
-		Lawful = _lawful;
-		Range = _ranged;
-		Area = _area;
+		targetTo = _targetTo;
+		damageBase = _damageValue;
+		damageDice = _damageDice;
+		damageDiceCount = _damageDiceCount;
+		properbilityValue = _properbilityValue;
+		properbilityDice = _properbilityDice;
+		attr = _attr;
+		actId = _actId;
+		type = _type;
+		lawful = _lawful;
+		range = _ranged;
+		area = _area;
 		//Through
 		if (_through > 0) {
-			Through = true;
+			through = true;
 		} else {
-			Through = false;
+			through = false;
 		}
-		Id = _id;
-		NameId = _nameId;
-		GfxId = _castGfx;
-		MsgIdStart = _msgIdStart;
-		MsgIdStop = _msgIdStop;
-		MsgIdFail = _msgIdFail;
+		id = _id;
+		nameId = _nameId;
+		gfx = _castGfx;
+		msgIdStart = _msgIdStart;
+		msgIdStop = _msgIdStop;
+		msgIdFail = _msgIdFail;
 		//Arrowtype
 		if (_arrowType > 0) {
-			ArrowType = true;
+			arrowType = true;
 		} else {
-			ArrowType = false;
+			arrowType = false;
 		}
 	}
 }

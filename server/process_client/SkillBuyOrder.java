@@ -123,7 +123,7 @@ public class SkillBuyOrder
 				for (int b = 0; b < 7; b++) {
 					if (((L1 >>> b) & 0x01) > 0) {
 						if (!DatabaseCmds.checkSkill (pc.uuid, 1+b) ) {
-							DatabaseCmds.saveSkills (pc.uuid, 1+b, CacheData.skill.get (1+b).Name);
+							DatabaseCmds.saveSkills (pc.uuid, 1+b, CacheData.skill.get (1+b).name);
 						}
 					}
 				}
@@ -133,7 +133,7 @@ public class SkillBuyOrder
 				for (int b = 0; b < 7; b++) {
 					if (((L2 >>> b) & 0x01) > 0) {
 						if (!DatabaseCmds.checkSkill (pc.uuid, 9+b) ) {
-							DatabaseCmds.saveSkills (pc.uuid, 9+b, CacheData.skill.get (9+b).Name) ;
+							DatabaseCmds.saveSkills (pc.uuid, 9+b, CacheData.skill.get (9+b).name) ;
 						}
 					}
 				}
@@ -143,7 +143,7 @@ public class SkillBuyOrder
 				for (int b = 0; b < 7; b++) {
 					if (((L3 >>> b) & 0x01) > 0) {
 						if (!DatabaseCmds.checkSkill (pc.uuid, 17+b) ) {
-							DatabaseCmds.saveSkills (pc.uuid, 17+b, CacheData.skill.get (17+b).Name) ;
+							DatabaseCmds.saveSkills (pc.uuid, 17+b, CacheData.skill.get (17+b).name) ;
 						}
 					}
 				}

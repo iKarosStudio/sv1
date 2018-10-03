@@ -311,7 +311,10 @@ public class CacheData
 					rs.getInt ("sysmsgID_fail"),
 					rs.getInt ("arrowType")	) ;
 				
-				skill.put (template.SkillId, template);
+				skill.put (template.skillId, template);
+				if (template.type == 128) {
+					//System.out.printf ("\nskill[%2d]%s:\t\t target:%02d type:%02d", template.skillId, template.name, template.targetTo, template.type);
+				}
 				Counter++;
 			}
 			long timeEnds = System.currentTimeMillis ();

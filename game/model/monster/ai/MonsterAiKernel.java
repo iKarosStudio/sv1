@@ -27,26 +27,10 @@ public class MonsterAiKernel extends TimerTask implements Runnable
 			/*
 			 * 死亡檢查
 			 */
-			
-			if (!monster.isDead) {
-				if (monster.hp < 1) {
-					byte[] die = new ModelAction (ModelActionId.DIE, monster.uuid, monster.heading).getRaw () ;
-					
-					//轉移經驗值與道具
-					monster.transferExp ();
-					monster.transferItems ();
-					
-					monster.boardcastPcInsight (die);
-					
-					monster.isDead = true;
-					monster.actionStatus = MonsterInstance.ACTION_DEAD;
-					System.out.printf ("%s 死掉了\n", monster.name);
-				}
+			if (monster.isDead) {
+				return;
 			}
 			
-			/*
-			 * 執行AI動作
-			 */
 			ai ();
 			
 		} catch (Exception e) {

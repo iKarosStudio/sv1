@@ -34,6 +34,7 @@ public class NormalAttack
 			isHit = isPc2NpcHit (src, dest);
 			if (isHit) {
 				dmg = calcPc2NpcDamage (src, dest);
+				dest.toggleHateList (src, dmg);
 				dest.takeDamage (dmg);
 				
 				/*
@@ -44,9 +45,6 @@ public class NormalAttack
 					dest.actionStatus = MonsterInstance.ACTION_ATTACK;
 					dest.targetPc = src;
 				}
-				
-				dest.toggleHateList (src, dmg);
-				
 			} else {
 				dmg = 0;
 			}
@@ -133,7 +131,9 @@ public class NormalAttack
 		
 		if (hitRate > 95) {
 			hitRate = 95;
-		} else if (hitRate < 5) {
+		} 
+		
+		if (hitRate < 5) {
 			hitRate = 5;
 		}
 		
@@ -155,11 +155,13 @@ public class NormalAttack
 			hitRate = src.level;
 		}
 		
-		if (hitRate < 5) {
-			hitRate = 5;
-		} else if (hitRate > 95) {
+		if (hitRate > 95) {
 			hitRate = 95;
 		}
+		
+		if (hitRate < 5) {
+			hitRate = 5;
+		} 
 		
 		int rate = random.nextInt (100) + 1;
 		return rate < hitRate;
@@ -231,6 +233,9 @@ public class NormalAttack
 				}
 				
 				if (src.isDarkelf ()) {
+					//雙刀1/3機率打出最大傷害 特效3671
+					//雙刀1/4機率打出雙倍傷害 特效3398
+					//雙刀雙爪有雙重破壞時1/3機率打出雙倍傷害
 				}
 				
 				if (dest.isUndead || dest.isWolf || dest.isOrc) {
@@ -243,9 +248,6 @@ public class NormalAttack
 					}
 				}
 				
-				//雙刀1/3機率打出最大傷害 特效3671
-				//雙刀1/4機率打出雙倍傷害 特效3398
-				//雙刀雙爪有雙重破壞時1/3機率打出雙倍傷害
 			}
 			
 			//有擬似魔法武器+2

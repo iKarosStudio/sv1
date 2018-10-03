@@ -1,9 +1,11 @@
 package vidar.server.database;
 
 import java.sql.*;
+import java.util.HashMap;
 
 import vidar.game.model.*;
 import vidar.game.model.item.*;
+import vidar.game.skill.SkillEffect;
 
 public class DatabaseCmds
 {
@@ -221,21 +223,98 @@ public class DatabaseCmds
 		return result;
 	}
 	
-	public static ResultSet loadTeleportBookmark (int uuid) {
-		Connection con = HikariCP.getConnection () ;
+	public static void insertSkillEffect (int uuid, int skillId, int remainTime, int polyId) {
+		Connection con = HikariCP.getConnection ();
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement ("INSERT INTO character_buff SET char_obj_id=?, skill_id=?, remaining_time=?, poly_id=?;");
+			ps.setInt (1, uuid);
+			ps.setInt (2, skillId);
+			ps.setInt (3, remainTime);
+			ps.setInt (4, polyId);
+			ps.execute ();
+			
+		} catch (Exception e) {
+			e.printStackTrace ();
+		} finally {
+			DatabaseUtil.close (con);
+			DatabaseUtil.close (ps);
+		}
+	}
+	
+	public static void updateSkillEffect (int uuid, int skillId, int remainTime, int polyId) {
+		Connection con = HikariCP.getConnection ();
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement ("UPDATE character_buff SET remaining_time=?, poly_id=? WHERE char_obj_id=? AND skill_id=?;");
+			ps.setInt (1, remainTime);
+			ps.setInt (2, polyId);
+			ps.setInt (3, uuid);
+			ps.setInt (4, skillId);
+			ps.execute ();
+			
+		} catch (Exception e) {
+			e.printStackTrace ();
+		} finally {
+			DatabaseUtil.close (con);
+			DatabaseUtil.close (ps);
+		}
+	}
+	
+	public static void deleteSkillEffects (int uuid) {
+		Connection con = HikariCP.getConnection ();
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement ("DELETE FROM character_buff WHERE char_obj_id=?;");
+			ps.setInt (1, uuid);
+			ps.execute ();
+			
+		} catch (Exception e) {
+			e.printStackTrace ();
+		} finally {
+			DatabaseUtil.close (con);
+			DatabaseUtil.close (ps);
+		}
+	}
+	
+	public static ResultSet loadSkillEffects (int uuid) {
+		Connection con = HikariCP.getConnection ();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
 		try {
-			ps = con.prepareStatement ("SELECT * FROM charater_teleport WHERE char_id=? ORDER BY name ASC;") ;
-			ps.setInt (1, uuid) ;
-			rs = ps.executeQuery () ;
+			ps = con.prepareStatement ("SELECT * FROM character_buff WHERE char_obj_id=?;");
+			ps.setInt (1, uuid);
+			rs = ps.executeQuery ();
+			
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
+			
 		} finally {
-			DatabaseUtil.close (rs) ;
-			DatabaseUtil.close (ps) ;
-			DatabaseUtil.close (con) ;
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
+			
+		}
+		
+		return rs;
+	}
+	
+	public static ResultSet loadTeleportBookmark (int uuid) {
+		Connection con = HikariCP.getConnection ();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement ("SELECT * FROM charater_teleport WHERE char_id=? ORDER BY name ASC;");
+			ps.setInt (1, uuid);
+			rs = ps.executeQuery ();
+			
+		} catch (Exception e) {
+			e.printStackTrace ();
+		} finally {
+			//DatabaseUtil.close (rs);
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
 		}
 		
 		return rs;

@@ -27,9 +27,7 @@ public class MonsterAiDistributor implements Runnable
 			
 			//被動模式
 			if (m.aiKernel != null) {
-				/*
-				 * 太久沒有被玩家觸發, 主動停止並清除AI核心節省系統資源
-				 */
+				/* 太久沒有被玩家觸發, 主動停止並清除AI核心節省系統資源 */
 				if (m.aiKernel.timeoutCounter < 20) { //500ms * 20 = 10s
 					m.aiKernel.timeoutCounter++;
 				} else {
@@ -49,7 +47,6 @@ public class MonsterAiDistributor implements Runnable
 					m.aiKernel.cancel ();
 					m.aiKernel = null;
 					
-					//map.remo (m) ;
 					map.monsters.remove (m.uuid);
 					map.monsterGenerator.removeMonster (m);
 				}

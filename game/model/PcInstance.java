@@ -201,6 +201,7 @@ public class PcInstance extends Model
 				} else if (item.isArmor () && item.isUsing) {
 					setArmor (item.uuid);
 				} else if (item.isArrow ()) {
+					setArrow (item.uuid);
 				}
 			}
 			
@@ -223,7 +224,7 @@ public class PcInstance extends Model
 			while (rs.next ()) {
 				int skill_id = rs.getInt ("skill_id");
 				SkillTemplate skillTemplate = CacheData.skill.get (skill_id);
-				skillValue[skillTemplate.SkillLv] |= skillTemplate.Id;
+				skillValue[skillTemplate.skillLevel] |= skillTemplate.id;
 			}
 			
 			for (int i = 1; i <= 24; i++) {
@@ -236,6 +237,14 @@ public class PcInstance extends Model
 		} finally {
 			DatabaseUtil.close (rs);
 		}
+	}
+	
+	public void saveSkillEffect () {
+		skillBuffs.saveBuffs ();
+	}
+	
+	public void loadSkillEffect () {
+		skillBuffs.loadBuffs ();
 	}
 	
 	public synchronized void attack (int _targetUuid, int _targetX, int _targetY) {
@@ -251,12 +260,14 @@ public class PcInstance extends Model
 		NormalAttack atk = new NormalAttack (this, _targetUuid, _targetX, _targetY);
 		
 		if (atk.isHit) {
+			System.out.printf ("命中! ");
 			if (atk.isRemoteAttack) {
 				actionPacket = new ModelShootArrow (this, _targetUuid, _targetX, _targetY).getRaw ();
 			} else {
 				actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
 			}
 		} else {
+			System.out.printf ("未命中!\n");
 			actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
 		}
 		
@@ -272,12 +283,15 @@ public class PcInstance extends Model
 	synchronized public void takeDamage (int dmg) {
 		if (hp > dmg) {
 			hp -= dmg;
-			boardcastPcInsight (new ModelAction (ModelActionId.DAMAGE, uuid, heading).getRaw());
+			byte[] actionDamage = new ModelAction (ModelActionId.DAMAGE, uuid, heading).getRaw();
+			handle.sendPacket (actionDamage);
+			boardcastPcInsight (actionDamage);
 		} else {
 			hp = 0;
 			isDead = true;
-			System.out.printf ("%s 往生了!\n", name);
-			boardcastPcInsight (new ModelAction (ModelActionId.DIE, uuid, heading).getRaw());
+			byte[] actionDie = new ModelAction (ModelActionId.DIE, uuid, heading).getRaw();
+			handle.sendPacket (actionDie);
+			boardcastPcInsight (actionDie);
 		}
 	}
 	
@@ -414,7 +428,7 @@ public class PcInstance extends Model
 	
 	public void removeSkillEffect(int skillId) {
 		if (skillBuffs.effects.containsKey (skillId)) {
-			skillBuffs.effects.get(skillId).RemainTime = 0;
+			skillBuffs.effects.get(skillId).remainTime = 0;
 		}
 	}
 	
@@ -684,6 +698,8 @@ public class PcInstance extends Model
 	}
 	
 	public void offline () {
+		saveSkillEffect ();
+		
 		sightUpdate.stop ();
 		routineTasks.stop ();
 		skillBuffs.stop ();
@@ -693,6 +709,7 @@ public class PcInstance extends Model
 		sightUpdate = null;
 		routineTasks = null;
 		skillBuffs = null;
+		
 		
 		DatabaseCmds.savePc (this);		
 	}

@@ -39,14 +39,17 @@ public class ItemUse
 				} else if (item.minorType == TYPE_LIGHT) {
 					//
 				} else if (item.minorType == TYPE_GEM) {
-					//
+					handle.sendPacket (new ServerMessage (74, new String[] {item.name}).getRaw ());
+					
 				} else if (item.minorType == TYPE_TOTEM) {
-					//
+					handle.sendPacket (new ServerMessage (74, new String[] {item.name}).getRaw ());
+					
 				} else if (item.minorType == TYPE_FIRECRACKER) {
 					//
 				} else if (item.minorType == TYPE_POTION) {
 					new UsePotion (pc, item) ;
 					//Pc.removeItem (i.Uuid, 1) ;
+					
 				} else if (item.minorType == TYPE_FOOD) {
 					//
 				} else if (item.minorType == TYPE_SCROLL) {
@@ -76,7 +79,8 @@ public class ItemUse
 						handle.sendPacket (new MapUse (item.uuid, item.id).getRaw ());
 					}
 				} else if (item.minorType == TYPE_MATERIAL) {
-					//
+					handle.sendPacket (new ServerMessage (74, new String[] {item.name}).getRaw ());
+					
 				} else if (item.minorType == TYPE_EVENT) {
 					//
 				} else if (item.minorType == TYPE_STING) {
@@ -90,9 +94,13 @@ public class ItemUse
 				pc.setWeapon (item.uuid);
 				
 				/* 更新腳色武器外型 */
-				byte[] packet = new UpdateModelGfx (pc.uuid, pc.getWeaponGfx ()).getRaw ();
-				handle.sendPacket (packet) ;
-				pc.boardcastPcInsight (packet) ;
+				if (pc.isPoly ()) {
+					//
+				} else {
+					byte[] packet = new UpdateModelGfx (pc.uuid, pc.getWeaponGfx ()).getRaw ();
+					handle.sendPacket (packet) ;
+					pc.boardcastPcInsight (packet) ;
+				}
 			
 			/* 使用防具 */
 			} else if (item.isArmor ()) {

@@ -31,7 +31,6 @@ public class CharacterOperation {
 			
 			pc.loadItemBag ();
 			pc.loadSkills ();
-			pc.skillBuffs.loadBuffs ();
 					
 			/* fix
 			byte[] config = new SendClientConfig (Handle).getRaw () ;
@@ -69,6 +68,8 @@ public class CharacterOperation {
 			
 			pc.updateCurrentMap ();
 			Vidar.getInstance ().addPc (pc);
+			
+			pc.loadSkillEffect ();
 			
 		} else {
 			/* 沒有角色ID, 非正常登入現象 */

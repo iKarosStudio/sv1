@@ -3,22 +3,18 @@ package vidar.server.process_server;
 import vidar.server.packet.*;
 import vidar.server.opcodes.*;
 
-/*
- * 告知客戶端NPC含有對話內容的HTML ID編號
- */
-public class NpcAccessResult
+public class NpcNothingForSell
 {
+	/*
+	 * 告知客戶端NPC含有對話內容的HTML ID編號
+	 */
 	private PacketBuilder packet = new PacketBuilder ();
 	
-	public NpcAccessResult (int npcId, String htmlKey) {
-		
+	public NpcNothingForSell (int npcId) {
 		packet.writeByte (ServerOpcodes.NPC_RESULT);
 		packet.writeDoubleWord (npcId);
-		packet.writeString (htmlKey);
-		//有參數在這邊帶入
-		//參考S_NPCTalksReturn.java
-		packet.writeWord (0x00);
-		packet.writeWord (0x00);
+		packet.writeString ("nosell");
+		packet.writeByte (0x01) ;
 
 	}
 	

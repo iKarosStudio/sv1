@@ -18,6 +18,7 @@ public class Teleport
 			map.addPc (pc);
 			pc.map.removePc (pc);
 			pc.map = map;
+			pc.saveSkillEffect ();
 		}
 		
 		pc.location.point.x = dest.point.x;
@@ -47,6 +48,9 @@ public class Teleport
 		handle.sendPacket (mapIdPacket);
 		handle.sendPacket (pcPacket);
 		handle.sendPacket (new UpdateModelGfx (pc.uuid, pc.getWeaponGfx ()).getRaw ());
+		if (pc.location.mapId != dest.mapId) {
+			pc.loadSkillEffect ();
+		}
 	
 		pc.boardcastPcInsight (pcPacket) ;
 	}

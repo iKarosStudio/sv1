@@ -160,20 +160,25 @@ public class MonsterInstance extends Model
 			boardcastPcInsight (new ModelAction (ModelActionId.DAMAGE, uuid, heading).getRaw());
 			
 		} else {
-			/*
-			try {
-				Aikernel.wait () ;
-			} catch (Exception e) {e.printStackTrace () ; }
-			*/
-			hp = 0;
-			//isDead = true;
-			//actionStatus = ACTION_DEAD;
 			
-			//往生動作
-			//boardcastPcInsight (new ModelAction (ModelActionId.DIE, uuid, heading).getRaw());
+			//一個毆打致死
+			try {
+				byte[] die = new ModelAction (ModelActionId.DIE, uuid, heading).getRaw ();
+				boardcastPcInsight (die);
+				
+				//轉移經驗值與道具
+				transferExp ();
+				transferItems ();					
+				
+				hp = 0;
+				isDead = true;
+				actionStatus = MonsterInstance.ACTION_DEAD;
+				System.out.printf ("%s 死掉了\n", name);
+			} catch (Exception e) {
+				e.printStackTrace ();
+			}
 		}
-		
-		
+
 	}
 	
 	public void transferExp () {

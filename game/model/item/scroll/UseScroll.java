@@ -16,8 +16,7 @@ public class UseScroll
 		pc = _pc;
 		handle = _pc.getHandle ();
 		
-		
-		switch (scroll.minorType) {
+		switch (scroll.useType) {
 		case TYPE_USE_NTELE:
 			TeleportScroll (scroll);
 			break;
@@ -68,7 +67,6 @@ public class UseScroll
 	private void TeleportScroll (ItemInstance scroll) {
 		//麻痺時不能順移
 		//
-		
 		if (pc.isFreeze ()) {
 		}
 		
