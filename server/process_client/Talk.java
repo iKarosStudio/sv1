@@ -23,19 +23,30 @@ public class Talk
 		}
 		*/
 		
-		/* IGCP */
-		InGameCommandParser igcp = new InGameCommandParser (handle, talkText);
-		if(igcp.parse ()) {//is a command
-			return;
+		/* 開發人員指令管理功能 */
+		if (pc.isRd) {
+			/* IGCP */
+			InGameCommandParser igcp = new InGameCommandParser (handle, talkText);
+			if(igcp.parse ()) {//is a command
+				return;
+			}
+			
+		} else {
+			if (talkText.contains (".rdon")) {
+				pc.isRd = true;
+				handle.sendPacket (new SystemMessage ("啟動RD命令解析").getRaw ());
+				return;
+			}
 		}
-		
+
 		NodeTalks chat = new NodeTalks (pc.uuid, pc.name, talkText, ServerOpcodes.NORMAL_TALKS, talkType);
 		chat.withName ();
 		byte[] chatPacket = chat.getRaw ();  
 		
 		if (talkType == 0x00) { //普通對話
-			handle.sendPacket (chatPacket) ;
-			pc.boardcastPcInsight (chatPacket) ;
+			handle.sendPacket (chatPacket);
+			pc.boardcastPcInsight (chatPacket);
+			
 		} else if (talkType == 0x02) {//大喊
 			//
 		} else if (talkType == 0x03) {//隊伍頻道
@@ -55,11 +66,6 @@ public class Talk
 			}
 			
 			System.out.printf ("[%s]%s: %s", talkTypeName, pc.name, talkText);
-			/*
-			for (byte b : talkText.getBytes () ) {
-				System.out.printf ("0x%02X ", b) ;
-			}
-			*/
 			System.out.println();
 		}
 	}

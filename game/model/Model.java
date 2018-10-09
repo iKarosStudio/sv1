@@ -7,6 +7,8 @@ import vidar.game.map.*;
 import vidar.game.skill.*;
 import static vidar.game.skill.SkillId.*;
 
+import java.util.List;
+
 public class Model
 {
 	/* 通用辨識編號 */
@@ -101,7 +103,7 @@ public class Model
 	}
 	
 	public boolean hasSkillEffect (int skillId) {
-		return skillBuffs.effects.containsKey (skillId);
+		return skillBuffs.hasSkillEffect (skillId);
 	}
 	
 	public boolean isParalyzed () {
@@ -144,4 +146,10 @@ public class Model
 		return hasSkillEffect (SHAPE_CHANGE);
 	}
 	
+	public void boardcastPcInsight (byte[] packet) {
+		List<PcInstance> pcs = map.getPcsInsight (location.point);			
+		for (PcInstance pc : pcs) {
+			pc.getHandle ().sendPacket (packet);
+		}
+	}
 }

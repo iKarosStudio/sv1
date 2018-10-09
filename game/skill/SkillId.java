@@ -120,4 +120,8 @@ public class SkillId
 	public static final int STATUS_CURSE_PARALYZING = 1010;
 	public static final int STATUS_CURSE_PARALYZED = 1011;
 	public static final int STATUS_FLOATING_EYE = 1012;
+	
+	public static final int SKILL_TARGET_NONE = 0;
+	public static final int SKILL_TARGET_ATTACK = 1;
+	public static final int SKILL_TARGET_BUFF = 2;
 }

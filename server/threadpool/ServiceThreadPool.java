@@ -31,12 +31,10 @@ public class ServiceThreadPool
 		        }*/
 		) ;
 		
-		/*
-		 * 數量建議值=max_users / 20
-		 */
+		/* 數量建議值=max_users / 20 */
 		servicePool = Executors.newScheduledThreadPool (
 				50, //Size
-				new PriorityThreadFactory ("UserService", Thread.NORM_PRIORITY) //ThreadFactory
+				new PriorityThreadFactory ("user_service", Thread.NORM_PRIORITY) //ThreadFactory
 			) ;
 		
 		System.out.println ("success") ;
@@ -44,17 +42,16 @@ public class ServiceThreadPool
 	
 	public void execute (Runnable Foo) {
 		if (pool != null) {
-			pool.execute (Foo) ;
+			pool.execute (Foo);
 			
 		} else {
-			Thread thread = new Thread (Foo) ;
-			thread.start () ;
-			//thread.setDaemon ();
+			Thread thread = new Thread (Foo);
+			thread.start ();
 		}
 	}
 	
 	public ScheduledFuture<?> ScheduleAtFixedRate (Runnable Foo, long InitDelay, long Period) {
-		return servicePool.scheduleAtFixedRate (Foo, InitDelay, Period, TimeUnit.MILLISECONDS) ;
+		return servicePool.scheduleAtFixedRate (Foo, InitDelay, Period, TimeUnit.MILLISECONDS);
 	}
 	
 	/*
@@ -78,21 +75,22 @@ public ScheduledFuture<?> pcSchedule(L1PcMonitor r, long delay) {
 	 */
 	
 	private class PriorityThreadFactory implements ThreadFactory {
-		private final int _priority;
-		private final String _group_name;
-		private final AtomicInteger _thread_number = new AtomicInteger (1) ;
-		private final ThreadGroup _group;
+		private final int priority;
+		private final String groupName;
+		private final AtomicInteger threadNumber = new AtomicInteger (1) ;
+		private final ThreadGroup group;
 		
-		public PriorityThreadFactory (String name, int priority) {
-			_priority = priority;
-			_group_name = name;
-			_group = new ThreadGroup (_group_name) ;
+		public PriorityThreadFactory (String name, int _priority) {
+			priority = _priority;
+			groupName = name;
+			group = new ThreadGroup (groupName) ;
 		}
 		
+		//interface
 		public Thread newThread (Runnable Foo) {
-			Thread thread = new Thread (_group, Foo) ;
-			thread.setName (_group_name + "-" + _thread_number.getAndIncrement () ) ;
-			thread.setPriority (_priority) ;
+			Thread thread = new Thread (group, Foo);
+			thread.setName (groupName + "-" + threadNumber.getAndIncrement ());
+			thread.setPriority (priority) ;
 			return thread;
 		}
 		/*

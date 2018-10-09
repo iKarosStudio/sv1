@@ -120,9 +120,9 @@ public class SkillBuyOrder
 			
 			/* 檢查各等級沒學過的技能並寫入資料庫 */
 			if (L1 != 0) {
-				for (int b = 0; b < 7; b++) {
+				for (int b = 0; b < 8; b++) {
 					if (((L1 >>> b) & 0x01) > 0) {
-						if (!DatabaseCmds.checkSkill (pc.uuid, 1+b) ) {
+						if (!DatabaseCmds.checkSkill (pc.uuid, 1+b)) {
 							DatabaseCmds.saveSkills (pc.uuid, 1+b, CacheData.skill.get (1+b).name);
 						}
 					}
@@ -130,7 +130,7 @@ public class SkillBuyOrder
 			}
 			
 			if (L2 != 0) {
-				for (int b = 0; b < 7; b++) {
+				for (int b = 0; b < 8; b++) {
 					if (((L2 >>> b) & 0x01) > 0) {
 						if (!DatabaseCmds.checkSkill (pc.uuid, 9+b) ) {
 							DatabaseCmds.saveSkills (pc.uuid, 9+b, CacheData.skill.get (9+b).name) ;
@@ -140,7 +140,7 @@ public class SkillBuyOrder
 			}
 			
 			if (L3 != 0) {
-				for (int b = 0; b < 7; b++) {
+				for (int b = 0; b < 8; b++) {
 					if (((L3 >>> b) & 0x01) > 0) {
 						if (!DatabaseCmds.checkSkill (pc.uuid, 17+b) ) {
 							DatabaseCmds.saveSkills (pc.uuid, 17+b, CacheData.skill.get (17+b).name) ;

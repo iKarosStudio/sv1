@@ -18,7 +18,7 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 	private final Timer timer = new Timer ("SkillEffectTimer") ;
 	private PcInstance pc;
 	private SessionHandler handle;
-	public ConcurrentHashMap<Integer, SkillEffect> effects = null;
+	private ConcurrentHashMap<Integer, SkillEffect> effects = null;
 	
 	
 	public SkillEffectTimer (PcInstance pc) {
@@ -83,7 +83,7 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 			e.printStackTrace ();
 			
 		} finally {
-			//DatabaseUtil.close (rs);
+			DatabaseUtil.close (rs);
 		}
 	}
 	
@@ -101,6 +101,12 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 	
 	private void skillPacket (int skillId) {
 		switch (skillId) {
+		case SkillId.SHIELD:
+			pc.skillParameters.ac -= 1;
+			handle.sendPacket (new UpdateAc (pc).getRaw ());
+			handle.sendPacket (new SkillShield (effects.get (skillId).remainTime, 0).getRaw ());
+			break;
+		
 		case SkillId.STATUS_HASTE:
 			handle.sendPacket (new SkillHaste (pc.uuid, 1, effects.get(skillId).remainTime).getRaw());
 			break;
@@ -114,23 +120,50 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 		}
 	}
 	
+	
+	public void addSkill (int skillId, int remainTime, int polyId) { //skillid, remain time poly
+		SkillEffect effect = new SkillEffect (skillId, remainTime, polyId);
+		effects.put (skillId, effect);
+		skillPacket (skillId);
+	}
+
+	
+	public void removeSkill(int skillId) {//skillid
+		stopSkill (skillId);
+	}
+	
+	public void stopSkill (int skillId) {
+		switch (skillId) {
+		case SkillId.SHIELD: //保護罩
+			pc.skillParameters.ac += 1;
+			handle.sendPacket (new UpdateAc (pc).getRaw ());
+			handle.sendPacket (new SkillShield (0, 0).getRaw ());
+			break;
+		
+		case SkillId.STATUS_HASTE: //加速
+			pc.moveSpeed = 0;
+			handle.sendPacket (new SkillHaste (pc.uuid, 0, 0).getRaw ());
+			break;
+			
+		case SkillId.STATUS_BRAVE: //勇敢藥水
+			pc.braveSpeed = 0;
+			handle.sendPacket (new SkillBrave (pc.uuid, 0, 0).getRaw ());
+			break;
+		
+		default:
+			break;
+		}
+	}
+	
+	public ConcurrentHashMap<Integer, SkillEffect> getEffects () {
+		return effects;
+	}
+	
 	public void start () {
 		timer.scheduleAtFixedRate (this, 0, 1000); //1S interval
 	}
 	
 	public void stop () {
 		timer.cancel ();
-	}
-	
-	public void stopSkill (int skillId) {
-		if (skillId == SkillId.STATUS_HASTE) {
-			pc.moveSpeed = 0;
-			handle.sendPacket (new SkillHaste (pc.uuid, 0, 0).getRaw () ) ;
-			
-		} else if (skillId == SkillId.STATUS_BRAVE) {
-			pc.braveSpeed = 0;
-			handle.sendPacket (new SkillBrave (pc.uuid, 0, 0).getRaw () ) ;
-			
-		}
 	}
 }

@@ -14,6 +14,6 @@ public class UpdateHp
 	}
 	
 	public byte[] getRaw () {
-		return builder.getPacket () ;
+		return builder.getPacket ();
 	}
 }

@@ -19,7 +19,9 @@ public class SkillTemplate
 	public int remainTime;
 	
 	/*
-	 *  0:none(自身) 1:attack(攻擊) 2:buff(輔助)
+	 *  0:none(自身)   -> 沒有指定目標uuid(通常)
+	 *  1:attack(攻擊) ->
+	 *  2:buff(輔助)   ->
 	 */
 	public int target;
 	

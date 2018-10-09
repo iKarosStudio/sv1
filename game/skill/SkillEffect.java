@@ -4,7 +4,7 @@ public class SkillEffect
 {
 	public int skillId;
 	public int remainTime; /* Sesond */
-	public int polyGfx = 0;
+	public int polyGfx = 0; //poly gfx of target item uid
 	
 	public SkillEffect (int _skillId, int _remainTime) {
 		skillId = _skillId;

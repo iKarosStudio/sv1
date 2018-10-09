@@ -3,13 +3,11 @@ package vidar.game.model.monster.ai;
 import java.util.*;
 import java.util.concurrent.*;
 
-/*
- * AI工作要求Queue
- */
+/* AI工作要求Queue */
 public class MonsterAiQueue
 {
 	private static MonsterAiQueue instance;
-	private static Queue<Runnable> taksQueue;
+	private static Queue<Runnable> taskQueue;
 	
 	public static MonsterAiQueue getInstance () {
 		if (instance == null) {
@@ -20,11 +18,15 @@ public class MonsterAiQueue
 	
 	public MonsterAiQueue () {
 		System.out.printf ("AI Task queue initializing...") ;
-		taksQueue = new ConcurrentLinkedQueue<Runnable> () ;
+		taskQueue = new ConcurrentLinkedQueue<Runnable> () ;
 		System.out.printf ("success\n") ;
 	}
 	
+	public int getQueueSize () {
+		return taskQueue.size ();
+	}
+	
 	public synchronized Queue<Runnable> getQueue () {
-		return taksQueue;
+		return taskQueue;
 	}
 }

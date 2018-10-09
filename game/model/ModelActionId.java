@@ -1,4 +1,4 @@
-package vidar.server.process_server;
+package vidar.game.model;
 
 public class ModelActionId
 {

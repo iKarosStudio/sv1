@@ -1,6 +1,7 @@
 package vidar.game;
 
 import java.lang.Thread;
+import java.util.*;
 import java.util.concurrent.*;
 
 import vidar.config.*;
@@ -171,6 +172,20 @@ public class Vidar extends Thread
 	
 	public VidarMap getMap (int id) {
 		return maps.get (id) ;
+	}
+	
+	public PcInstance getPc (int uuid) {
+		List<PcInstance> result = new ArrayList<PcInstance> ();
+		
+		maps.forEach ((Integer mapId, VidarMap map)->{
+			map.pcs.forEach ((Integer uid, PcInstance pc)->{
+				if (uid == uuid) {
+					result.add (pc);
+				}
+			});
+		});
+		
+		return result.get (0);
 	}
 	
 }

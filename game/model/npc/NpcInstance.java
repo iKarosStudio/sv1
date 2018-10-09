@@ -17,5 +17,6 @@ public class NpcInstance extends Model
 		heading = _template.heading;
 		
 		location = new Location ();
+		updateCurrentMap ();
 	}
 }

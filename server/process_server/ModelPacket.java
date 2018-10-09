@@ -24,9 +24,7 @@ public class ModelPacket
 	public static int STATUS_FASTMOVE = 0x40; //高速移動用
 	public static int STATUS_GHOST = 0x80; //幽靈模式
 	
-	/*
-	 * 報告角色物件
-	 */
+	/* 報告角色物件 */
 	public ModelPacket (PcInstance pc) {
 		int status = STATUS_PC;	
 		
@@ -114,44 +112,8 @@ public class ModelPacket
 	}
 	
 	/*
-	 * 報告地面物件
-	 */
-	/*
-	public NodePacket (ItemInstance i) {
-		packet.writeByte (ServerOpcodes.NODE_PACK) ;
-		packet.writeWord (i.location.point.x) ;
-		packet.writeWord (i.location.point.y) ;
-		packet.writeDoubleWord (i.Uuid) ;
-		packet.writeWord (i.GndGfx) ;
-		packet.writeByte (0); //*
-		packet.writeByte (0); //heading
-		packet.writeByte (1) ; //light
-		packet.writeByte (0) ; //speed
-		packet.writeDoubleWord (i.Count) ;
-		packet.writeByte (0) ;
-		packet.writeByte (0) ;
-		if (i.Count > 1) {
-			packet.writeString (i.getName () ) ;
-		} else {
-			packet.writeString (i.Name) ;
-		}
-		packet.writeByte (0) ;
-		packet.writeDoubleWord (0) ;
-		packet.writeDoubleWord (0) ;
-		packet.writeByte (0xFF) ;
-		packet.writeByte (0) ;
-		packet.writeByte (0) ;
-		packet.writeByte (0) ;
-		packet.writeWord (0xFFFF) ; 
-		packet.writeDoubleWord (0) ;
-		packet.writeByte (0) ;
-		packet.writeByte (0) ;
-	}
-	*/
-	/*
 	 * 報告門物件
 	 */
-	
 	public ModelPacket (DoorInstance d) {
 		packet.writeByte (ServerOpcodes.MODEL_PACK) ;
 		packet.writeWord (d.location.point.x) ;

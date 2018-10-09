@@ -27,12 +27,13 @@ public class NpcRequest
 	int size = 0;
 	int unknown = 0;
 	
+	SessionHandler handle = null;
 	PcInstance pc = null;
 	PacketReader packetReader = null;
 	
-	public NpcRequest (SessionHandler handle, byte[] data) {
-		
-		pc = handle.getPc ();
+	public NpcRequest (SessionHandler _handle, byte[] data) {
+		handle = _handle;
+		pc = _handle.getPc ();
 		packetReader = new PacketReader (data);
 		
 		npcId = packetReader.readDoubleWord ();
@@ -40,11 +41,11 @@ public class NpcRequest
 		size = packetReader.readByte ();
 		unknown = packetReader.readByte ();
 		
-		System.out.printf ("npc request npcid:%d type:%d\n", npcId, reqType);
+		System.out.printf ("npc request npcid(%d) type:%d\n", npcId, reqType);
 		
 		switch (reqType) {
 		case 0: //Shop buy
-			parseBuyList (handle, data);
+			parseBuyList (_handle, data);
 			break;
 			
 		case 1: //Shop sell
@@ -146,11 +147,6 @@ public class NpcRequest
 		 * 更新資料庫
 		 */
 		//pc.saveItem ();
-		
-		/*
-		 * 更新角色狀況
-		 */
-		handle.sendPacket (new NodeStatus (pc).getRaw ());
 	}
 	
 	void parseSellList (int npcId, int size, byte[] data) {
@@ -158,15 +154,15 @@ public class NpcRequest
 		
 		if (npcId == 70523 || npcId == 70805) { // ???or ?∴??
 			htmlId = "ladar2";
-			System.out.printf ("特殊NPC處理 查NpcRequest.java:159\n");
+			System.out.printf ("特殊NPC處理 查C_NpcRequest.java:159\n");
 			
 		} else if (npcId == 70537 || npcId == 70807) { // ?橘??喉???or ?橘???
 			htmlId = "farlin2";
-			System.out.printf ("特殊NPC處理 查NpcRequest.java:163\n");
+			System.out.printf ("特殊NPC處理 查C_NpcRequest.java:163\n");
 			
 		} else if (npcId == 70525 || npcId == 70804) { // ???? or ?∴???
 			htmlId = "lien2";
-			System.out.printf ("特殊NPC處理 查NpcRequest.java:169\n");
+			System.out.printf ("特殊NPC處理 查C_NpcRequest.java:169\n");
 			
 		} else if (npcId == 50527 || npcId == 50505 || npcId == 50519
 				|| npcId == 50545 || npcId == 50531 || npcId == 50529
@@ -192,18 +188,27 @@ public class NpcRequest
 			if (sellHouseMessage != null) {
 				htmlId = sellHouseMessage;
 			}*/
-			System.out.printf ("特殊NPC處理 查NpcRequest.java:171\n");
-		} else {
+			System.out.printf ("特殊NPC處理 查C_NpcRequest.java:171\n");
+			
+		} else {			
+			NpcShop shop = CacheData.npcShop.get (npcId);
+			int totalPrice = 0;
 			//一般商店處理
 			for (int index = 0; index < size; index++) {
-				int solduuid = packetReader.readDoubleWord ();
-				int soldcount = packetReader.readDoubleWord ();
+				int soldUuid = packetReader.readDoubleWord ();
+				int soldCount = packetReader.readDoubleWord ();
+				
+				totalPrice += (shop.itemPrice.get (pc.itemBag.get (soldUuid).id) >>> 1) * soldCount;
+				pc.removeItem (soldUuid, soldCount);
 			}
 			
 			//賣掉換錢
-			
-			//pc.sendPackets(new S_ShopBuyList(objid, pc));
-			pc.getHandle ().sendPacket (new NpcNothingForSell (npcId).getRaw());
+			pc.addMoney (totalPrice);
 		}
+		
+		/*
+		 * 更新角色狀況
+		 */
+		handle.sendPacket (new NodeStatus (pc).getRaw ());
 	}
 }

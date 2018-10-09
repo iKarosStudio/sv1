@@ -60,8 +60,8 @@ public class Main
 		gameService.start ();
 		
 		/* 建立管理用TCP/IP端口 */
-		ManageService manageService = ManageService.getInstance ();
-		manageService.start ();
+		//ManageService manageService = ManageService.getInstance ();
+		//manageService.start ();
 		
 		SystemMonitor systemMonitor = SystemMonitor.getInstance ();
 		KernelThreadPool.getInstance ().ScheduleAtFixedRate (systemMonitor, 0, 1000);
@@ -69,12 +69,14 @@ public class Main
 		
 		/* 實作賭場系統 */
 		if (Configurations.CASINO) {
+			//
 		}
 		
 		/* Display GameRate setting */
 		
 		System.out.printf ("cpu core  :%d\n", SystemMonitor.getInstance ().cpuCount);
 		System.out.printf ("system_pid:%s\n", SystemMonitor.getInstance ().pid);
+		System.out.printf ("run on:%s\n", System.getProperty("java.vm.name"));
 		
 		Runtime.getRuntime().addShutdownHook (new Shutdown ());
 		

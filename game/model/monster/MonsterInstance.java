@@ -254,11 +254,4 @@ public class MonsterInstance extends Model
 		}
 		
 	}
-	
-	public void boardcastPcInsight (byte[] packet) {
-		List<PcInstance> pcs = map.getPcsInsight (location.point);			
-		for (PcInstance pc : pcs) {
-			pc.getHandle ().sendPacket (packet);
-		}
-	}
 }

@@ -94,7 +94,7 @@ public class ReportNpcShop
 		List<ItemInstance> sellList = new ArrayList<ItemInstance> ();
 		
 		pc.itemBag.forEach ((Integer uuid, ItemInstance item)->{
-			if (shop.isExistItem (item.id)) { //可以賣掉的東西
+			if (shop.itemPrice.containsKey (item.id)) {
 				sellList.add (item);
 			}
 		});
@@ -108,7 +108,7 @@ public class ReportNpcShop
 			packet.writeWord (sellList.size ());
 			for (int index = 0; index < sellList.size (); index++) {
 				packet.writeDoubleWord (sellList.get (index).uuid); //item
-				packet.writeDoubleWord (50); //顯示售價
+				packet.writeDoubleWord (shop.itemPrice.get (sellList.get (index).id) >>> 1); //顯示售價
 			}
 		}
 	}

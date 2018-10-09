@@ -22,48 +22,28 @@ public class InGameCommandParser
 	}
 	
 	public boolean parse () {
-		boolean isValid = false;
+		boolean isValid = true;
 		
-		/*
-		if (talkText.startsWith (".help") ) {
-			byte[] packet = new SystemMessage (String.format ("RD開發資訊")).getRaw ();
-			handle.sendPacket (packet);
-			return;
+		if (text.startsWith (".rdoff")) {
+			pc.isRd = false;
+			handle.sendPacket (new SystemMessage ("關閉RD命令解析").getRaw ());
+			
+		} else if (text.startsWith (".tp")) { //傳送自己
+			new RdTeleport (pc, text);
+			
+		} else if (text.startsWith (".create")) { //創造道具
+			new RdCreateItem (pc, text);
+			
+		} else if (text.startsWith (".pc")) { //顯示pc資料
+			new RdPcData (pc, text);
+			
+		} else if (text.startsWith (".server")) { //顯示伺服器資料
+		} else if (text.startsWith (".map")) { //顯示地圖資料
+		} else if (text.startsWith (".tile")) { //顯示座標資料
+		} else {
+			isValid = false;
 		}
 		
-		if (talkText.startsWith (".tile") ) {
-			String[] splitText = talkText.split (" ") ;
-			if (splitText.length == 3) {
-				int t = pc.map.getTile (Integer.valueOf (splitText[1]), Integer.valueOf (splitText[2]) ) ;
-				String msg = String.format ("Tile(%s,%s):0x%02X", splitText[1], splitText[2], t) ; 
-				handle.sendPacket (new SystemMessage (msg).getRaw () ) ;
-			} else {
-				String msg = String.format ("Tile(%d:%5d, %5d):0x%02X", pc.map.mapId, pc.location.point.x, pc.location.point.y, pc.map.getTile (pc.location.point.x, pc.location.point.y) ) ;
-				handle.sendPacket (new SystemMessage (msg).getRaw () ) ;
-			}
-			return ;
-		}
-		
-		if (talkText.startsWith (".tp") ) {
-			String[] tpLocation = talkText.split (" ") ;
-			if (tpLocation.length == 4) {
-				int destMapId = Integer.valueOf (tpLocation[1]) ;
-				int destX = Integer.valueOf (tpLocation[2]) ;
-				int destY = Integer.valueOf (tpLocation[3]) ;
-				
-				
-				String msg = String.format ("Teleport to location(%d:%5d,%5d)\n", destMapId, destX, destY) ;
-				byte[] packet = new SystemMessage (msg).getRaw () ;
-				handle.sendPacket (packet) ;
-				
-				//Location Dest = new Location (DestMapId, DestX, DestY, Pc.heading) ;
-				Location dest = new Location (destMapId, destX, destY);
-				new Teleport (pc, dest, true) ;
-				
-				return ;
-			}
-		}
-		*/
 		return isValid;
 	}
 }

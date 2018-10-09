@@ -4,6 +4,7 @@ import vidar.types.*;
 import vidar.server.packet.*;
 import vidar.game.*;
 import vidar.game.template.*;
+import vidar.game.skill.*;
 import static vidar.game.template.ItemTypeTable.*;
 
 public class ItemInstance
@@ -225,7 +226,6 @@ public class ItemInstance
 			isElfUsable   = template.isElfUsable;
 			isDarkelfUsable=template.isDarkelfUsable;
 		}
-		
 		
 		updateDetail ();
 	}

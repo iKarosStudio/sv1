@@ -94,8 +94,7 @@ public class SessionHandler extends Thread implements Runnable
 	 * 使用者Session主要工作迴圈
 	 */
 	public void run () {
-		boolean isLineageClient = false;
-		
+
 		firstPacket ();
 		packetCodec.initKey ();
 		
@@ -108,6 +107,9 @@ public class SessionHandler extends Thread implements Runnable
 				
 			} catch (SocketException s) {
 				/* 連線中斷 */
+				break;
+			} catch (NegativeArraySizeException e) {
+				System.out.printf ("socket ping detecttion:%s\n", getIP ());
 				break;
 				
 			} catch (Exception e) {

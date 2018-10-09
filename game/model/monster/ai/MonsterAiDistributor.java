@@ -15,10 +15,9 @@ public class MonsterAiDistributor implements Runnable
 {
 	private VidarMap map;
 	private ScheduledFuture<?> schedulor;
-	//private static Queue<Runnable> queue;
 	
 	public void run () {
-		map.monsters.forEach ((Integer u, MonsterInstance m)->{
+		map.monsters.forEach ((Integer uuid, MonsterInstance monster)->{
 			//主動模式
 			/*
 			if (!queue.contains (m.Aikernel) ) {
@@ -26,29 +25,28 @@ public class MonsterAiDistributor implements Runnable
 			}*/
 			
 			//被動模式
-			if (m.aiKernel != null) {
+			if (monster.aiKernel != null) {
 				/* 太久沒有被玩家觸發, 主動停止並清除AI核心節省系統資源 */
-				if (m.aiKernel.timeoutCounter < 20) { //500ms * 20 = 10s
-					m.aiKernel.timeoutCounter++;
+				if (monster.aiKernel.timeoutCounter < 20) { //500ms * 20 = 10s
+					monster.aiKernel.timeoutCounter++;
 				} else {
-					m.aiKernel.cancel () ;
-					m.aiKernel = null;
+					monster.aiKernel.cancel () ;
+					monster.aiKernel = null;
 				}
-				
 			}
 			
-			if (m.isDead) {
-				if (m.aiKernel.deadTimeCounter < 10) { //500ms * 20 = 10s
-					m.aiKernel.deadTimeCounter++;
+			if (monster.isDead) {
+				if (monster.aiKernel.deadTimeCounter < 10) { //500ms * 20 = 10s
+					monster.aiKernel.deadTimeCounter++;
 				} else {
 					//System.out.printf ("清除%s(%d)屍體\n", m.Name, m.Uuid) ;
-					m.boardcastPcInsight (new RemoveModel (m.uuid).getRaw ());
+					monster.boardcastPcInsight (new RemoveModel (monster.uuid).getRaw ());
 					
-					m.aiKernel.cancel ();
-					m.aiKernel = null;
+					monster.aiKernel.cancel ();
+					monster.aiKernel = null;
 					
-					map.monsters.remove (m.uuid);
-					map.monsterGenerator.removeMonster (m);
+					map.monsters.remove (monster.uuid);
+					map.monsterGenerator.removeMonster (monster);
 				}
 			}
 		});

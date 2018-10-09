@@ -48,6 +48,7 @@ public class ServerOpcodes
 	public static final int UNKNOWN2 = 105;
 	public static final int SET_HEADING = 105;
 	public static final int CHAR_TITLE = 109;
+	public static final int SKILL_SHIELD = 114;
 	public static final int CHAR_AMOUNT = 117;
 	public static final int CHAR_LIST = 118;
 	public static final int MP_UPDATE = 119;

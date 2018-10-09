@@ -275,10 +275,6 @@ public class PcInstance extends Model
 		handle.sendPacket (actionPacket);
 		boardcastPcInsight (actionPacket);		
 	}
-
-	synchronized public void takeAttack (NormalAttack _atk) {
-		battleCounter = 30; //戰鬥狀態秒數
-	}
 	
 	synchronized public void takeDamage (int dmg) {
 		if (hp > dmg) {
@@ -292,6 +288,37 @@ public class PcInstance extends Model
 			byte[] actionDie = new ModelAction (ModelActionId.DIE, uuid, heading).getRaw();
 			handle.sendPacket (actionDie);
 			boardcastPcInsight (actionDie);
+		}
+	}
+	
+	synchronized public void useSkill (int tid, int actionId, int skillGfx, int tx, int ty) {
+		Model target = map.getModel (tid);
+		
+		if (target != null) {
+			byte[] visualPacket = new VisualEffect (tid, skillGfx).getRaw ();
+			byte[] actionPacket = new ModelAction (actionId, uuid, heading).getRaw ();
+			
+			if (tid == uuid) {
+				handle.sendPacket (visualPacket);
+				boardcastPcInsight (visualPacket);
+			} else {
+				target.boardcastPcInsight (visualPacket);
+			}
+			handle.sendPacket (actionPacket);
+			boardcastPcInsight (actionPacket);
+		}
+		
+		//byte[] skillPacket = new SkillGfx (this, tid, actionId, skillGfx, tx, ty).getRaw ();
+		//handle.sendPacket (skillPacket);
+		//boardcastPcInsight (skillPacket);
+	}
+	
+	synchronized public void useAttackSkill (int tid, int actionId, int skillGfx, int tx, int ty, boolean isHit) {
+		Model target = map.getModel (tid);
+		if (target != null) {
+			byte[] skillPacket = new SkillGfx (this, tid, actionId, skillGfx, tx, ty, isHit).getRaw ();
+			handle.sendPacket (skillPacket);
+			boardcastPcInsight (skillPacket);
 		}
 	}
 	
@@ -318,6 +345,11 @@ public class PcInstance extends Model
 			money = find.get (0).count;
 		}
 		return money;
+	}
+	
+	public void addMoney (int amount) {
+		ItemInstance money = new ItemInstance (40308, UuidGenerator.next(), uuid, 0, amount, 0, 0, false, true);
+		addItem (money);
 	}
 	
 	public void addItem (ItemInstance item) {
@@ -422,14 +454,16 @@ public class PcInstance extends Model
 	}
 	
 	public void addSkillEffect (int skillId, int remainTime) {
-		SkillEffect skillEffect = new SkillEffect (skillId, remainTime);
-		skillBuffs.effects.put (skillId, skillEffect);
+		//SkillEffect skillEffect = new SkillEffect (skillId, remainTime);
+		//skillBuffs.effects.put (skillId, skillEffect);
+		skillBuffs.addSkill (skillId, remainTime, 0);
 	}
 	
 	public void removeSkillEffect(int skillId) {
-		if (skillBuffs.effects.containsKey (skillId)) {
-			skillBuffs.effects.get(skillId).remainTime = 0;
-		}
+		//if (skillBuffs.effects.containsKey (skillId)) {
+		//	skillBuffs.effects.get(skillId).remainTime = 0;
+		//}
+		skillBuffs.removeSkill (skillId);
 	}
 	
 	public long getItemDelay (int item_id, long now_time) {
@@ -471,8 +505,9 @@ public class PcInstance extends Model
 	
 	public void applyEquipmentEffects () {
 		AbilityParameter temp = new AbilityParameter ();
-		List<ItemInstance> armorList = equipment.getArmorList ();
-		armorList.forEach ((ItemInstance armor)->{
+		List<ItemInstance> equipmentList = equipment.getList ();
+		
+		equipmentList.forEach ((ItemInstance armor)->{
 			if (armor != null) {
 				temp.ac += armor.ac;
 				temp.str += armor.str; temp.dex += armor.dex; temp.con += armor.con;
@@ -486,16 +521,15 @@ public class PcInstance extends Model
 				temp.spModify += armor.magicDmgModify;
 				temp.dmgReduction += armor.dmgReduction;
 				temp.weightReduction += armor.weightReduction;
+				
+				temp.hitModify += equipment.weapon.hitModify;
+				temp.dmgModify += equipment.weapon.dmgModify;
+				temp.spModify  += equipment.weapon.magicDmgModify;
 			}
 		});
-		if (equipment.weapon != null) {
-			temp.hitModify += equipment.weapon.hitModify;
-			temp.dmgModify += equipment.weapon.dmgModify;
-			temp.spModify  += equipment.weapon.magicDmgModify;
-		}
 		
 		equipParameter = temp;
-		handle.sendPacket (new UpdatePcAc (this).getRaw());
+		handle.sendPacket (new UpdateAc (this).getRaw());
 	}
 	
 	public boolean isRoyal () {
