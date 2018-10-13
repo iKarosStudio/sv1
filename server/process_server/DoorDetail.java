@@ -10,8 +10,8 @@ public class DoorDetail
 	
 	public DoorDetail (DoorInstance door) {
 		packet.writeByte (ServerOpcodes.DOOR_DETAIL);
-		packet.writeWord (door.entrance.point.x);
-		packet.writeWord (door.entrance.point.y);
+		packet.writeWord (door.entrance.p.x);
+		packet.writeWord (door.entrance.p.y);
 		packet.writeByte (door.heading);
 		packet.writeByte (!door.isOpened);
 	}

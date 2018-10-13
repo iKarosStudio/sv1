@@ -40,7 +40,7 @@ public class MonsterAiKernel extends TimerTask implements Runnable
 	
 	public MonsterAiKernel (MonsterInstance _monster) {
 		monster = _monster;
-		map = monster.map;
+		map = monster.getCurrentMap ();
 	}
 	
 	public boolean ai () {
@@ -65,7 +65,8 @@ public class MonsterAiKernel extends TimerTask implements Runnable
 						monster.actionStatus = MonsterInstance.ACTION_IDLE;
 					}
 				} else {
-					monster.attackPc (monster.targetPc);
+					//monster.attackPc (monster.targetPc);
+					monster.attack (monster.targetPc);
 					Thread.sleep (monster.attackInterval);
 				}
 				
@@ -79,7 +80,7 @@ public class MonsterAiKernel extends TimerTask implements Runnable
 			
 		} catch (Exception e) {
 			isAiRunning = false;
-			System.out.printf ("%s -> map:%d(%d,%d)\n", monster.name, monster.location.mapId, monster.location.point.x, monster.location.point.y) ;
+			System.out.printf ("%s -> map:%d(%d,%d)\n", monster.name, monster.location.mapId, monster.location.p.x, monster.location.p.y) ;
 			e.printStackTrace ();
 			System.exit (999);
 			

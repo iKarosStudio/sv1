@@ -18,7 +18,7 @@ public class s005_Teleport
 		System.out.printf ("\t\t使用%s\n", skillTemplate.name);
 		
 		//pc.useSkill (pc.uuid, ModelActionId.NONE_TARGETED_SKILL, skillTemplate.gfx, pc.location.point.x, pc.location.point.y);
-		Location dest = pc.map.getRandomLocation ();
-		new vidar.server.process_server.Teleport (pc, dest, true);
+		Location dest = pc.getCurrentMap ().getRandomLocation ();
+		new Teleport (pc, dest, true);
 	}
 }

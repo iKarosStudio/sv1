@@ -1,11 +1,9 @@
 package vidar.server.database;
 
 import java.sql.*;
-import java.util.HashMap;
 
 import vidar.game.model.*;
 import vidar.game.model.item.*;
-import vidar.game.skill.SkillEffect;
 
 public class DatabaseCmds
 {
@@ -407,8 +405,8 @@ public class DatabaseCmds
 			ps.setInt (6, p.mp);
 			ps.setInt (7, p.getBaseAc () + p.getEquipAc ());
 			ps.setInt (8, p.status);
-			ps.setInt (9, p.location.point.x);
-			ps.setInt (10, p.location.point.y);
+			ps.setInt (9, p.location.p.x);
+			ps.setInt (10, p.location.p.y);
 			ps.setInt (11, p.heading);
 			ps.setInt (12, p.location.mapId);
 			ps.setInt (13, p.uuid);

@@ -6,8 +6,8 @@ import vidar.server.packet.*;
 import vidar.game.model.*;
 
 /*
-	 * 報告玩家角色各項數值
-	 */
+ * 報告玩家角色各項數值
+ */
 public class NodeStatus
 {
 	PacketBuilder packet = new PacketBuilder ();

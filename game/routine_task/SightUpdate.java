@@ -25,10 +25,7 @@ public class SightUpdate implements Runnable
 	public void run () {
 		/* 更新視界各類物件 */
 		updatePcs ();
-		updateNpcs ();
-		updateMonsters ();
-		updateDoors ();
-		updateItems ();
+		updateModels ();
 	}
 	
 	private void updatePcs () {
@@ -36,11 +33,12 @@ public class SightUpdate implements Runnable
 		// 加入/移出不在清單內卻在視距內的物件
 		// 注意:不會自己將自身視為端點
 		//
-		List<PcInstance> pcs = pc.map.getPcsInsight (pc.location.point);
+		List<PcInstance> pcs = pc.getCurrentMap ().getPcsInsight (pc.location.p);
 		//pcs.forEach ((PcInstance eachPc)->{
 		for (PcInstance eachPc : pcs) {
 			if (!pc.pcsInsight.containsKey (eachPc.uuid) && (eachPc.uuid != pc.uuid)) {
-				pc.addPcInstance (eachPc);
+				//pc.addPcInstance (eachPc);
+				pc.pcsInsight.putIfAbsent (eachPc.uuid, eachPc);
 				handle.sendPacket (new ModelPacket (eachPc).getRaw ());
 			}
 		}
@@ -50,158 +48,35 @@ public class SightUpdate implements Runnable
 		//
 		pc.pcsInsight.forEach ((Integer u, PcInstance p)->{
 			if (!pc.isInsight (p.location) || !pcs.contains (p)) {
-				pc.removePcInstance (u);
+				//pc.removePcInstance (u);
+				pc.pcsInsight.remove (u);
 				handle.sendPacket (new RemoveModel (u).getRaw());
 			}
 		});
 	}
 	
-	private void updateNpcs () {
-		List<NpcInstance> npcs = pc.map.getNpcsInsight (pc.location.point);
-		for (NpcInstance eachNpc : npcs) {
-			if (!pc.npcsInsight.containsKey (eachNpc.uuid)) {
-				pc.addNpcInstance (eachNpc);
-				handle.sendPacket (new ModelPacket (eachNpc).getRaw());
+	private void updateModels () {
+		List<MapModel> models = pc.getCurrentMap ().getModelInsight (pc.location.p);
+		for (MapModel model : models) {
+			if (!pc.modelsInsight.containsKey (model.uuid)) {
+				pc.modelsInsight.putIfAbsent (model.uuid, model);
+				handle.sendPacket (new ModelPacket (model).getRaw());
 			}
 		}
-	}
-	
-	private void updateMonsters () {
-		List<MonsterInstance> monsters = pc.map.getMonstersInsight (pc.location.point);
-		for (MonsterInstance monster : monsters) {
-			if (!pc.monstersInsight.containsKey (monster.uuid) ) {
-				pc.addMonstersInsight (monster) ;
-				handle.sendPacket (new ModelPacket (monster).getRaw ());
-			}
-		}
-		monsters = null;
+		models = null;
 		
-		pc.monstersInsight.forEach ((Integer u, MonsterInstance monster)->{
-			if (!pc.isInsight (monster.location)) {
-				pc.removeMonstersInsight (monster.uuid);
-				handle.sendPacket (new RemoveModel (monster.uuid).getRaw ());
+		pc.modelsInsight.forEach ((Integer uuid, MapModel model)->{
+			if (!pc.isInsight (model.location)) {
+				pc.modelsInsight.remove (model.uuid);
+				handle.sendPacket (new RemoveModel (model.uuid).getRaw ());
 			} else {
-				monster.toggleAi ();
-			}
-		}) ;
-	}
-	
-	private void updateDoors () {
-		List<DoorInstance> doors = pc.map.getDoorsInsight (pc.location.point);
-		for (DoorInstance door : doors) {
-			if (!pc.doorsInsight.containsKey (door.uuid)) {
-				pc.addDoorsInsight (door);
-				handle.sendPacket (new ModelPacket (door).getRaw ());
-				handle.sendPacket (new DoorDetail (door).getRaw ());
-			}
-		}
-		doors = null;
-		
-		pc.doorsInsight.forEach ((Integer u, DoorInstance d)->{
-			if (!pc.isInsight (d.location) ) {
-				pc.removeDoorsInsight (d.uuid);
-				handle.sendPacket (new RemoveModel (d.uuid).getRaw ());
+				if (model instanceof MonsterInstance) {
+					((MonsterInstance) model).toggleAi ();
+				}
 			}
 		});
 	}
 	
-	private void updateItems () {
-		List<ItemInstance> Items = pc.map.getItemsInsight (pc.location.point);
-		for (ItemInstance i : Items) {
-			if (!pc.itemsInsight.containsKey (i.uuid)) {
-				pc.addItemInsight (i);
-				handle.sendPacket (new ModelPacket (i).getRaw ());
-			}
-		}
-		Items = null;
-		
-		pc.itemsInsight.forEach ((Integer u, ItemInstance i)->{
-			if (!pc.isInsight (i.location)) {
-				pc.removeItemInsight (i.uuid);
-				handle.sendPacket (new RemoveModel (i.uuid).getRaw ());
-			}
-		});
-	}
-	
-	/*
-	public void Npc () {
-		List<NpcInstance> Npcs = Pc.getNpcInsight () ;
-		for (NpcInstance NpcNode : Npcs) {
-			if (!Pc.NpcInsight.containsKey (NpcNode.Uuid) ) {
-				Pc.addNpcInstance (NpcNode) ;
-				Handle.sendPacket (new NodePacket (NpcNode).getRaw () ) ;
-			}
-		}
-		Npcs = null;
-		
-		Pc.NpcInsight.forEach ((Integer u, NpcInstance n)->{
-			if (!Pc.isInsight (n) ) {
-				Pc.removeNpcInsight (n) ;
-				Handle.sendPacket (new RemoveObject (n.Uuid).getRaw () ) ;
-			}
-		});
-	}
-	
-	public void Monster () {
-		List<MonsterInstance> Mobs = Pc.getMonsterInsight () ;
-		for (MonsterInstance m : Mobs) {
-			if (!Pc.MonsterInsight.containsKey (m.Uuid) ) {
-				Pc.addMonsterInstance (m) ;
-				Handle.sendPacket (new NodePacket (m).getRaw () );
-			}
-		}
-		Mobs = null;
-		
-		Pc.MonsterInsight.forEach ((Integer u, MonsterInstance m)->{
-			if (!Pc.isInsight (m) ) {
-				Pc.removeMonsterInsight (m) ;
-				Handle.sendPacket (new RemoveObject (m.Uuid).getRaw () ) ;
-			} else {
-				m.ToggleAi () ;
-			}
-		}) ;
-	}
-	
-	public void Item () {
-		List<ItemInstance> Items = Pc.getItemInsight () ;
-		for (ItemInstance i : Items) {
-			if (!Pc.GndItemInsight.containsKey (i.Uuid) ) {
-				Pc.addGndItemInstance (i) ;
-				Handle.sendPacket (new NodePacket (i).getRaw () ) ;
-			}
-		}
-		Items = null;
-		
-		Pc.GndItemInsight.forEach ((Integer u, ItemInstance i)->{
-			if (!Pc.isInsight (i) ) {
-				Pc.removeGndItemInsight (i) ;
-				Handle.sendPacket (new RemoveObject (i.Uuid).getRaw () ) ;
-			}
-		});
-	}
-	
-	public void Door () {
-		List<DoorInstance> Doors = Pc.getDoorInsight () ;
-		for (DoorInstance d : Doors) {
-			if (!Pc.DoorInsight.containsKey (d.Uuid) ) {
-				Pc.addDoorInstance (d) ;
-				Handle.sendPacket (new NodePacket (d).getRaw () ) ;
-				Handle.sendPacket (new DoorDetail (d).getRaw () ) ;
-			}
-		}
-		Doors = null;
-		
-		Pc.DoorInsight.forEach ((Integer u, DoorInstance d)->{
-			if (!Pc.isInsight (d) ) {
-				Pc.removeDoorInsight (d) ;
-				Handle.sendPacket (new RemoveObject (d.Uuid).getRaw () ) ;
-			}
-		});
-	}
-	
-	public void Pet () {
-	}
-	*/
 	public void start () {
 		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 200, 500);
 	}

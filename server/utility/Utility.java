@@ -187,7 +187,8 @@ public class Utility
 		return mr;
 	}
 	
-	private static final int SP_K[] = {
+	//http://gametsg.techbang.com/lineage/index.php?view=article&articleid=1163448
+	private static final int SP_K[] = { //額外魔法點數
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, 0, //0-9
 			 0,  0,  1,  1,  1,  2,  2,  2 //10-17
 	} ;
@@ -195,15 +196,15 @@ public class Utility
 		int sp = 0;
 		int k = 0;
 		
-		if (type == 0) {
+		if (type == 0) { //royan
 			sp = level / 10;
-		} else if (type == 1) {
+		} else if (type == 1) { //knight
 			sp = level / 50;
-		} else if (type == 2) {
+		} else if (type == 2) { //elf
 			sp = level / 8;
-		} else if (type == 3) {
+		} else if (type == 3) { //wizard
 			sp = level / 4;
-		} else if (type == 4) {
+		} else if (type == 4) { //darkelf
 			sp = level / 12;
 		}
 		

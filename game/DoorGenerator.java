@@ -26,7 +26,7 @@ public class DoorGenerator
 			if (map != null) {
 				ResultSet rs = DatabaseCmds.doorSpawnList (mapId);
 				try {
-					while (rs.next () ) {
+					while (rs.next ()) {
 						DoorInstance door = new DoorInstance (
 							rs.getInt ("id"),
 							rs.getString ("location"),
@@ -44,8 +44,9 @@ public class DoorGenerator
 							rs.getInt ("castle"),
 							rs.getInt ("order"));
 						
-						map.doors.put (door.uuid, door);
-						map.setAccessible (door.location.point.x, door.location.point.y, false);
+						//map.doors.put (door.uuid, door);
+						map.addModel (door);
+						map.setAccessible (door.location.p.x, door.location.p.y, false);
 					}
 				} catch (Exception e) {
 					e.printStackTrace ();

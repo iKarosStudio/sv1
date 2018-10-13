@@ -58,8 +58,8 @@ public class CharacterInitializer
 		
 		/* 出生地點 */
 		pc.location.mapId = 0;
-		pc.location.point.x = 32643;
-		pc.location.point.y = 32960;
+		pc.location.p.x = 32643;
+		pc.location.p.y = 32960;
 		
 		if (pc.isRoyal ()) {
 			pc.basicParameters.maxHp = 14;
@@ -138,8 +138,8 @@ public class CharacterInitializer
 			ps.setInt (19, pc.sex);
 			ps.setInt (20, pc.type);
 			ps.setInt (21, pc.heading);
-			ps.setInt (22, pc.location.point.x);
-			ps.setInt (23, pc.location.point.y);
+			ps.setInt (22, pc.location.p.x);
+			ps.setInt (23, pc.location.p.y);
 			ps.setInt (24, pc.location.mapId);
 			ps.setInt (25, pc.satiation);
 			ps.setInt (26, pc.lawful);

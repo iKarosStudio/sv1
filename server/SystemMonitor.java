@@ -6,7 +6,6 @@ import com.sun.management.OperatingSystemMXBean;
 
 import vidar.config.*;
 import vidar.gui.*;
-import vidar.game.Vidar;
 
 public class SystemMonitor extends Thread implements Runnable
 {
@@ -59,7 +58,7 @@ public class SystemMonitor extends Thread implements Runnable
 	
 	public static SystemMonitor getInstance () {
 		if (instance == null) {
-			instance = new SystemMonitor () ;
+			instance = new SystemMonitor ();
 		}
 		
 		return instance;

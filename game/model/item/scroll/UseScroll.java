@@ -79,7 +79,7 @@ public class UseScroll
 		}
 		
 		Location dest;
-		dest = pc.map.getRandomLocation ();		
+		dest = pc.getCurrentMap ().getRandomLocation ();		
 		new Teleport (pc, dest, true);
 	}
 }

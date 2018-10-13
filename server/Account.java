@@ -16,7 +16,7 @@ public class Account
 	public PcInstance activePc = null;
 	
 	public Account () {
-		super () ;
+		super ();
 	}
 	
 	public Account (SessionHandler _session, String account, String password) {
@@ -34,22 +34,22 @@ public class Account
 	
 		int loginResult = 0;
 		try {
-			rs = DatabaseCmds.loadAccount (userName) ;
+			rs = DatabaseCmds.loadAccount (userName);
 			
 			if (!rs.next () ) {
-				System.out.println ("Account:" + userName + " NOT EXISTS.") ;
+				System.out.println ("Account:" + userName + " NOT EXISTS.");
 				loginResult = AccountOperation.ACCOUNT_ALREADY_EXISTS;
 				
 			} else {
-				String pw = rs.getString ("password") ;
-				if (userPassword.equals (pw) ) {
+				String pw = rs.getString ("password");
+				if (userPassword.equals (pw)) {
 					loginResult = AccountOperation.LOGIN_OK;
 				} else {
 					loginResult = AccountOperation.ACCOUNT_PASSWORD_ERROR;
 				}
 				
-				online  = DatabaseCmds.checkCharacterOnline (userName) ;
-				if (online.next () ) {
+				online = DatabaseCmds.checkCharacterOnline (userName);
+				if (online.next ()) {
 					loginResult = AccountOperation.ACCOUNT_IN_USE;
 				}
 			}
@@ -65,6 +65,6 @@ public class Account
 	}
 	
 	public void updateLastLogin () {
-		DatabaseCmds.updateAccountLoginTime (userName, session.getIP (), session.getHostName () ) ;
+		DatabaseCmds.updateAccountLoginTime (userName, session.getIP (), session.getHostName ());
 	}
 }

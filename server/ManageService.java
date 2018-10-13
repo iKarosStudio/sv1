@@ -56,16 +56,16 @@ public class ManageService extends Thread
 		try {
 			ServiceSocket = new ServerSocket (Configurations.MANAGE_PORT);
 			ServiceSocket.setSoTimeout (3000) ; //10s accept timeout
-			System.out.printf ("success\n") ;
+			System.out.printf ("success\n");
 			
 			remoteManageEnable = true;
 			this.setName ("MANAGEMENT SERVICE");
 			
 		} catch (Exception e) {
-			System.out.printf ("fail\n") ;
-			System.out.printf ("[!] TCP/IP Listening fault->%s\n", e.getMessage () ) ;
-			e.printStackTrace () ;
-			System.exit (666) ;
+			System.out.printf ("fail\n");
+			System.out.printf ("[!] TCP/IP Listening fault->%s\n", e.getMessage ());
+			e.printStackTrace ();
+			System.exit (666);
 			
 		}
 	}

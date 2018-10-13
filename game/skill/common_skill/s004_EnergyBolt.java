@@ -15,7 +15,7 @@ public class s004_EnergyBolt
 		
 		System.out.printf ("\t\t%s 目標%d\n", skillTemplate.name, tid);
 		
-		Model target = pc.map.getModel (tid);
-		pc.useAttackSkill (tid, ModelActionId.TARGETED_SKILL, skillTemplate.gfx, target.location.point.x, target.location.point.y, true);
+		MapModel target = pc.getCurrentMap ().getModel (tid);
+		pc.useAttackSkill (tid, ModelActionId.TARGETED_SKILL, skillTemplate.gfx, target.location.p.x, target.location.p.y, true);
 	}
 }

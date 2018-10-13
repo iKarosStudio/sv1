@@ -2,10 +2,8 @@ package vidar.game.skill;
 
 import java.util.*;
 
-import vidar.game.map.*;
 import vidar.game.model.item.*;
 import vidar.game.model.*;
-import vidar.game.model.npc.*;
 import vidar.game.model.monster.*;
 
 import static vidar.game.skill.AttackOffsetTable.*;
@@ -15,12 +13,56 @@ public class NormalAttack
 {	
 	Random random = new Random ();
 	
-	public boolean isRemoteAttack;
-	public boolean isHit;
-	public int dmg;
+	public MapModel attacker;
+	public MapModel target;
+	public boolean isRemoteAttack = false;
+	public ItemInstance weapon = null;
+	public ItemInstance arrow = null;
+	public int fixedDmg = 0;
+	public int randomDmg = 0;
+	public int hitRate = 0;
 	
 	/* 由玩家發動的攻擊 */
+	public NormalAttack (PcInstance pc) {
+		//calcHitRate (pc);
+		//calcDmg (pc);
+	}
+	
 	public NormalAttack (PcInstance src, int _targetUuid, int _targetX, int _targetY) {
+		attacker = src;
+		
+		target = attacker.getCurrentMap ().getModel (_targetUuid);
+		if (target != null) {
+			//
+		}
+		
+		if (src.equipment.weapon != null) {
+			weapon = src.equipment.weapon;
+			if (weapon.isRemoteWeapon ()) {
+				isRemoteAttack = true;
+				arrow = src.equipment.arrow;
+				
+				if (target.size == 0) {
+					randomDmg += (weapon.dmgSmall + arrow.dmgSmall);
+				} else {
+					randomDmg += (weapon.dmgLarge + arrow.dmgLarge);
+				}
+			} else {
+				
+				if (target.size == 0) {
+					randomDmg += weapon.dmgSmall;
+				} else {
+					randomDmg += weapon.dmgLarge;
+				}
+				
+			}
+		}
+		
+	
+		
+		//find target in map
+		
+		/*
 		VidarMap map = src.map;
 		
 		//attacking a monster
@@ -37,9 +79,9 @@ public class NormalAttack
 				dest.toggleHateList (src, dmg);
 				dest.takeDamage (dmg);
 				
-				/*
-				 * 設定反擊
-				 */
+				//
+				// 設定反擊
+				//
 				if (dest.targetPc == null) {
 					dest.aiKernel.cancel ();
 					dest.actionStatus = MonsterInstance.ACTION_ATTACK;
@@ -53,10 +95,11 @@ public class NormalAttack
 		} else if (map.pcs.containsKey (_targetUuid)) {
 			//
 		}
-		
+		*/
 	}
 	
 	public NormalAttack (MonsterInstance src, PcInstance dest) {
+		/*
 		if (dest.isDead) {
 			return;
 		}
@@ -71,10 +114,11 @@ public class NormalAttack
 			System.out.printf ("沒有命中\n");
 			dmg = 0;
 		}
+		*/
 	}
 	
 	
-	private boolean isPc2NpcHit (PcInstance src, Model dest) {
+	private boolean isPc2NpcHit (PcInstance src, MonsterInstance dest) {
 		int srcStr = src.getStr ();
 		int srcDex = src.getDex ();
 		int hitRate = src.level;
@@ -141,7 +185,7 @@ public class NormalAttack
 		return rate < hitRate;
 	}
 	
-	private boolean isNpc2PcHit (Model src, PcInstance dest) {
+	private boolean isNpc2PcHit (ActiveModel src, PcInstance dest) {
 		int hitRate = 0;
 		
 		hitRate = src.level * 10;
@@ -167,7 +211,7 @@ public class NormalAttack
 		return rate < hitRate;
 	}
 	
-	private int calcPc2NpcDamage (PcInstance src, Model dest) {
+	private int calcPc2NpcDamage (PcInstance src, MonsterInstance dest) {
 		ItemInstance weapon = src.equipment.weapon;
 		ItemInstance arrow = null;
 		int weaponMaxDmg = 0;
@@ -261,7 +305,7 @@ public class NormalAttack
 		return weaponDmg;
 	}
 	
-	private int calcNpc2PcDamage (Model src, PcInstance dest) {
+	private int calcNpc2PcDamage (MonsterInstance src, PcInstance dest) {
 		int dmg = 5 * (src.level / 10);
 		dmg += random.nextInt (src.level - dmg + 5);
 		dmg += src.basicParameters.str;
@@ -292,6 +336,25 @@ public class NormalAttack
 		
 		return dmg;
 	}
+	
+	
+	
+	//new!
+	private void calcDmg (PcInstance pc) {
+	}
+	
+	//new!
+	private void calcDmg (ActiveModel npc) {
+	}
+	
+	//new!
+	private void calcHitRate (PcInstance pc) {
+	}
+	
+	//new!
+	private void calcHitRate (ActiveModel npc) {
+	}
+
 	
 	private int calcEr (int type, int level, int dex) {
 		int d = 0;

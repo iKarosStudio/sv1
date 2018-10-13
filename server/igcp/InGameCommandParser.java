@@ -1,6 +1,5 @@
 package vidar.server.igcp;
 
-import vidar.types.*;
 import vidar.server.*;
 import vidar.server.process_server.*;
 import vidar.game.model.*;
@@ -38,8 +37,11 @@ public class InGameCommandParser
 			new RdPcData (pc, text);
 			
 		} else if (text.startsWith (".server")) { //顯示伺服器資料
+			//
 		} else if (text.startsWith (".map")) { //顯示地圖資料
+			//
 		} else if (text.startsWith (".tile")) { //顯示座標資料
+			//
 		} else {
 			isValid = false;
 		}

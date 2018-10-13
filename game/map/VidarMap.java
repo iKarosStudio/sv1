@@ -7,8 +7,6 @@ import vidar.config.*;
 import vidar.types.*;
 import vidar.game.*;
 import vidar.game.model.*;
-import vidar.game.model.item.*;
-import vidar.game.model.npc.*;
 import vidar.game.model.monster.*;
 import vidar.game.model.monster.ai.*;
 
@@ -39,17 +37,19 @@ public class VidarMap
 	/* 線上使用者實體 */
 	public ConcurrentHashMap<Integer, PcInstance> pcs;
 	
+	/* 地圖物件實體 */
+	public ConcurrentHashMap<Integer, MapModel> models;
 	/* NPC實體 */
-	public ConcurrentHashMap<Integer, NpcInstance> npcs;
+	//public ConcurrentHashMap<Integer, NpcInstance> npcs;
 	
 	/* 地面道具實體 */
-	public ConcurrentHashMap<Integer, ItemInstance> items; //Items on ground
+	//public ConcurrentHashMap<Integer, ItemInstance> items; //Items on ground
 	
 	/* 門的實體 */
-	public ConcurrentHashMap<Integer, DoorInstance> doors; //Doors
+	//public ConcurrentHashMap<Integer, DoorInstance> doors; //Doors
 	
 	/* 怪物實體 */
-	public ConcurrentHashMap<Integer, MonsterInstance> monsters;
+	//public ConcurrentHashMap<Integer, MonsterInstance> monsters;
 	public MonsterAiDistributor aiDistributor;
 	
 	/* 寵物, 召喚怪物實體  */
@@ -74,17 +74,14 @@ public class VidarMap
 		tpLocation = new ConcurrentHashMap<Integer, Location> () ;
 		
 		pcs = new ConcurrentHashMap<Integer, PcInstance> ();
-		npcs = new ConcurrentHashMap<Integer, NpcInstance> ();
-		items = new ConcurrentHashMap<Integer, ItemInstance> ();
-		doors = new ConcurrentHashMap<Integer, DoorInstance> ();
-		monsters = new ConcurrentHashMap<Integer, MonsterInstance> ();
+		models = new ConcurrentHashMap<Integer, MapModel> ();
+		//npcs = new ConcurrentHashMap<Integer, NpcInstance> ();
+		//items = new ConcurrentHashMap<Integer, ItemInstance> ();
+		//doors = new ConcurrentHashMap<Integer, DoorInstance> ();
+		//monsters = new ConcurrentHashMap<Integer, MonsterInstance> ();
 		
 		aiDistributor = new MonsterAiDistributor (this);
 		aiDistributor.start ();
-	}
-	
-	public int spawnMonster () {
-		return 0;
 	}
 	
 	public void setAccessible (int x, int y, boolean passable) {
@@ -270,9 +267,9 @@ public class VidarMap
 		Location dest = new Location (mapId, 0, 0);
 		
 		do {
-			dest.point.x = startX + random.nextInt (sizeX) ;
-			dest.point.y = startY + random.nextInt (sizeY) ;
-		} while (getTile (dest.point.x, dest.point.y) == 0) ;
+			dest.p.x = startX + random.nextInt (sizeX) ;
+			dest.p.y = startY + random.nextInt (sizeY) ;
+		} while (getTile (dest.p.x, dest.p.y) == 0) ;
 		
 		return dest;
 	}
@@ -323,13 +320,12 @@ public class VidarMap
 		pcs.remove (pc.uuid);
 	}
 
-	
-	public List<NpcInstance> getNpcsInDistance (Coordinate _point, int _range) {
-		List<NpcInstance> result = new ArrayList<NpcInstance> ();
+	public List<MapModel> getModelInDistance (Coordinate _point, int _range) {
+		List<MapModel> result = new ArrayList<MapModel> ();
 		try {
-			npcs.forEach ((Integer uuid, NpcInstance npc)->{
-				if (npc.getDistance (_point.x, _point.y) < _range) {
-					result.add (npc);
+			models.forEach ((Integer uuid, MapModel model)->{
+				if (model.getDistance (_point.x, _point.y) < _range) {
+					result.add (model);
 				}
 			});
 		} catch (Exception e) {
@@ -338,87 +334,28 @@ public class VidarMap
 		return result;
 	}
 	
-	public List<NpcInstance> getNpcsInsight (Coordinate _point) {
-		return getNpcsInDistance (_point, Configurations.SIGHT_RAGNE) ;
+	public List<MapModel> getModelInsight (Coordinate _point) {
+		return getModelInDistance (_point, Configurations.SIGHT_RAGNE);
 	}
 	
-	public void addNpc (NpcInstance npc) {
-		npcs.putIfAbsent (npc.uuid, npc);
+	public void addModel (MapModel model) {
+		models.putIfAbsent (model.uuid, model);
 	}
 	
-	public void removeNpc (NpcInstance npc) {
-		npcs.remove (npc.uuid);
+	public void removeModel (int uuid) {
+		models.remove (uuid);
 	}
 	
-	public List<DoorInstance> getDoorsInDistance (Coordinate _point, int _range) {
-		List<DoorInstance> result = new ArrayList<DoorInstance> ();
-		try {
-			doors.forEach ((Integer uuid, DoorInstance door)->{
-				if (door.getDistance (_point.x, _point.y) < _range) {
-					result.add (door);
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace ();
-		}
-		return result;
-	}
-	
-	public List<DoorInstance> getDoorsInsight (Coordinate _point) {
-		return getDoorsInDistance (_point, Configurations.SIGHT_RAGNE);
-	}
-	
-	
-	public List<MonsterInstance> getMonstersInDistance (Coordinate _point, int _range) {
-		List<MonsterInstance> result = new ArrayList<MonsterInstance> ();
-		try {
-			monsters.forEach ((Integer uuid, MonsterInstance monster)->{
-				if (monster.getDistance (_point.x, _point.y) < _range) {
-					result.add (monster);
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace ();
-		}
-		return result;
-	}
-	
-	public List<MonsterInstance> getMonstersInsight (Coordinate _point) {
-		return getMonstersInDistance (_point, Configurations.SIGHT_RAGNE);
-	}
-	
-	public List<ItemInstance> getItemsInDistance (Coordinate _point, int _range) {
-		List<ItemInstance> result = new ArrayList<ItemInstance> ();
-		try {
-			items.forEach ((Integer uuid, ItemInstance item)->{
-				if (item.getDistance (_point.x, _point.y) < _range) {
-					result.add (item);
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace ();
-		}
-		
-		return result;
-	}
-	
-	public List<ItemInstance> getItemsInsight (Coordinate _point) {
-		return getItemsInDistance (_point, Configurations.SIGHT_RAGNE);
-	}
-	
-	public Model getModel (int uuid) {
-		Model result;
+	public MapModel getModel (int uuid) {
+		MapModel result = null;
 		
 		if (pcs.containsKey (uuid)) {
 			result = pcs.get (uuid);
-		} else if (monsters.containsKey (uuid)) {
-			result = monsters.get (uuid);
-		} else if (npcs.containsKey (uuid)) {
-			result = npcs.get (uuid);
 		} else {
-			result = null;
-		}	
+			result = models.get (uuid);
+		}
 		
 		return result;
 	}
+
 }

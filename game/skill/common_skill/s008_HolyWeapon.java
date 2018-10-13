@@ -15,13 +15,14 @@ public class S008_HolyWeapon
 		
 		System.out.printf ("\t\t%s 對目標:%d\n", skillTemplate.name, tid);
 		
-		Model target = pc.map.getModel (tid);
-		pc.useSkill (tid, ModelActionId.NONE_TARGETED_SKILL, skillTemplate.gfx, target.location.point.x, target.location.point.y);
+		MapModel target = pc.getCurrentMap ().getModel (tid);
+		pc.useSkill (tid, ModelActionId.NONE_TARGETED_SKILL, skillTemplate.gfx, target.location.p.x, target.location.p.y);
+		
 		if (tid == pc.uuid) {
 			pc.addSkillEffect (skillTemplate.skillId, skillTemplate.remainTime);
 		} else {
-			if (pc.map.pcs.contains (tid)) {
-				pc.map.pcs.get (tid).addSkillEffect (skillTemplate.skillId, skillTemplate.remainTime);
+			if (pc.getCurrentMap ().pcs.contains (tid)) {
+				pc.getCurrentMap ().pcs.get (tid).addSkillEffect (skillTemplate.skillId, skillTemplate.remainTime);
 			}
 		}
 	}

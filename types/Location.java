@@ -7,15 +7,15 @@ public class Location
 	public int mapId;
 	
 	/* 所在地圖座標 */
-	public Coordinate point;
+	public Coordinate p;
 	
 	public Location () {
 		mapId = 0;
-		point = new Coordinate (0, 0) ;
+		p = new Coordinate (0, 0) ;
 	}
 	
 	public Location (int mapid, int x, int y) {
 		mapId = mapid;
-		point = new Coordinate (x, y);
+		p = new Coordinate (x, y);
 	}
 }

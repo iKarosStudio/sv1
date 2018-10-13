@@ -13,6 +13,7 @@ public class AbilityParameter
 	public int maxHp, maxMp, hpR, mpR;
 	public int defFire, defWater, defWind, defEarth;
 	//resists
+	
 	/*
 	 * 額外攻擊點數修正
 	 * 額外命中修正

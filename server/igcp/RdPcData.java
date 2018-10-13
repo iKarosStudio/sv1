@@ -29,7 +29,7 @@ public class RdPcData
 			StringBuffer console = new StringBuffer ();
 			
 			console.append (String.format ("  %s[UUID:%d]\n", pc.name, pc.uuid));
-			console.append (String.format ("  location={mapid:%d, x:%d, y:%d, heading:%d}\n", pc.location.mapId, pc.location.point.x, pc.location.point.y, pc.heading));
+			console.append (String.format ("  location={mapid:%d, x:%d, y:%d, heading:%d}\n", pc.location.mapId, pc.location.p.x, pc.location.p.y, pc.heading));
 			console.append (String.format ("  moveSpeed:%d, braveSpeed:%d\n", pc.moveSpeed, pc.braveSpeed));
 			console.append (String.format ("  status:0x%02X\n", pc.status));
 			console.append (String.format ("  str:%d, con:%d, dex:%d\n", pc.getStr(), pc.getCon(), pc.getDex()));

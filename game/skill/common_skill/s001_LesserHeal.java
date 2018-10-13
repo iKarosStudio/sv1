@@ -15,7 +15,7 @@ public class s001_LesserHeal
 		
 		System.out.printf ("\t\t%s 對目標:%d\n", skillTemplate.name, tid);
 		
-		Model target = pc.map.getModel (tid);
-		pc.useSkill (tid, ModelActionId.NONE_TARGETED_SKILL, skillTemplate.gfx, target.location.point.x, target.location.point.y);
+		MapModel target = pc.getCurrentMap ().getModel (tid);
+		pc.useSkill (tid, ModelActionId.NONE_TARGETED_SKILL, skillTemplate.gfx, target.location.p.x, target.location.p.y);
 	}
 }

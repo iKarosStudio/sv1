@@ -12,17 +12,16 @@ public class Teleport
 		SessionHandler handle = pc.getHandle ();
 		
 		if (pc.location.mapId != dest.mapId) {
+			pc.getCurrentMap ().removePc (pc);
 			pc.location.mapId = dest.mapId;
 			
 			VidarMap map = Vidar.getInstance ().getMap (pc.location.mapId);
 			map.addPc (pc);
-			pc.map.removePc (pc);
-			pc.map = map;
-			pc.saveSkillEffect ();
+			pc.saveSkillEffects ();
 		}
 		
-		pc.location.point.x = dest.point.x;
-		pc.location.point.y = dest.point.y;
+		pc.location.p.x = dest.p.x;
+		pc.location.p.y = dest.p.y;
 		//pc.location.Heading = dest.Heading;
 		
 		byte[] mapIdPacket = new MapId (pc.location.mapId).getRaw ();
@@ -40,7 +39,9 @@ public class Teleport
 			}
 		}
 		
-		pc.removeAllInsight ();
+		//pc.removeAllInsight ();
+		pc.pcsInsight.clear ();
+		pc.modelsInsight.clear ();
 		
 		//update Skills
 		//Pc.SkillTimer.UpdateSkillEffects () ;
@@ -49,7 +50,7 @@ public class Teleport
 		handle.sendPacket (pcPacket);
 		handle.sendPacket (new UpdateModelGfx (pc.uuid, pc.getWeaponGfx ()).getRaw ());
 		if (pc.location.mapId != dest.mapId) {
-			pc.loadSkillEffect ();
+			pc.loadSkillEffects ();
 		}
 	
 		pc.boardcastPcInsight (pcPacket) ;

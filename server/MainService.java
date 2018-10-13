@@ -14,14 +14,12 @@ public class MainService extends Thread
 	private ServerSocket serviceSocket;
 	private boolean loginEnable;
 	
-	/*
-	 * 建立連接用session
-	 */
+	/* 建立連接用session */
 	public void run () {		
 		while (true) {
 			try {
 				if (loginEnable) {
-					Socket clientSock = serviceSocket.accept () ;
+					Socket clientSock = serviceSocket.accept ();
 					
 					/* 敏感IP 捕抓 */
 					/*
@@ -35,7 +33,7 @@ public class MainService extends Thread
 					SessionHandler clientSession = new SessionHandler (clientSock);
 					ServiceThreadPool.getInstance().execute (clientSession);
 				} else {
-					//
+					Thread.sleep (500);
 				}
 			} catch (SocketTimeoutException e) {
 				//it's ok
@@ -69,7 +67,7 @@ public class MainService extends Thread
 			ps.setInt (2, 1);
 			ps.execute ();
 			
-			loginEnable = true;
+			loginEnable = false;
 			
 		} catch (BindException e) {
 			System.out.printf ("bind Port:%d fail\n", Configurations.SERVER_PORT);
@@ -82,5 +80,14 @@ public class MainService extends Thread
 			System.exit (666);
 		}
 	}
-
+	
+	public void loginEnable () {
+		loginEnable = true;
+		System.out.println ("login enable");
+	}
+	
+	public void loginDisable () {
+		loginEnable = false;
+		System.out.println ("login disable");
+	}
 }

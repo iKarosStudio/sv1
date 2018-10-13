@@ -1,42 +1,38 @@
 package vidar.game.model.item;
 
+import java.util.*;
+
 import vidar.types.*;
 import vidar.server.packet.*;
 import vidar.game.*;
+import vidar.game.map.*;
 import vidar.game.template.*;
+import vidar.game.model.*;
 import vidar.game.skill.*;
 import static vidar.game.template.ItemTypeTable.*;
 
-public class ItemInstance
-{	
-	public int uuid;
+public class ItemInstance extends MapModel implements BoardcastNode
+{
 	public int uuidOwner;
 	public int id;
-	
 	public int gfxInBag;
-	public int gfxOnGround;
-	
-	public Location location; 
-	
-	public String name;
 	public String nameId;
 	public String materialName;
 	public String typeName;
-	public int desciptId;
+	public int descriptId;
 	
 	public int material;
-	
 	public int majorType;
 	public int minorType;
 	public int useType;
 	
-	public int count; //單位數量
-	public int weight; //重量 = 單位數量 * 單位重量
+	public int count;
+	public int weight;
 	public int enchant;
 	
-	public boolean isIdentified; //已經鑑定
-	public boolean isTradeable; //可交易
-	public boolean isStackable; //可堆疊物品
+	public boolean isIdentified;
+	public boolean isTradeable;
+	public boolean isStackable;
 	
 	public int durability;
 	public int chargeCount;
@@ -83,9 +79,6 @@ public class ItemInstance
 	public int dmgReduction;
 	public int weightReduction;
 	
-	
-	//加入SkillEffectTimer for 針對道具的技能
-	
 	public byte[] detail;
 	
 	public ItemInstance () {
@@ -93,16 +86,16 @@ public class ItemInstance
 	}
 	
 	public ItemInstance (
-		int _id,
-		int _uuid,
-		int _ownerUuid,
-		int _enchant,
-		int _count,
-		int _durability,
-		int _chargeCount,
-		boolean _isUsing,
-		boolean _isIdentified) {
-		
+			int _id,
+			int _uuid,
+			int _ownerUuid,
+			int _enchant,
+			int _count,
+			int _durability,
+			int _chargeCount,
+			boolean _isUsing,
+			boolean _isIdentified) {
+			
 		location = new Location ();
 		id = _id;
 		uuid = _uuid;
@@ -121,13 +114,13 @@ public class ItemInstance
 			useType = template.useType;
 			weight = template.weight * count;
 			gfxInBag = template.gfxInBag;
-			gfxOnGround = template.gfxOnGround;
+			gfx = template.gfxOnGround;
 			name = template.name;
 			nameId = template.nameId;
 			material = template.material;
 			materialName = template.materialName;
 			typeName = template.typeName;
-			desciptId = template.descriptId;
+			descriptId = template.descriptId;
 			isTradeable = template.isTradeable;
 			isStackable = template.isStackable;
 			bless = template.bless;
@@ -143,13 +136,13 @@ public class ItemInstance
 			useType = TYPE_USE_WEAPON;
 			weight = template.weight;
 			gfxInBag = template.gfxInBag;
-			gfxOnGround = template.gfxOnGround;
+			gfx = template.gfxOnGround;
 			gfx = template.gfx;
 			name = template.name;
 			nameId = template.nameId;
 			material = template.material;
 			materialName = template.materialName;
-			desciptId = template.descriptId;
+			descriptId = template.descriptId;
 			isTradeable = template.isTradeable;
 			isStackable = template.isStackable;
 			bless = template.bless;
@@ -187,13 +180,13 @@ public class ItemInstance
 			useType = ArmorMinorType2UseType (template.minorType);
 			weight = template.weight;
 			gfxInBag = template.gfxInBag;
-			gfxOnGround = template.gfxOnGround;
+			gfx = template.gfxOnGround;
 			name = template.name;
 			nameId = template.nameId;
 			material = template.material;
 			materialName = template.materialName;
 			typeName = template.typeName;
-			desciptId = template.descriptId;
+			descriptId = template.descriptId;
 			isTradeable = template.isTradeable;
 			isStackable = template.isStackable;
 			bless = template.bless;
@@ -257,7 +250,6 @@ public class ItemInstance
 		
 		return veiwName.toString ();
 	}
-	
 	
 	public byte[] getItemDetail () {
 		PacketBuilder packet = new PacketBuilder ();
@@ -556,14 +548,56 @@ public class ItemInstance
 	public boolean isOriharukon () {
 		return material == MATERIAL_ORIHARUKON;
 	}
-	
-	/*
-	 * 自身對p(x, y)的距離
-	 */
-	public int getDistance (int x, int y) {
-		int dx = Math.abs (x - location.point.x);
-		int dy = Math.abs (y - location.point.y);
-		
-		return (int) Math.sqrt (Math.pow (dx, 2) + Math.pow (dy, 2) );		
+
+	@Override
+	public void boardcastToAll (byte[] packet) {
+		Vidar.getInstance ().boardcastToAllPc (packet);
+	}
+
+	@Override
+	public void boardcastToMap (byte[] packet) {
+		//
+	}
+
+	@Override
+	public List<MapModel> getModelInsight () {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PcInstance> getPcInsight () {
+		List<PcInstance> result = Vidar.getInstance ().getMap (location.mapId).getPcsInsight (location.p);
+		return result;
+	}
+
+	@Override
+	public void boardcastPcInsight (byte[] packet) {
+		VidarMap map = Vidar.getInstance ().getMap (location.mapId);
+		List<PcInstance> pcs = map.getPcsInsight (location.p);
+		for (PcInstance pc : pcs) {
+			pc.getHandle ().sendPacket (packet);
+		}
+		pcs = null;
+	}
+
+	@Override
+	public void updateModel () {
+		//
+	}
+
+	@Override
+	public boolean isParalyzed () {
+		return false;
+	}
+
+	@Override
+	public boolean hasSkillEffect (int skillId) {
+		return false;
+	}
+
+	@Override
+	public void damage (NormalAttack atk) {
+		//
 	}
 }

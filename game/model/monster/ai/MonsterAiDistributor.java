@@ -5,6 +5,7 @@ import java.util.concurrent.*;
 import vidar.server.threadpool.*;
 import vidar.server.process_server.*;
 import vidar.game.map.*;
+import vidar.game.model.*;
 import vidar.game.model.monster.*;
 
 /*
@@ -17,7 +18,14 @@ public class MonsterAiDistributor implements Runnable
 	private ScheduledFuture<?> schedulor;
 	
 	public void run () {
-		map.monsters.forEach ((Integer uuid, MonsterInstance monster)->{
+		map.models.forEach ((Integer uuid, MapModel m)->{
+			MonsterInstance monster = null;
+			if (!(m instanceof MonsterInstance)) {
+				return;
+			} else {
+				monster = (MonsterInstance) m;
+			}
+			
 			//主動模式
 			/*
 			if (!queue.contains (m.Aikernel) ) {
@@ -45,7 +53,7 @@ public class MonsterAiDistributor implements Runnable
 					monster.aiKernel.cancel ();
 					monster.aiKernel = null;
 					
-					map.monsters.remove (monster.uuid);
+					map.models.remove (monster.uuid);
 					map.monsterGenerator.removeMonster (monster);
 				}
 			}
@@ -54,11 +62,10 @@ public class MonsterAiDistributor implements Runnable
 	
 	public MonsterAiDistributor (VidarMap map) {
 		this.map = map;
-		//queue = MonsterAiQueue.getInstance ().getQueue ();
 	}
 	
 	public void start () {
-		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 100, 500);
+		schedulor = KernelThreadPool.getInstance ().ScheduleAtFixedRate (this, 100, 500); //500ms interval
 	}
 	
 	public void stop () {

@@ -74,15 +74,18 @@ public class Main
 		
 		/* Display GameRate setting */
 		
+		/* Server platform info */
 		System.out.printf ("cpu core  :%d\n", SystemMonitor.getInstance ().cpuCount);
 		System.out.printf ("system_pid:%s\n", SystemMonitor.getInstance ().pid);
 		System.out.printf ("run on:%s\n", System.getProperty("java.vm.name"));
 		
 		Runtime.getRuntime().addShutdownHook (new Shutdown ());
 		
+		gameService.loginEnable ();
+		
 		/* 本地控制台 */
 		while (true) {
-			Thread.sleep (10000);
+			Thread.sleep (120000); //120S
 		}
 	}
 }

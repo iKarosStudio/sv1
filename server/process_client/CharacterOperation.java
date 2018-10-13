@@ -66,10 +66,10 @@ public class CharacterOperation {
 			pc.sightUpdate = new SightUpdate (pc);
 			pc.sightUpdate.start ();
 			
-			pc.updateCurrentMap ();
+			//pc.updateCurrentMap ();
 			Vidar.getInstance ().addPc (pc);
 			
-			pc.loadSkillEffect ();
+			pc.loadSkillEffects ();
 			
 		} else {
 			/* 沒有角色ID, 非正常登入現象 */

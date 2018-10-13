@@ -33,7 +33,7 @@ public class MonsterGenerator extends Thread implements Runnable {
 				while (msl.monsters.size () < msl.count) {
 				//if (msl.Mobs.size () < msl.Count) {
 				//if (msl.Mobs.size () < 1) {
-					NpcTemplate monsterTemplate = CacheData.npcs.get (msl.npcTemplateId) ;
+					NpcTemplate monsterTemplate = CacheData.npcs.get (msl.npcTemplateId);
 					
 					/* 定點生怪 */
 					//Location SpawnLoc = new Location (msl.MapId, msl.LocX, msl.LocY, msl.Heading) ;
@@ -51,24 +51,24 @@ public class MonsterGenerator extends Thread implements Runnable {
 					
 					/* 確保怪物不會生在非行動區域 */
 					do {
-						x = msl.locX1 + random.nextInt (dx) ;
-						y = msl.locY1 + random.nextInt (dy) ;
+						x = msl.locX1 + random.nextInt (dx);
+						y = msl.locY1 + random.nextInt (dy);
 						if (x == 0 || y == 0) {
 							x = msl.locX; y = msl.locY;
 						}
 					} while (!vidarMap.isNextTileAccessible (x, y, msl.heading));
-					Location spawnLocation = new Location (msl.mapId, x, y);//new Location (msl.MapId, x, y, msl.Heading) ;
+					Location spawnLocation = new Location (msl.mapId, x, y); //new Location (msl.MapId, x, y, msl.Heading) ;
 					
 					/* 製作怪物實體 */
-					MonsterInstance monster = new MonsterInstance (monsterTemplate, spawnLocation) ;
+					MonsterInstance monster = new MonsterInstance (monsterTemplate, spawnLocation);
 					monster.movementDistance = msl.movementDistance;
-					monster.uuid = UuidGenerator.next ();
+					monster.uuid = UuidGenerator.next ();//FIX
 					
 					//System.out.printf ("要求產生[%s]%d隻在地圖%d", msl.Location, (msl.Count-msl.Mobs.size()), msl.MapId) ;
 					//System.out.printf (":0x%08X\n", Mob.Uuid) ;
 					
 					/* 產生怪物持有道具 (mdl->monster drop list) */
-					List<MonsterDropList> mdl = dropList.get (msl.npcTemplateId) ;
+					List<MonsterDropList> mdl = dropList.get (msl.npcTemplateId);
 					if (mdl != null) {
 						for (MonsterDropList i : mdl) {		
 							int dropRate = random.nextInt (1000000) * Configurations.RateDropItem;
@@ -88,13 +88,14 @@ public class MonsterGenerator extends Thread implements Runnable {
 						} //end of mdl
 					}
 					
-					vidarMap.monsters.put (monster.uuid, monster);
+					//vidarMap.monsters.put (monster.uuid, monster);
+					vidarMap.addModel (monster);
 					msl.monsters.add (monster) ;
 					monster.actionStatus = MonsterInstance.ACTION_IDLE; /* 生怪後的初始狀態 */
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		}
 	}
 	
@@ -102,19 +103,19 @@ public class MonsterGenerator extends Thread implements Runnable {
 		vidarMap = map;
 		spawnList = new ConcurrentHashMap<Integer, MonsterSpawnList> ();
 		dropList  = new ConcurrentHashMap<Integer, List<MonsterDropList>> ();
-		updateSpawnList () ;
+		updateSpawnList ();
 	}
 	
 	public void removeMonster (MonsterInstance m) {
 		spawnList.forEach ((Integer u, MonsterSpawnList msl)->{
-			msl.monsters.remove (m) ;
+			msl.monsters.remove (m);
 		});
 	}
 	
 	public void updateSpawnList () {
 		ResultSet rs = DatabaseCmds.mobSpawnList (vidarMap.mapId);
 		try {
-			while (rs.next () ) {
+			while (rs.next ()) {
 				MonsterSpawnList msl = new MonsterSpawnList (
 					rs.getInt ("id"),
 					rs.getString ("location"),
@@ -154,14 +155,14 @@ public class MonsterGenerator extends Thread implements Runnable {
 					System.out.printf ("MSL ERR, CHECK->id:%d name:%s location(%d:%d,%d)\n",
 						msl.listId,
 						CacheData.npcs.get (msl.npcTemplateId).name,
-						msl.mapId, msl.locX, msl.locY) ;
+						msl.mapId, msl.locX, msl.locY);
 					continue;
 				} 
 				
 				spawnList.put (msl.listId, msl);
 				
 				int monsterId = rs.getInt ("npc_templateid") ;
-				ResultSet rsDrop = DatabaseCmds.mobDropList (monsterId) ;
+				ResultSet rsDrop = DatabaseCmds.mobDropList (monsterId);
 				try {
 					rsDrop.last ();
 					int dropListSize = rsDrop.getRow ();
@@ -179,26 +180,24 @@ public class MonsterGenerator extends Thread implements Runnable {
 								rsDrop.getInt ("chance"));
 							dropTable.add (mdl);
 						}
-						dropList.putIfAbsent (monsterId, dropTable) ;
+						dropList.putIfAbsent (monsterId, dropTable);
 						
 					}
 				} catch (Exception e) {
-					e.printStackTrace () ;
+					e.printStackTrace ();
 				} finally {
-					DatabaseUtil.close (rsDrop) ;
+					DatabaseUtil.close (rsDrop);
 				}
 			} //End of rs.next()
 			
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		} finally {
-			DatabaseUtil.close (rs) ;
+			DatabaseUtil.close (rs);
 		}
 	}
 	
-	/*
-	 * 快取資料庫的spawnlist用
-	 */
+	/* 快取資料庫的spawnlist用 */
 	class MonsterSpawnList {
 		public int listId;
 		public String location;
@@ -264,7 +263,7 @@ public class MonsterGenerator extends Thread implements Runnable {
 			rest = _rest;
 			nearSpawn = _nearRespawn;
 			
-			monsters = new ArrayList<MonsterInstance> () ;
+			monsters = new ArrayList<MonsterInstance> ();
 		}
 	}
 	

@@ -3,9 +3,6 @@ package vidar.server.process_server;
 import vidar.server.opcodes.*;
 import vidar.server.packet.*;
 import vidar.game.model.*;
-import vidar.game.model.npc.*;
-import vidar.game.model.monster.*;
-import vidar.game.model.item.*;
 
 /*
  * S_OwnCharPack對比
@@ -13,7 +10,7 @@ import vidar.game.model.item.*;
  */
 public class ModelPacket
 {
-	PacketBuilder packet = new PacketBuilder () ;
+	PacketBuilder packet = new PacketBuilder ();
 	
 	public static int STATUS_POISON = 0x01; //中毒
 	public static int STATUS_INVISIBLE = 0x02;//隱身
@@ -24,7 +21,35 @@ public class ModelPacket
 	public static int STATUS_FASTMOVE = 0x40; //高速移動用
 	public static int STATUS_GHOST = 0x80; //幽靈模式
 	
+	public ModelPacket (MapModel node) {
+		packet.writeByte (ServerOpcodes.MODEL_PACK);
+		packet.writeWord (node.location.p.x);
+		packet.writeWord (node.location.p.y);
+		packet.writeDoubleWord (node.uuid);
+		packet.writeWord (node.gfx);
+		packet.writeByte (node.getActId ());
+		packet.writeByte (node.heading);
+		packet.writeByte (node.lightRange);
+		packet.writeByte (node.moveSpeed);
+		packet.writeDoubleWord (node.exp);
+		packet.writeWord (node.lawful);
+		packet.writeString (node.name);
+		packet.writeString (node.title);
+		packet.writeByte (node.status);
+		packet.writeDoubleWord (node.clanId);
+		packet.writeString (node.clanName);
+		packet.writeString (null);
+		packet.writeByte (0x00);
+		packet.writeByte (node.hpScale); //血條百分比
+		packet.writeByte (0x00);
+		packet.writeByte (node.levelScale);
+		packet.writeByte (0x00);
+		packet.writeByte (0xFF);
+		packet.writeByte (0xFF);
+	}
+	
 	/* 報告角色物件 */
+	/*
 	public ModelPacket (PcInstance pc) {
 		int status = STATUS_PC;	
 		
@@ -32,13 +57,9 @@ public class ModelPacket
 			status |= STATUS_BRAVE;
 		}
 		
-		//Check Invisible
-		//Check FastMove
-		//Check Ghost
-		
 		packet.writeByte (ServerOpcodes.MODEL_PACK);
-		packet.writeWord (pc.location.point.x) ;
-		packet.writeWord (pc.location.point.y) ;
+		packet.writeWord (pc.location.p.x) ;
+		packet.writeWord (pc.location.p.y) ;
 		packet.writeDoubleWord (pc.uuid) ;
 		
 		packet.writeWord (pc.gfxTemp) ; //get gfx
@@ -71,15 +92,16 @@ public class ModelPacket
 		packet.writeByte (0x00) ;
 		packet.writeByte (0xFF) ;
 		packet.writeByte (0xFF) ;
-	}
+	}*/
 	
 	/*
 	 * 報告NPC物件
 	 */
+	/*
 	public ModelPacket (NpcInstance npc) {
 		packet.writeByte (ServerOpcodes.MODEL_PACK);
-		packet.writeWord (npc.location.point.x) ;
-		packet.writeWord (npc.location.point.y) ;
+		packet.writeWord (npc.location.p.x) ;
+		packet.writeWord (npc.location.p.y) ;
 		packet.writeDoubleWord (npc.uuid) ;
 		
 		packet.writeWord (npc.gfx) ; //get gfx
@@ -109,15 +131,16 @@ public class ModelPacket
 		packet.writeByte (0x00) ;
 		packet.writeByte (0xFF) ;
 		packet.writeByte (0xFF) ;
-	}
+	}*/
 	
 	/*
 	 * 報告門物件
 	 */
+	/*
 	public ModelPacket (DoorInstance d) {
 		packet.writeByte (ServerOpcodes.MODEL_PACK) ;
-		packet.writeWord (d.location.point.x) ;
-		packet.writeWord (d.location.point.y) ;
+		packet.writeWord (d.location.p.x) ;
+		packet.writeWord (d.location.p.y) ;
 		packet.writeDoubleWord (d.uuid) ;
 		packet.writeWord (d.gfx) ;
 		packet.writeByte (d.actionCode) ;
@@ -143,15 +166,16 @@ public class ModelPacket
 		packet.writeByte (0) ;
 		packet.writeByte (0xFF) ;
 		packet.writeByte (0xFF) ;
-	}	
+	}*/	
 	
 	/*
 	 * 報告怪物物件
 	 */
+	/*
 	public ModelPacket (MonsterInstance monster) {
 		packet.writeByte (ServerOpcodes.MODEL_PACK);
-		packet.writeWord (monster.location.point.x) ;
-		packet.writeWord (monster.location.point.y) ;
+		packet.writeWord (monster.location.p.x) ;
+		packet.writeWord (monster.location.p.y) ;
 		packet.writeDoubleWord (monster.uuid) ;
 		
 		packet.writeWord (monster.gfx) ; //get gfx
@@ -181,12 +205,12 @@ public class ModelPacket
 		packet.writeByte (0x00) ;
 		packet.writeByte (0xFF) ;
 		packet.writeByte (0xFF) ;
-	}
-	
+	}*/
+	/*
 	public ModelPacket (ItemInstance item) {
 		packet.writeByte (ServerOpcodes.MODEL_PACK);
-		packet.writeWord (item.location.point.x);
-		packet.writeWord (item.location.point.y);
+		packet.writeWord (item.location.p.x);
+		packet.writeWord (item.location.p.y);
 		packet.writeDoubleWord (item.uuid);
 		packet.writeWord (item.gfxOnGround);
 		packet.writeByte (0);
@@ -213,7 +237,7 @@ public class ModelPacket
 		packet.writeByte (0);
 		packet.writeByte (0);
 		
-	}
+	}*/
 	
 	public byte[] getRaw () {
 		return packet.getPacketNoPadding () ;

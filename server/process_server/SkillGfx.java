@@ -12,7 +12,7 @@ public class SkillGfx
 	PacketBuilder packet = new PacketBuilder ();
 	private static AtomicInteger sequentialNumber = new AtomicInteger(0);
 	
-	public SkillGfx (Model src, int tid, int actionId, int skillGfx, int x, int y, boolean isHit) {
+	public SkillGfx (MapModel src, int tid, int actionId, int skillGfx, int x, int y, boolean isHit) {
 		packet.writeByte (ServerOpcodes.MODEL_ACTION);
 		packet.writeByte (actionId);
 		
@@ -36,8 +36,8 @@ public class SkillGfx
 		packet.writeByte (127);
 		
 		//發動方, 接受方座標
-		packet.writeWord (src.location.point.x);
-		packet.writeWord (src.location.point.y);
+		packet.writeWord (src.location.p.x);
+		packet.writeWord (src.location.p.y);
 		packet.writeWord (x);
 		packet.writeWord (y);
 		

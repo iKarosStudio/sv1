@@ -36,20 +36,20 @@ public class ServerTime extends Thread implements Runnable
 	}
 	
 	public ServerTime () {
-		cal = Calendar.getInstance () ;
+		cal = Calendar.getInstance ();
 		//System.out.println ("Server Time start") ;
 		this.setName ("SERVER TIME") ;
 	}
 	
 	public static ServerTime getInstance () {
 		if (instance == null) {
-			instance = new ServerTime () ;
+			instance = new ServerTime ();
 		}
 		return instance;
 	}
 	
 	public static String getTimeString () {
-		return Calendar.getInstance ().getTime ().toString () ;
+		return Calendar.getInstance ().getTime ().toString ();
 	}
 	
 	public int getTime () {

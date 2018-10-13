@@ -16,7 +16,7 @@ public class DoorTouch
 		packetReader.readWord ();//int y = packetReader.readWord ();
 		int uuid = packetReader.readDoubleWord ();
 		
-		DoorInstance door = pc.doorsInsight.get (uuid);
+		DoorInstance door = (DoorInstance) pc.modelsInsight.get (uuid);
 		
 		if (door.keyId == 0) {
 			if (door.isOpened) {
@@ -25,7 +25,7 @@ public class DoorTouch
 				door.open ();
 			}
 			byte[] detail = new DoorDetail (door).getRaw ();
-			byte[] action = new ModelAction (door.actionCode, door.uuid, door.heading).getRaw ();
+			byte[] action = new ModelAction (door.actId, door.uuid, door.heading).getRaw ();
 			
 			/* 以門為點做廣播 */
 			door.boardcastPcInsight (detail);

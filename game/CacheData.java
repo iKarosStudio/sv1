@@ -26,39 +26,39 @@ public class CacheData
 	
 	public static CacheData getInstance () {
 		if (instance == null) {
-			instance = new CacheData () ;
+			instance = new CacheData ();
 		}
 		return instance;
 	}
 	
 	public CacheData () {
-		System.out.print ("Load Game data...\n") ;
+		System.out.print ("Load Game data...\n");
 		
-		System.out.print ("\t-> Load npc cache data...") ;
-		loadNpcCache () ;
+		System.out.print ("\t-> Load npc cache data...");
+		loadNpcCache ();
 		
-		System.out.print ("\t-> Load npc action cache data...") ;
-		loadNpcActionCache () ;
+		System.out.print ("\t-> Load npc action cache data...");
+		loadNpcActionCache ();
 		
-		System.out.print ("\t-> Load npc talk cache data...") ;
-		loadNpcTalkDataCache () ;
+		System.out.print ("\t-> Load npc talk cache data...");
+		loadNpcTalkDataCache ();
 		
-		System.out.print ("\t-> Load items cache data...") ;
-		loadItemCache () ;
+		System.out.print ("\t-> Load items cache data...");
+		loadItemCache ();
 		
-		System.out.print ("\t-> Load skill cache data...") ;
-		loadSkillCache () ;
+		System.out.print ("\t-> Load skill cache data...");
+		loadSkillCache ();
 		
-		System.out.print ("\t-> Load shop cache data...") ;
-		loadShopCache () ;
+		System.out.print ("\t-> Load shop cache data...");
+		loadShopCache ();
 		
-		System.out.print ("\t-> Load weapons cache data...") ;
-		loadWeaponCache () ;
+		System.out.print ("\t-> Load weapons cache data...");
+		loadWeaponCache ();
 		
-		System.out.print ("\t-> Load armor cache data...") ;
-		loadArmorCache () ;
+		System.out.print ("\t-> Load armor cache data...");
+		loadArmorCache ();
 		
-		System.out.println () ;
+		System.out.println ();
 		//cache pets types
 		//cache monster types
 		//cache npc types
@@ -150,20 +150,20 @@ public class CacheData
 			}
 			long timeEnds = System.currentTimeMillis ();
 			float usedTime = (float) (timeEnds - timeStarts) / 1000;
-			System.out.printf ("\t\t" + validCounter + " npc cached in\t%.3f s\n", usedTime) ;
+			System.out.printf ("\t\t" + validCounter + " npc cached in\t%.3f s\n", usedTime);
 			
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		} finally {
-			DatabaseUtil.close (rs) ;
-			DatabaseUtil.close (ps) ;
+			DatabaseUtil.close (rs);
+			DatabaseUtil.close (ps);
 			//DatabaseUtil.close (con) ;
 		}	
 	}
 	
 	public static void loadNpcActionCache () {
-		npcAction = new ConcurrentHashMap<String, Document> () ;
-		long t_starts = System.currentTimeMillis () ;
+		npcAction = new ConcurrentHashMap<String, Document> ();
+		long t_starts = System.currentTimeMillis ();
 		
 		NpcActionXmlLoader xmlActionFileLoader = new NpcActionXmlLoader ();
 		xmlActionFileLoader.load (npcAction);
@@ -200,7 +200,7 @@ public class CacheData
 			}
 			long timeEnds = System.currentTimeMillis ();
 			float usedTime = (float) (timeEnds - timeStarts) / 1000;
-			System.out.printf ("\t\t" + validCounter + " npc talk cached in\t%.3f s\n", usedTime) ;
+			System.out.printf ("\t\t" + validCounter + " npc talk cached in\t%.3f s\n", usedTime);
 		} catch (Exception e) {
 			e.printStackTrace ();
 		} finally {
@@ -219,7 +219,7 @@ public class CacheData
 		
 		try {
 			ps = con.prepareStatement ("SELECT * FROM etcitem;");
-			rs = ps.executeQuery () ;
+			rs = ps.executeQuery ();
 			
 			int Counter = 0;
 			long timeStarts = System.currentTimeMillis ();
@@ -248,26 +248,26 @@ public class CacheData
 					rs.getInt ("food_volume"),
 					rs.getBoolean ("save_at_once"));
 				
-				item.put (rs.getInt ("item_id"), i) ;
+				item.put (rs.getInt ("item_id"), i);
 				
 				Counter ++;
 			}
 			long timeEnds = System.currentTimeMillis () ;
 			float usedTime = (float) (timeEnds - timeStarts) / 1000;
-			System.out.printf ("\t\t" + Counter + " items cached in\t%.3f s\n", usedTime) ;
+			System.out.printf ("\t\t" + Counter + " items cached in\t%.3f s\n", usedTime);
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 		} finally {
-			DatabaseUtil.close (rs) ;
-			DatabaseUtil.close (ps) ;
-			DatabaseUtil.close (con) ;
+			DatabaseUtil.close (rs);
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
 		}
 	}
 	
 	public static void loadSkillCache () {
-		skill = new ConcurrentHashMap<Integer, SkillTemplate> () ;
+		skill = new ConcurrentHashMap<Integer, SkillTemplate> ();
 		
-		Connection con = HikariCP.getConnection () ;
+		Connection con = HikariCP.getConnection ();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
@@ -319,7 +319,7 @@ public class CacheData
 			}
 			long timeEnds = System.currentTimeMillis ();
 			float usedTime = (float) (timeEnds - timeStarts) / 1000;
-			System.out.printf ("\t\t" + Counter + " skills cached in\t%.3f s\n", usedTime) ;
+			System.out.printf ("\t\t" + Counter + " skills cached in\t%.3f s\n", usedTime);
 		} catch (Exception e) {
 			e.printStackTrace ();
 		} finally {
@@ -441,33 +441,33 @@ public class CacheData
 			}
 			long timeEnds = System.currentTimeMillis ();
 			float usedTime = (float) (timeEnds - timeStarts) / 1000;
-			System.out.printf ("\t\t" + Counter + " weapons cached in\t%.3f s\n", usedTime) ;
+			System.out.printf ("\t\t" + Counter + " weapons cached in\t%.3f s\n", usedTime);
 		} catch (Exception e) {
-			e.printStackTrace () ;
+			e.printStackTrace ();
 			
 		} finally {
-			DatabaseUtil.close (rs) ;
-			DatabaseUtil.close (ps) ;
-			DatabaseUtil.close (con) ;
+			DatabaseUtil.close (rs);
+			DatabaseUtil.close (ps);
+			DatabaseUtil.close (con);
 			
 		}
 	}
 	
 	public void loadArmorCache () {
-		armor = new ConcurrentHashMap<Integer, ArmorTemplate> () ;
+		armor = new ConcurrentHashMap<Integer, ArmorTemplate> ();
 		
-		Connection con = HikariCP.getConnection () ;
+		Connection con = HikariCP.getConnection ();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
 		try {
-			ps = con.prepareStatement ("SELECT * FROM armor;") ;
-			rs = ps.executeQuery () ;
+			ps = con.prepareStatement ("SELECT * FROM armor;");
+			rs = ps.executeQuery ();
 			
 			int Counter = 0;
-			long timeStarts = System.currentTimeMillis () ;
-			while (rs.next () ) {
-				int itemId = rs.getInt ("item_id") ;
+			long timeStarts = System.currentTimeMillis ();
+			while (rs.next ()) {
+				int itemId = rs.getInt ("item_id");
 				
 				ArmorTemplate a = new ArmorTemplate (
 					itemId,
@@ -513,13 +513,14 @@ public class CacheData
 					rs.getInt ("regist_stan"),
 					rs.getInt ("regist_stone"),
 					rs.getInt ("regist_sleep"),
-					rs.getInt ("regist_freeze")	) ;
-				armor.putIfAbsent (itemId, a) ;
+					rs.getInt ("regist_freeze"));
+				
+				armor.putIfAbsent (itemId, a);
 				Counter ++;
 			}
-			long timeEnds = System.currentTimeMillis () ;
+			long timeEnds = System.currentTimeMillis ();
 			float usedTime = (float) (timeEnds - timeStarts) / 1000;
-			System.out.printf ("\t\t" + Counter + " armors cached in \t%.3f s\n", usedTime) ;
+			System.out.printf ("\t\t" + Counter + " armors cached in \t%.3f s\n", usedTime);
 		} catch (Exception e) {
 			e.printStackTrace ();
 			

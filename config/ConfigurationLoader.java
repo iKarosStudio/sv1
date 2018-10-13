@@ -10,7 +10,7 @@ public class ConfigurationLoader
 	public static ConfigurationLoader getInstance () 
 	{
 		if (instance == null) {
-			instance = new ConfigurationLoader () ;
+			instance = new ConfigurationLoader ();
 		}
 		return instance;
 	}

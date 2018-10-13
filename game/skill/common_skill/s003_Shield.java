@@ -15,7 +15,7 @@ public class s003_Shield
 		
 		System.out.printf ("\t\t使用%s\n", skillTemplate.name);
 		
-		pc.useSkill (pc.uuid, ModelActionId.NONE_TARGETED_SKILL, skillTemplate.gfx, pc.location.point.x, pc.location.point.y);
+		pc.useSkill (pc.uuid, ModelActionId.NONE_TARGETED_SKILL, skillTemplate.gfx, pc.location.p.x, pc.location.p.y);
 		pc.addSkillEffect (skillTemplate.skillId, skillTemplate.remainTime);
 		//send sop=114 shield icon
 	}

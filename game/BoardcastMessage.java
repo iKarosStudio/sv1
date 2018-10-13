@@ -18,12 +18,12 @@ public class BoardcastMessage extends Thread implements Runnable
 	
 	public static BoardcastMessage getInstance () {
 		if (instance == null) {
-			instance = new BoardcastMessage () ;
+			instance = new BoardcastMessage ();
 		}
 		return instance;
 	}
 	
 	public BoardcastMessage () {
-		vidar = Vidar.getInstance () ;
+		vidar = Vidar.getInstance ();
 	}
 }

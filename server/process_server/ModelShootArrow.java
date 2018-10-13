@@ -11,7 +11,7 @@ public class ModelShootArrow
 	PacketBuilder packet = new PacketBuilder ();
 	private static AtomicInteger sequentialNumber = new AtomicInteger(0);
 	
-	public ModelShootArrow (Model src, int targetUuid, int targetX, int targetY) {
+	public ModelShootArrow (MapModel src, int targetUuid, int targetX, int targetY) {
 		packet.writeByte (ServerOpcodes.MODEL_ACTION);
 		packet.writeByte (ModelActionId.ATTACK);
 		
@@ -35,8 +35,8 @@ public class ModelShootArrow
 		packet.writeByte (127);
 		
 		//發動方, 接受方座標
-		packet.writeWord (src.location.point.x);
-		packet.writeWord (src.location.point.y);
+		packet.writeWord (src.location.p.x);
+		packet.writeWord (src.location.p.y);
 		packet.writeWord (targetX);
 		packet.writeWord (targetY);
 		

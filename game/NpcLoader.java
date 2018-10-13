@@ -49,8 +49,8 @@ public class NpcLoader
 						NpcTemplate npcData = CacheData.npcs.get (npcTemplateId);
 						NpcInstance npc = new NpcInstance (npcData);
 						
-						npc.location.point.x = posX;
-						npc.location.point.y = posY;
+						npc.location.p.x = posX;
+						npc.location.p.y = posY;
 						npc.location.mapId = mapId;
 						npc.heading = heading;
 						

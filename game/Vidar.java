@@ -104,6 +104,7 @@ public class Vidar extends Thread
 			/* Game boardcast message */
 			sysMessage = BoardcastMessage.getInstance () ;
 			KernelThreadPool.getInstance ().ScheduleAtFixedRate (sysMessage, 10000, 30000);
+			
 		} catch (Exception e) {
 			e.printStackTrace () ;
 			
@@ -162,12 +163,14 @@ public class Vidar extends Thread
 	
 	public void addNpc (NpcInstance npc) {
 		VidarMap map = getMap (npc.location.mapId);
-		map.addNpc (npc);
+		//map.addNpc (npc);
+		map.addModel (npc);
 	}
 	
 	public void removeNpc (NpcInstance npc) {
 		VidarMap map = getMap (npc.location.mapId);
-		map.removeNpc (npc);
+		//map.removeNpc (npc);
+		map.removeModel (npc.uuid);
 	}
 	
 	public VidarMap getMap (int id) {

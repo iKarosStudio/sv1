@@ -3,16 +3,13 @@ package vidar.server;
 import java.io.*;
 import java.net.*;
 import java.lang.Thread;
-import java.util.logging.*;
 
 import vidar.server.packet.*;
-import vidar.server.opcodes.*;
 import vidar.game.model.*;
 
 
 public class SessionHandler extends Thread implements Runnable
 {
-	Logger Log = Logger.getLogger (SessionHandler.class.getSimpleName () ) ;
 	private Socket sock;
 
 	public Account account;
@@ -27,7 +24,7 @@ public class SessionHandler extends Thread implements Runnable
 			(byte) 0xB1, (byte) 0x3C, (byte) 0x2C, (byte) 0x28, (byte) 0xF6,
 			(byte) 0x65, (byte) 0x1D, (byte) 0xDD, (byte) 0x56, (byte) 0xE3, 
 			(byte) 0xEF
-	} ;
+	};
 		
 	public void firstPacket () {
 		byte[] initPacket = new byte[18];
@@ -103,7 +100,7 @@ public class SessionHandler extends Thread implements Runnable
 				byte[] recvData = receivePacket (); //Get decoded data
 				
 				/* 處理客戶端封包  */
-				packetHandle.process (recvData) ;
+				packetHandle.process (recvData);
 				
 			} catch (SocketException s) {
 				/* 連線中斷 */
@@ -122,19 +119,19 @@ public class SessionHandler extends Thread implements Runnable
 		if (account != null) {
 			try {
 				if (!account.activePc.isExit) { //若不是客戶端主動離線
-					account.activePc.offline () ;
+					account.activePc.offline ();
 				}
 				
 				account.activePc = null;
 				
 				account.updateLastLogin ();
-				sock.close () ;
+				sock.close ();
 				
 				System.out.printf ("[Disconnect]IP:%s [Host:%s]\n", 
 						sock.getInetAddress().getHostAddress ().toString (),
 						sock.getInetAddress ().getHostName ());
 			} catch (Exception e) {
-				e.printStackTrace () ;
+				e.printStackTrace ();
 			}
 			account = null;
 		}		
