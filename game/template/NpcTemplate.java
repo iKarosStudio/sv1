@@ -169,30 +169,6 @@ public class NpcTemplate extends ActiveModel
 	}
 
 	@Override
-	public int getDmgModify () {
-		//Nothing to do
-		return 0;
-	}
-
-	@Override
-	public int getSpModify () {
-		//Nothing to do
-		return 0;
-	}
-
-	@Override
-	public int getHitModify () {
-		//Nothing to do
-		return 0;
-	}
-
-	@Override
-	public int getBowHitModify () {
-		//Nothing to do
-		return 0;
-	}
-
-	@Override
 	public int getDmgReduction () {
 		//Nothing to do
 		return 0;

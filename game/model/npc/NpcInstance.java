@@ -103,30 +103,6 @@ public class NpcInstance extends ActiveModel implements BoardcastNode
 	}
 
 	@Override
-	public int getDmgModify () {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getSpModify () {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getHitModify () {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getBowHitModify () {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public int getDmgReduction () {
 		// TODO Auto-generated method stub
 		return 0;

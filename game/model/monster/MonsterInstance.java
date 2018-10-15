@@ -153,7 +153,7 @@ public class MonsterInstance extends ActiveModel implements Fightable, Moveable,
 		//}
 	}
 	
-	public void toggleHateList (PcInstance pc, int dmg) {
+	public void toggleHateList (MapModel pc, int dmg) {
 		hateListSize ++;
 		if (hateList == null) {
 			hateList = new ConcurrentHashMap<Integer, Integer> ();
@@ -260,32 +260,52 @@ public class MonsterInstance extends ActiveModel implements Fightable, Moveable,
 
 	@Override
 	public synchronized void damage (NormalAttack atk) {
+		int dmg = atk.totalDmg;
 		
-		int dmg = 0;
-		if (hp > dmg) {
-			hp -= dmg;
-			
-			//挨打動作
-			boardcastPcInsight (new ModelAction (ModelActionId.DAMAGE, uuid, heading).getRaw());
-			
-		} else {
-			
-			//一個毆打致死
-			try {
-				byte[] die = new ModelAction (ModelActionId.DIE, uuid, heading).getRaw ();
-				boardcastPcInsight (die);
+		//減免調整
+		atk.hitRate += (getAc () * 5);
+		
+		
+		if (atk.isHit ()) {
+			System.out.printf ("命中! %d\n", atk.hitRate);
+			if (hp > dmg) {
+				hp -= dmg;
 				
-				//轉移經驗值與道具
-				transferExp ();
-				transferItems ();					
+				//挨打動作
+				boardcastPcInsight (new ModelAction (ModelActionId.DAMAGE, uuid, heading).getRaw());
 				
-				hp = 0;
-				isDead = true;
-				actionStatus = MonsterInstance.ACTION_DEAD;
-				System.out.printf ("%s 死掉了\n", name);
-			} catch (Exception e) {
-				e.printStackTrace ();
+				toggleHateList (atk.attacker, dmg);
+				
+				//設定反擊
+				if (targetPc == null) {
+					aiKernel.cancel ();
+					actionStatus = MonsterInstance.ACTION_ATTACK;
+					targetPc = (PcInstance) atk.attacker;
+				}
+				
+			} else {
+				
+				//一個毆打致死
+				try {
+					byte[] die = new ModelAction (ModelActionId.DIE, uuid, heading).getRaw ();
+					boardcastPcInsight (die);
+					
+					toggleHateList (atk.attacker, dmg);
+					
+					//轉移經驗值與道具
+					transferExp ();
+					transferItems ();					
+					
+					hp = 0;
+					isDead = true;
+					actionStatus = MonsterInstance.ACTION_DEAD;
+					System.out.printf ("%s 死掉了\n", name);
+				} catch (Exception e) {
+					e.printStackTrace ();
+				}
 			}
+		} else {
+			System.out.println ("沒有命中!");
 		}
 	}
 
@@ -351,8 +371,7 @@ public class MonsterInstance extends ActiveModel implements Fightable, Moveable,
 
 	@Override
 	public int getAc () {
-		// TODO Auto-generated method stub
-		return 0;
+		return basicParameters.ac;
 	}
 
 	@Override
@@ -375,30 +394,6 @@ public class MonsterInstance extends ActiveModel implements Fightable, Moveable,
 
 	@Override
 	public int getMpr () {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getDmgModify () {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getSpModify () {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getHitModify () {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getBowHitModify () {
 		// TODO Auto-generated method stub
 		return 0;
 	}

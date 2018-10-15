@@ -27,7 +27,7 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 		handle = pc.getHandle ();
 	}
 	
-	public void run () {
+	public void run () {//每一秒定時檢查技能存在時間
 		if (!effects.isEmpty ()) {
 			effects.forEach ((Integer SkillId, SkillEffect Buff)->{
 				if (Buff.remainTime == 0xFFFF) {
@@ -36,7 +36,7 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 					Buff.remainTime--;
 				} else {
 					//Stop buff
-					stopSkill (SkillId);
+					removeSkill (SkillId);
 					effects.remove (SkillId);
 				}
 			});
@@ -52,16 +52,16 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 			} else if (skillId == SkillId.STATUS_BRAVE) {
 				byte[] data = new SkillBrave (pc.uuid, pc.braveSpeed, effects.remainTime).getRaw () ;
 				handle.sendPacket (data);
-				
 			} else {
 				//其他持續性技能
 			}
 		}) ;
 	}
 	
+	//登入&換地圖時重新載入角色技能效果資訊
 	public void loadBuffs () {		
 		effects.forEach ((Integer skillId, SkillEffect effect)->{
-			stopSkill (skillId);
+			removeSkill (skillId);
 		});
 		effects.clear ();
 		
@@ -88,15 +88,13 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 	}
 	
 	public void saveBuffs () {
+		//清空全部紀錄
 		DatabaseCmds.deleteSkillEffects (pc.uuid);
 		
+		//塞新的進去
 		effects.forEach ((Integer skillId, SkillEffect effect)->{
 			DatabaseCmds.insertSkillEffect (pc.uuid, skillId, effect.remainTime, effect.polyGfx);
 		});
-	}
-	
-	public boolean hasSkillEffect (int skillId) {
-		return effects.containsKey (skillId);
 	}
 	
 	private void skillPacket (int skillId) {
@@ -113,6 +111,7 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 			
 		case SkillId.STATUS_BRAVE:
 			handle.sendPacket (new SkillBrave (pc.uuid, 1, effects.get(skillId).remainTime).getRaw());
+			pc.status |= 0x10;
 			break;
 		
 		default:
@@ -120,19 +119,17 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 		}
 	}
 	
+	public boolean hasSkillEffect (int skillId) {
+		return effects.containsKey (skillId);
+	}
 	
 	public void addSkill (int skillId, int remainTime, int polyId) { //skillid, remain time poly
 		SkillEffect effect = new SkillEffect (skillId, remainTime, polyId);
 		effects.put (skillId, effect);
 		skillPacket (skillId);
 	}
-
 	
-	public void removeSkill(int skillId) {//skillid
-		stopSkill (skillId);
-	}
-	
-	public void stopSkill (int skillId) {
+	public void removeSkill (int skillId) {
 		switch (skillId) {
 		case SkillId.SHIELD: //保護罩
 			pc.skillParameters.ac += 1;
@@ -148,6 +145,7 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 		case SkillId.STATUS_BRAVE: //勇敢藥水
 			pc.braveSpeed = 0;
 			handle.sendPacket (new SkillBrave (pc.uuid, 0, 0).getRaw ());
+			pc.status &= 0xEF;
 			break;
 		
 		default:

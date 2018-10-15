@@ -67,7 +67,7 @@ public class ItemInstance extends MapModel implements BoardcastNode
 	public boolean isDarkelfUsable;
 	
 	/* weapon 特性 */
-	public int gfx;
+	public int actId;
 	public boolean isDamageable;
 	public boolean isTwoHanded;
 	public boolean isManaDrain;
@@ -137,7 +137,7 @@ public class ItemInstance extends MapModel implements BoardcastNode
 			weight = template.weight;
 			gfxInBag = template.gfxInBag;
 			gfx = template.gfxOnGround;
-			gfx = template.gfx;
+			actId = template.actId;
 			name = template.name;
 			nameId = template.nameId;
 			material = template.material;

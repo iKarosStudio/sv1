@@ -5,6 +5,7 @@ import java.util.*;
 import vidar.game.model.item.*;
 import vidar.game.model.*;
 import vidar.game.model.monster.*;
+import vidar.game.skill.*;
 
 import static vidar.game.skill.AttackOffsetTable.*;
 import static vidar.game.template.ItemTypeTable.*;
@@ -20,47 +21,132 @@ public class NormalAttack
 	public ItemInstance arrow = null;
 	public int fixedDmg = 0;
 	public int randomDmg = 0;
+	public int totalDmg = 0;
 	public int hitRate = 0;
 	
 	/* 由玩家發動的攻擊 */
-	public NormalAttack (PcInstance pc) {
-		//calcHitRate (pc);
-		//calcDmg (pc);
-	}
-	
 	public NormalAttack (PcInstance src, int _targetUuid, int _targetX, int _targetY) {
 		attacker = src;
+		int dex = src.getDex ();
+		int str = src.getStr ();
 		
+		//find target in map
 		target = attacker.getCurrentMap ().getModel (_targetUuid);
-		if (target != null) {
-			//
+		if (target == null) {
+			return;
 		}
 		
+		hitRate += src.level;
+		
+		if (dex > 39) {
+			hitRate += DEX_HIT_OFFSET[39];
+		} else {
+			hitRate += DEX_HIT_OFFSET[dex];
+		}
+		
+		if (str > 39) {
+			hitRate += STR_HIT_OFFSET[39];
+		} else {
+			hitRate += STR_HIT_OFFSET[str];
+		}
+		
+		//計算攻擊點數
+		//*命中減免在damage裡做計算
+		
+		//隨機武器傷害部分
 		if (src.equipment.weapon != null) {
 			weapon = src.equipment.weapon;
-			if (weapon.isRemoteWeapon ()) {
+			hitRate += (weapon.enchant >>> 1);
+			
+			if (weapon.isRemoteWeapon ()) { //遠距離武器
 				isRemoteAttack = true;
-				arrow = src.equipment.arrow;
+				hitRate += weapon.bowHitModify;
 				
+				if (src.equipment.arrow == null) {
+					src.itemBag.forEach ((Integer uuid, ItemInstance item)->{
+						if (item.isArrow ()) {
+							src.equipment.setArrow (item);
+						}
+					});
+					
+					if (src.equipment.arrow == null) {
+						hitRate = 0;
+					} else {
+						arrow = src.equipment.arrow;
+					}
+				}
+				
+				//Random
 				if (target.size == 0) {
 					randomDmg += (weapon.dmgSmall + arrow.dmgSmall);
 				} else {
 					randomDmg += (weapon.dmgLarge + arrow.dmgLarge);
 				}
-			} else {
 				
+				if (dex > 35) {
+					randomDmg += DEX_DMG_OFFSET[35];
+				} else {
+					randomDmg += DEX_DMG_OFFSET[dex];
+				}
+				
+				if (src.isElf ()) {
+					randomDmg += src.level / 10;
+				}
+				
+				if (src.isDarkelf ()) {
+				}
+	
+				
+			} else { //近戰武器
+				hitRate += weapon.hitModify;
+				
+				//Random
 				if (target.size == 0) {
 					randomDmg += weapon.dmgSmall;
 				} else {
 					randomDmg += weapon.dmgLarge;
 				}
 				
+				
+				if (str > 50) {
+					randomDmg += STR_DMG_OFFSET[50];
+				} else {
+					randomDmg += STR_DMG_OFFSET[str];
+				}
+				
+				//雙刀33%機率打出最大傷害 特效3671
+				//雙刀25%機率打出兩倍傷害 特效3398
+				//雙刀雙爪有雙重破壞時33%機率打出雙被傷害 特效3398
 			}
+			
+			
+			randomDmg = random.nextInt (randomDmg) + 1;
+			
+			//fixed 固定傷害部分
+			fixedDmg += weapon.enchant;
+			fixedDmg += weapon.dmgModify;
+			
+			if (src.hasSkillEffect (SkillId.HOLY_WEAPON)) {
+				fixedDmg += 1;
+			}
+			
+			if (src.hasSkillEffect (SkillId.ENCHANT_WEAPON)) { //擬似魔法武器 , TODO 加入針對武器UUID檢查
+				fixedDmg += 2;
+			}
+			
+			totalDmg = randomDmg + fixedDmg;
+		} else {//end of weapon != null
+			//空手打
+			totalDmg = 1;
 		}
 		
-	
-		
-		//find target in map
+		/*
+		System.out.printf ("%s 發動一次攻擊 DMG:%d (rnd(%d) + fix(%d)) 命中率:%d\n",
+				src.name,
+				totalDmg,
+				randomDmg,
+				fixedDmg,
+				hitRate);*/
 		
 		/*
 		VidarMap map = src.map;
@@ -117,7 +203,7 @@ public class NormalAttack
 		*/
 	}
 	
-	
+	/*
 	private boolean isPc2NpcHit (PcInstance src, MonsterInstance dest) {
 		int srcStr = src.getStr ();
 		int srcDex = src.getDex ();
@@ -184,6 +270,7 @@ public class NormalAttack
 		int rate = random.nextInt (100) + 1;
 		return rate < hitRate;
 	}
+	*/
 	
 	private boolean isNpc2PcHit (ActiveModel src, PcInstance dest) {
 		int hitRate = 0;
@@ -337,25 +424,6 @@ public class NormalAttack
 		return dmg;
 	}
 	
-	
-	
-	//new!
-	private void calcDmg (PcInstance pc) {
-	}
-	
-	//new!
-	private void calcDmg (ActiveModel npc) {
-	}
-	
-	//new!
-	private void calcHitRate (PcInstance pc) {
-	}
-	
-	//new!
-	private void calcHitRate (ActiveModel npc) {
-	}
-
-	
 	private int calcEr (int type, int level, int dex) {
 		int d = 0;
 		
@@ -369,5 +437,10 @@ public class NormalAttack
 		}
 		
 		return (level / d) + (dex >>> 2) - 4;
+	}
+	
+	//按當前hitRate判斷隨機是否命中
+	public boolean isHit () {
+		return random.nextInt (100) < hitRate;
 	}
 }

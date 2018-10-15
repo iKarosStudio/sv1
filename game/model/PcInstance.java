@@ -384,6 +384,7 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 		if (weapon != null) {
 			equipment.setWeapon (weapon);
 			applyEquipmentEffects ();
+			actId = getWeaponGfx ();
 		}
 	}
 	
@@ -416,14 +417,14 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 				temp.sp += armor.sp; temp.mr += armor.mr;
 				temp.defWater += armor.defenseWater; temp.defWind += armor.defenseWind;
 				temp.defFire += armor.defenseFire; temp.defEarth += armor.defenseEarth;
-				temp.bowHitModify += armor.bowHitModify;
-				temp.spModify += armor.magicDmgModify;
+				//temp.bowHitModify += armor.bowHitModify;
+				//temp.spModify += armor.magicDmgModify;
 				temp.dmgReduction += armor.dmgReduction;
 				temp.weightReduction += armor.weightReduction;
 				
-				temp.hitModify += equipment.weapon.hitModify;
-				temp.dmgModify += equipment.weapon.dmgModify;
-				temp.spModify  += equipment.weapon.magicDmgModify;
+				//temp.hitModify += equipment.weapon.hitModify;
+				//temp.dmgModify += equipment.weapon.dmgModify;
+				//temp.spModify  += equipment.weapon.magicDmgModify;
 			}
 		});
 		
@@ -459,7 +460,7 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 		if (equipment.weapon == null) {
 			return 0;
 		} else {
-			return equipment.weapon.gfx;
+			return equipment.weapon.actId;
 		}
 	}
 
@@ -579,13 +580,15 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 		// TODO Auto-generated method stub
 		heading = getDirection (targetX, targetY);
 		
+		//建構攻擊原型
+		NormalAttack atk = new NormalAttack (this, targetUuid, targetX, targetY);
+		if (atk.target != null) {
+			atk.target.damage (atk);
+		}
+		
+		//表現攻擊動作
 		int actionId = ModelActionId.ATTACK;
 		handle.sendPacket (new ModelAction (actionId, uuid, heading).getRaw ());
-		MapModel m = getCurrentMap ().models.get (targetUuid);
-		
-		//大約的架構
-		NormalAttack atk = new NormalAttack (this);
-		m.damage (atk);
 	}
 
 	@Override
@@ -735,26 +738,6 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 	@Override
 	public int getMpr () {
 		return basicParameters.mpR + skillParameters.mpR + equipParameter.mpR;
-	}
-
-	@Override
-	public int getDmgModify () {
-		return basicParameters.dmgModify + skillParameters.dmgModify + equipParameter.dmgModify;
-	}
-
-	@Override
-	public int getSpModify () {
-		return basicParameters.spModify + skillParameters.spModify + equipParameter.spModify;
-	}
-
-	@Override
-	public int getHitModify () {
-		return basicParameters.hitModify + skillParameters.hitModify + equipParameter.hitModify;
-	}
-
-	@Override
-	public int getBowHitModify () {
-		return basicParameters.bowHitModify + skillParameters.bowHitModify + equipParameter.bowHitModify;
 	}
 
 	@Override

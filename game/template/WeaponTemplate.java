@@ -5,7 +5,7 @@ import static vidar.game.template.ItemTypeTable.*;
 
 public class WeaponTemplate extends ItemTemplate
 {	
-	public int gfx = 0;
+	public int actId = 0;
 	
 	public int safeEnchant;
 	public boolean isRoyalUsable;
@@ -115,71 +115,71 @@ public class WeaponTemplate extends ItemTemplate
 		switch (typeName) {
 		case "sword" :
 			minorType = WEAPON_TYPE_SWORD; 
-			gfx = WEAPON_GFX_SWORD;
+			actId = WEAPON_GFX_SWORD;
 			break;
 		case "dagger" :
 			minorType = WEAPON_TYPE_DAGGER; 
-			gfx = WEAPON_GFX_DAGGER;
+			actId = WEAPON_GFX_DAGGER;
 			break;
 		case "tohandsword" :
 			minorType = WEAPON_TYPE_TOHAND_SWORD;
-			gfx = WEAPON_GFX_TOHAND_SWORD;
+			actId = WEAPON_GFX_TOHAND_SWORD;
 			break;
 		case "bow" :
 			minorType = WEAPON_TYPE_BOW; 
-			gfx = WEAPON_GFX_BOW;
+			actId = WEAPON_GFX_BOW;
 			break;
 		case "spear" :
 			minorType = WEAPON_TYPE_SPEAR;
-			gfx = WEAPON_GFX_SPEAR;
+			actId = WEAPON_GFX_SPEAR;
 			break;
 		case "blunt" :
 			minorType = WEAPON_TYPE_BLUNT;
-			gfx = WEAPON_GFX_BLUNT;
+			actId = WEAPON_GFX_BLUNT;
 			break;
 		case "staff" :
 			minorType = WEAPON_TYPE_STAFF;
-			gfx = WEAPON_GFX_STAFF;
+			actId = WEAPON_GFX_STAFF;
 			break;
 		case "throwingknife" :
 			minorType = WEAPON_TYPE_THROWING_KNIFE;
-			gfx = WEAPON_GFX_THROWING_KNIFE;
+			actId = WEAPON_GFX_THROWING_KNIFE;
 			break;
 		case "arrow" :
 			minorType = WEAPON_TYPE_ARROW;
-			gfx = WEAPON_GFX_ARROW;
+			actId = WEAPON_GFX_ARROW;
 			break;
 		case "gauntlet" :
 			minorType = WEAPON_TYPE_GAUNTLET;
-			gfx = WEAPON_GFX_GAUNTLET;
+			actId = WEAPON_GFX_GAUNTLET;
 			break;
 		case "claw" :
 			minorType = WEAPON_TYPE_CLAW;
-			gfx = WEAPON_GFX_CLAW;
+			actId = WEAPON_GFX_CLAW;
 			break;
 		case "edoryu" :
 			minorType = WEAPON_TYPE_EDORYU;
-			gfx = WEAPON_GFX_EDORYU;
+			actId = WEAPON_GFX_EDORYU;
 			break;
 		case "singlebow" :
 			minorType = WEAPON_TYPE_SINGLE_BOW;
-			gfx = WEAPON_GFX_SINGLE_BOW;
+			actId = WEAPON_GFX_SINGLE_BOW;
 			break;
 		case "singlespear" :
 			minorType = WEAPON_TYPE_SINGLE_SPEAR;
-			gfx = WEAPON_GFX_SINGLE_SPEAR;
+			actId = WEAPON_GFX_SINGLE_SPEAR;
 			break;
 		case "tohandblunt" :
 			minorType = WEAPON_TYPE_TOHAND_BLUNT;
-			gfx = WEAPON_GFX_TOHAND_BLUNT;
+			actId = WEAPON_GFX_TOHAND_BLUNT;
 			break;
 		case "tohandstaff" :
 			minorType = WEAPON_TYPE_TOHAND_STAFF;
-			gfx = WEAPON_GFX_TOHAND_STAFF;
+			actId = WEAPON_GFX_TOHAND_STAFF;
 			break;
 		default :
 			minorType = 0xFF;
-			gfx = 0;
+			actId = 0;
 			break;
 		}
 		

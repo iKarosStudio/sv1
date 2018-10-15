@@ -44,7 +44,7 @@ public class Teleport
 		pc.modelsInsight.clear ();
 		
 		//update Skills
-		//Pc.SkillTimer.UpdateSkillEffects () ;
+		pc.skillBuffs.updateSkillEffects ();
 		
 		handle.sendPacket (mapIdPacket);
 		handle.sendPacket (pcPacket);

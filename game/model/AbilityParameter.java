@@ -20,10 +20,10 @@ public class AbilityParameter
 	 * 魔法攻擊修正
 	 * 弓箭命中修正
 	 */
-	public int dmgModify;
-	public int hitModify;
-	public int spModify;
-	public int bowHitModify;
+	//public int dmgModify;
+	//public int hitModify;
+	//public int spModify;
+	//public int bowHitModify;
 	
 	/*
 	 * 傷害減免修正

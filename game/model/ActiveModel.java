@@ -76,10 +76,6 @@ public abstract class ActiveModel extends MapModel
 	public abstract int getMaxMp ();
 	public abstract int getHpr ();
 	public abstract int getMpr ();
-	public abstract int getDmgModify ();
-	public abstract int getSpModify ();
-	public abstract int getHitModify ();
-	public abstract int getBowHitModify ();
 	public abstract int getDmgReduction ();
 	public abstract int getWeightReduction ();
 }
