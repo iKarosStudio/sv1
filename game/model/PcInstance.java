@@ -436,6 +436,16 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 		handle.sendPacket (new UpdateAc (this).getRaw());
 	}
 	
+	public void setBrave () {
+		braveSpeed = 1;
+		status |= STATUS_BRAVE;
+	}
+	
+	public void unsetBrave () {
+		braveSpeed = 0;
+		status &= ~STATUS_BRAVE;
+	}
+	
 	public boolean isRoyal () {
 		return (type == TYPE_ROYAL);
 	}
@@ -621,9 +631,9 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 			pick.uuidOwner = uuid;
 			pick.location.p.x = 0;
 			pick.location.p.y = 0;
-			pick.location.mapId = 0;
-			addItem (pick);
+			pick.location.mapId = 0;			
 			getCurrentMap ().models.remove (pick.uuid);
+			addItem (pick);
 		}
 	}
 
@@ -653,6 +663,7 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 			drop.location.p.x = x;
 			drop.location.p.y = y;
 			drop.location.mapId = location.mapId;
+			drop.exp = drop.count;
 			
 			getCurrentMap ().models.put (drop.uuid, drop);
 		} else {
@@ -800,5 +811,10 @@ public class PcInstance extends ActiveModel implements Fightable, Moveable, Skil
 		skillBuffs = null;
 		
 		DatabaseCmds.savePc (this);		
+	}
+
+	@Override
+	public String getName () {
+		return name;
 	}
 }

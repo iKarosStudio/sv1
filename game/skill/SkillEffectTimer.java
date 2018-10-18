@@ -46,12 +46,12 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 	public void updateSkillEffects () {
 		effects.forEach ((Integer skillId, SkillEffect effects)->{
 			if (skillId == SkillId.STATUS_HASTE) {
-				byte[] data = new SkillHaste (pc.uuid, pc.moveSpeed, effects.remainTime).getRaw () ;
-				handle.sendPacket (data);
+				//byte[] data = new SkillHaste (pc.uuid, pc.moveSpeed, effects.remainTime).getRaw () ;
+				//handle.sendPacket (data);
 				
 			} else if (skillId == SkillId.STATUS_BRAVE) {
-				byte[] data = new SkillBrave (pc.uuid, pc.braveSpeed, effects.remainTime).getRaw () ;
-				handle.sendPacket (data);
+				//byte[] data = new SkillBrave (pc.uuid, pc.braveSpeed, effects.remainTime).getRaw () ;
+				//handle.sendPacket (data);
 			} else {
 				//其他持續性技能
 			}
@@ -111,7 +111,7 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 			
 		case SkillId.STATUS_BRAVE:
 			handle.sendPacket (new SkillBrave (pc.uuid, 1, effects.get(skillId).remainTime).getRaw());
-			pc.status |= 0x10;
+			pc.setBrave ();
 			break;
 		
 		default:
@@ -143,7 +143,7 @@ public class SkillEffectTimer extends TimerTask implements Runnable
 			break;
 			
 		case SkillId.STATUS_BRAVE: //勇敢藥水
-			pc.braveSpeed = 0;
+			pc.unsetBrave ();
 			handle.sendPacket (new SkillBrave (pc.uuid, 0, 0).getRaw ());
 			pc.status &= 0xEF;
 			break;

@@ -221,4 +221,9 @@ public class NpcTemplate extends ActiveModel
 	public void damage (NormalAttack atk) {
 		//Nothing to do
 	}
+
+	@Override
+	public String getName () {
+		return nameId;
+	}
 }

@@ -48,6 +48,7 @@ public class ConfigurationLoader
 			p.load (new FileInputStream ("configs/server.properties"));
 			Configurations.SERVER_PORT = Integer.valueOf (p.getProperty ("ServerPort"));
 			Configurations.MANAGE_PORT = Integer.valueOf (p.getProperty ("AdminPort"));
+			Configurations.MAX_PLAYER  = Integer.valueOf (p.getProperty ("MaxPlayer"));
 			Configurations.USE_BLOCKCHAIN = Boolean.valueOf (p.getProperty ("UseBlockchain"));
 			Configurations.USE_GUI = Boolean.valueOf (p.getProperty ("UseLocalGui")) ;
 			Configurations.SIGHT_RAGNE = Integer.valueOf (p.getProperty ("SightRange"));

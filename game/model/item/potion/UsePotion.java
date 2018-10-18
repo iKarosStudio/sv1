@@ -29,18 +29,18 @@ public class UsePotion
 			pc.moveSpeed = 1;
 			visualPacket = new VisualEffect (pc.uuid, 191).getRaw ();
 			handle.sendPacket (visualPacket) ; //Virtual effect
-			handle.sendPacket (new SkillHaste (pc.uuid, 1, 1800).getRaw ());
+			//handle.sendPacket (new SkillHaste (pc.uuid, 1, 1800).getRaw ());
 			pc.addSkillEffect (SkillId.STATUS_HASTE, 1800);
 			
 		} else if (_item.id == 40014) { //勇敢藥水
-			pc.braveSpeed = 1;
+			pc.setBrave ();
 			visualPacket = new VisualEffect (pc.uuid, 751).getRaw ();
 			handle.sendPacket (visualPacket) ; //Virtual effect
 			handle.sendPacket (new SkillBrave (pc.uuid, 1, 300).getRaw ());
 			pc.addSkillEffect (SkillId.STATUS_BRAVE, 300) ;
 			
 		} else if (_item.id == 40068) { //精靈餅乾
-			pc.braveSpeed = 1;
+			pc.setBrave ();
 			visualPacket = new VisualEffect (pc.uuid, 751).getRaw ();
 			handle.sendPacket (visualPacket) ; //Virtual effect
 			handle.sendPacket (new SkillBrave (pc.uuid, 1, 300).getRaw ());

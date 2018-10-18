@@ -48,7 +48,6 @@ public class SightUpdate implements Runnable
 		//
 		pc.pcsInsight.forEach ((Integer u, PcInstance p)->{
 			if (!pc.isInsight (p.location) || !pcs.contains (p)) {
-				//pc.removePcInstance (u);
 				pc.pcsInsight.remove (u);
 				handle.sendPacket (new RemoveModel (u).getRaw());
 			}

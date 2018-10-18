@@ -187,5 +187,10 @@ public class NpcInstance extends ActiveModel implements BoardcastNode
 	public List<PcInstance> getPcInsight () {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getName () {
+		return nameId;
 	}	
 }

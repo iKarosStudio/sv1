@@ -26,14 +26,14 @@ public class ModelPacket
 		packet.writeWord (node.location.p.x);
 		packet.writeWord (node.location.p.y);
 		packet.writeDoubleWord (node.uuid);
-		packet.writeWord (node.gfx);
-		packet.writeByte (node.getActId ());
-		packet.writeByte (node.heading);
+		packet.writeWord (node.gfx); //外型
+		packet.writeByte (node.getActId ()); //動作
+		packet.writeByte (node.heading); //方向
 		packet.writeByte (node.lightRange);
 		packet.writeByte (node.moveSpeed);
 		packet.writeDoubleWord (node.exp);
 		packet.writeWord (node.lawful);
-		packet.writeString (node.name);
+		packet.writeString (node.getName ());
 		packet.writeString (node.title);
 		packet.writeByte (node.status);
 		packet.writeDoubleWord (node.clanId);

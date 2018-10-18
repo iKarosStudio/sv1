@@ -2,15 +2,15 @@ package vidar.server.opcodes;
 
 public class ServerOpcodes
 {
-	public static final int OBJ_ACTION = 3;
-	public static final int MAP_USE = 5;
-	public static final int ITEM_UPDATE_STATUS = 6;
-	public static final int SKILL_BUY_RESULT = 17;
-	public static final int HP_UPDATE = 19;
-	public static final int NEW_CHARACTER_PACK = 22;
-	public static final int ITEM_INSERT = 24;
-	public static final int MAP_ID = 27;
-	public static final int REMOVE_OBJECT = 34;
+	public static final int OBJ_ACTION = 3; //指定uuid執行actid動作
+	public static final int MAP_USE = 5; //開地圖
+	public static final int ITEM_UPDATE_STATUS = 6; //更新uuid道具的各種屬性
+	public static final int SKILL_BUY_RESULT = 17; //回應購買的技能
+	public static final int HP_UPDATE = 19; //更新玩家HP/最大HP
+	public static final int NEW_CHARACTER_PACK = 22; //在選角色畫面新增一個角色
+	public static final int ITEM_INSERT = 24; //加入一個道具到角色背包
+	public static final int MAP_ID = 27; //要求更換地圖畫面
+	public static final int REMOVE_OBJECT = 34; //移除指定uuid的物件
 	public static final int SERVER_VERSION = 35;
 	public static final int LOGIN_WELCOME_MSG = 36;
 	public static final int ITEM_UPDATE_NAME = 38;

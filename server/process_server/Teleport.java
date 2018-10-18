@@ -22,7 +22,6 @@ public class Teleport
 		
 		pc.location.p.x = dest.p.x;
 		pc.location.p.y = dest.p.y;
-		//pc.location.Heading = dest.Heading;
 		
 		byte[] mapIdPacket = new MapId (pc.location.mapId).getRaw ();
 		byte[] pcPacket = new ModelPacket (pc).getRaw ();
@@ -39,7 +38,6 @@ public class Teleport
 			}
 		}
 		
-		//pc.removeAllInsight ();
 		pc.pcsInsight.clear ();
 		pc.modelsInsight.clear ();
 		

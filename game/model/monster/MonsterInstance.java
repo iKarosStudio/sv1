@@ -239,35 +239,53 @@ public class MonsterInstance extends ActiveModel implements Fightable, Moveable,
 		/* 嘗試接近攻擊目標 */
 		if (getDistance (target.location.p.x, target.location.p.y) > 1) {
 			moveToHeading (heading);
-			return;
-		}
-		
-		/* 顯示攻擊動作 */
-		byte[] actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
-		boardcastPcInsight (actionPacket);
-		
-		/* 命中與傷害運算 */
-		if (isInsight (target.location)) {
-			//NormalAttack atk = new NormalAttack (this, target);
+		} else {
+			/* 顯示攻擊動作 */
+			byte[] actionPacket = new ModelAction (ModelActionId.ATTACK, uuid, heading).getRaw ();
+			boardcastPcInsight (actionPacket);
+			
+			/* 命中與傷害運算 */
+			if (isInsight (target.location)) {
+				//NormalAttack atk = new NormalAttack (this, target);
+			}
 		}
 	}
 
 	@Override
 	public void attack (int targetUuid, int targetX, int targetY) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public synchronized void damage (NormalAttack atk) {
 		int dmg = atk.totalDmg;
 		
+		//材質修正
+		if ((isUndead || isOrc || isWolf) && atk.weapon != null) {
+			if (atk.isRemoteAttack) {
+				if (atk.arrow.isSilver ()) {
+					atk.totalDmg += 4;
+				} else if (atk.arrow.isMithril ()) {
+					atk.totalDmg += 6;
+				} else if (atk.arrow.isOriharukon ()) {
+					atk.totalDmg += 10;
+				}
+			} else {
+				if (atk.weapon.isSilver ()) {
+					atk.totalDmg += 4;
+				} else if (atk.weapon.isMithril ()) {
+					atk.totalDmg += 6;
+				} else if (atk.weapon.isOriharukon ()) {
+					atk.totalDmg += 10;
+				}
+			}
+		}
+		
 		//減免調整
 		atk.hitRate += (getAc () * 5);
 		
 		
 		if (atk.isHit ()) {
-			System.out.printf ("命中! %d\n", atk.hitRate);
 			if (hp > dmg) {
 				hp -= dmg;
 				
@@ -284,7 +302,6 @@ public class MonsterInstance extends ActiveModel implements Fightable, Moveable,
 				}
 				
 			} else {
-				
 				//一個毆打致死
 				try {
 					byte[] die = new ModelAction (ModelActionId.DIE, uuid, heading).getRaw ();
@@ -299,14 +316,11 @@ public class MonsterInstance extends ActiveModel implements Fightable, Moveable,
 					hp = 0;
 					isDead = true;
 					actionStatus = MonsterInstance.ACTION_DEAD;
-					System.out.printf ("%s 死掉了\n", name);
 				} catch (Exception e) {
 					e.printStackTrace ();
 				}
 			}
-		} else {
-			System.out.println ("沒有命中!");
-		}
+		} //End of isHit
 	}
 
 	@Override
@@ -460,6 +474,11 @@ public class MonsterInstance extends ActiveModel implements Fightable, Moveable,
 	public void dropItem (int uuid, int count, int x, int y) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String getName () {
+		return nameId;
 	}
 	
 }

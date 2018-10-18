@@ -17,14 +17,11 @@ public class PacketHandler
 	{
 		int opcode = packet[0] & 0x0FF;
 		
-		/*
-		System.out.printf ("[ IN OP:%2d]:", Opcode) ;
-		for (byte b : Data) {
-			System.out.printf ("0x%02X ", b) ;
+		System.out.printf ("[C_OP:%3d] - [", opcode);
+		for (byte b : packet) {
+			System.out.printf ("0x%02X ", b);
 		}
-		System.out.print ("\n") ;
-		*/
-		//System.out.print ("\n--------\n") ;
+		System.out.println ("]");
 		
 		switch (opcode) {
 		

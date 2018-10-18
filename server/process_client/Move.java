@@ -2,8 +2,6 @@ package vidar.server.process_client;
 
 import vidar.server.*;
 import vidar.server.packet.*;
-import vidar.server.process_server.*;
-import vidar.game.map.*;
 import vidar.game.model.*;
 
 public class Move {

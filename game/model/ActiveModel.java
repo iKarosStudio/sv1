@@ -10,7 +10,7 @@ public abstract class ActiveModel extends MapModel
 	/* 有變身時的polyGfx */
 	public int gfxTemp;
 	
-	public int braveSpeed;
+	public int braveSpeed = 0;
 	
 	public volatile int hp;
 	public volatile int mp;
@@ -58,8 +58,8 @@ public abstract class ActiveModel extends MapModel
 	
 	//
 	
-	public abstract void pickItem (int uuid, int count, int x, int y);
-	public abstract void dropItem (int uuid, int count, int x, int y);
+	public abstract void pickItem (int _uuid, int count, int x, int y);
+	public abstract void dropItem (int _uuid, int count, int x, int y);
 	public abstract void giveItem ();
 	public abstract void recvItem ();
 	

@@ -224,29 +224,29 @@ public class VidarMap
 		byte[] res = new byte[2];
 		
 		if (heading == 0) {
-			res[0] = getHeadingTile (x, y, 7) ;
-			res[1] = getHeadingTile (x, y, 1) ;
+			res[0] = getHeadingTile (x, y, 7);
+			res[1] = getHeadingTile (x, y, 1);
 		} else if (heading == 1) {
-			res[0] = getHeadingTile (x, y, 0) ;
-			res[1] = getHeadingTile (x, y, 2) ;
+			res[0] = getHeadingTile (x, y, 0);
+			res[1] = getHeadingTile (x, y, 2);
 		} else if (heading == 2) {
-			res[0] = getHeadingTile (x, y, 1) ;
-			res[1] = getHeadingTile (x, y, 3) ;
+			res[0] = getHeadingTile (x, y, 1);
+			res[1] = getHeadingTile (x, y, 3);
 		} else if (heading == 3) {
-			res[0] = getHeadingTile (x, y, 2) ;
-			res[1] = getHeadingTile (x, y, 4) ;
+			res[0] = getHeadingTile (x, y, 2);
+			res[1] = getHeadingTile (x, y, 4);
 		} else if (heading == 4) {
-			res[0] = getHeadingTile (x, y, 3) ;
-			res[1] = getHeadingTile (x, y, 5) ;
+			res[0] = getHeadingTile (x, y, 3);
+			res[1] = getHeadingTile (x, y, 5);
 		} else if (heading == 5) {
-			res[0] = getHeadingTile (x, y, 4) ;
-			res[1] = getHeadingTile (x, y, 6) ;
+			res[0] = getHeadingTile (x, y, 4);
+			res[1] = getHeadingTile (x, y, 6);
 		} else if (heading == 6) {
-			res[0] = getHeadingTile (x, y, 5) ;
-			res[1] = getHeadingTile (x, y, 7) ;
+			res[0] = getHeadingTile (x, y, 5);
+			res[1] = getHeadingTile (x, y, 7);
 		} else if (heading == 7) {
-			res[0] = getHeadingTile (x, y, 6) ;
-			res[1] = getHeadingTile (x, y, 0) ;
+			res[0] = getHeadingTile (x, y, 6);
+			res[1] = getHeadingTile (x, y, 0);
 		} else {
 			res[0] = 0;
 			res[1] = 0;
@@ -269,7 +269,7 @@ public class VidarMap
 		do {
 			dest.p.x = startX + random.nextInt (sizeX) ;
 			dest.p.y = startY + random.nextInt (sizeY) ;
-		} while (getTile (dest.p.x, dest.p.y) == 0) ;
+		} while (getTile (dest.p.x, dest.p.y) == 0);
 		
 		return dest;
 	}
@@ -281,16 +281,16 @@ public class VidarMap
 	public boolean isInTpLocation (int x, int y) {
 		int pos = (x << 16) | y;
 		
-		return tpLocation.containsKey (pos)	;	
+		return tpLocation.containsKey (pos);	
 	}
 	
-	public Location getTpDestination (int src_x, int src_y) {
-		int src = (src_x << 16) | src_y;
-		return tpLocation.get (src) ;
+	public Location getTpDestination (int srcX, int srcY) {
+		int src = (srcX << 16) | srcY;
+		return tpLocation.get (src);
 	}
 	
-	public void addTpLocation (int src_x, int src_y, Location dest) {
-		int src = (src_x << 16) | src_y;
+	public void addTpLocation (int srcX, int srcY, Location dest) {
+		int src = (srcX << 16) | srcY;
 		tpLocation.put (src, dest);
 	}
 	

@@ -68,6 +68,7 @@ public class Main
 		
 		
 		/* 實作賭場系統 */
+		System.out.println ("implement casino:" + Configurations.CASINO);
 		if (Configurations.CASINO) {
 			//
 		}

@@ -27,10 +27,12 @@ public class HpMonitor implements Runnable
 		
 		//System.out.printf ("%s hp\n", Pc.Name) ;
 		try {
-			if (prevHp != pc.hp) {
-				handle.sendPacket (new UpdateHp (pc.hp, pc.getMaxHp ()).getRaw ());
+			if (!pc.isDead) {
+				if (prevHp != pc.hp) {
+					handle.sendPacket (new UpdateHp (pc.hp, pc.getMaxHp ()).getRaw ());
+				}
+				prevHp = pc.hp;
 			}
-			prevHp = pc.hp;
 		} catch (Exception e) {
 			e.printStackTrace ();
 		}

@@ -10,6 +10,7 @@ public class Configurations
 	/* 系統連線設定 */
 	public static int SERVER_PORT = 2000;
 	public static int MANAGE_PORT = 2001;
+	public static int MAX_PLAYER = 200;
 	
 	/* 系統設定 */
 	public static boolean USE_BLOCKCHAIN = false;

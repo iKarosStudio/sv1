@@ -2,6 +2,7 @@ package vidar.game.skill;
 
 import java.util.*;
 
+import vidar.server.process_server.*;
 import vidar.game.model.item.*;
 import vidar.game.model.*;
 import vidar.game.model.monster.*;
@@ -16,9 +17,11 @@ public class NormalAttack
 	
 	public MapModel attacker;
 	public MapModel target;
+	
 	public boolean isRemoteAttack = false;
 	public ItemInstance weapon = null;
 	public ItemInstance arrow = null;
+	public ItemInstance sting = null;
 	public int fixedDmg = 0;
 	public int randomDmg = 0;
 	public int totalDmg = 0;
@@ -140,51 +143,21 @@ public class NormalAttack
 			totalDmg = 1;
 		}
 		
-		/*
-		System.out.printf ("%s 發動一次攻擊 DMG:%d (rnd(%d) + fix(%d)) 命中率:%d\n",
-				src.name,
-				totalDmg,
-				randomDmg,
-				fixedDmg,
-				hitRate);*/
-		
-		/*
-		VidarMap map = src.map;
-		
-		//attacking a monster
-		if (map.monsters.containsKey (_targetUuid)) {
-			MonsterInstance dest = map.monsters.get (_targetUuid);
-			
-			if (dest.isDead) {
-				return;
-			}
-			
-			isHit = isPc2NpcHit (src, dest);
-			if (isHit) {
-				dmg = calcPc2NpcDamage (src, dest);
-				dest.toggleHateList (src, dmg);
-				dest.takeDamage (dmg);
-				
-				//
-				// 設定反擊
-				//
-				if (dest.targetPc == null) {
-					dest.aiKernel.cancel ();
-					dest.actionStatus = MonsterInstance.ACTION_ATTACK;
-					dest.targetPc = src;
-				}
-			} else {
-				dmg = 0;
-			}
-		
-		//attacking a player
-		} else if (map.pcs.containsKey (_targetUuid)) {
-			//
+		if (src.isRd) {
+			String info = String.format ("%s 發動一次攻擊 DMG:%d (rnd(%d) + fix(%d)) 命中率:%d\n",
+					src.name,
+					totalDmg,
+					randomDmg,
+					fixedDmg,
+					hitRate);
+			src.getHandle ().sendPacket (new SystemMessage (info).getRaw ());
 		}
-		*/
+		
 	}
 	
-	public NormalAttack (MonsterInstance src, PcInstance dest) {
+	public NormalAttack (ActiveModel src, ActiveModel dest) {
+			
+		
 		/*
 		if (dest.isDead) {
 			return;

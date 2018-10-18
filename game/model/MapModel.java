@@ -20,45 +20,47 @@ public abstract class MapModel
 	public int gfx;
 
 	/* 0:small 1:large */
-	public int size;
+	public int size = 0;
 	
 	/* 照明範圍 */
-	public int lightRange;
+	public int lightRange = 0;
 	
 	/* 閒置動作 */
-	public int actId;
+	public int actId = 0;
 	
 	/* 顯示名稱 */
-	public String name;
-	public int lawful;
+	public String name = null;
+	public int lawful = 0;
 	
 	/* 顯示稱號 */
-	public String title;
+	public String title = null;
 	
 	/* 血盟敘述 */
-	public int clanId;
-	public String clanName;
+	public int clanId = 0;
+	public String clanName = null;
 	
 	/* 額外狀態標示 */
-	public int status;
-	public int moveSpeed;
+	public int status = 0;
+	public int moveSpeed = 0;
 	
 	/* 外顯等級, hp */
-	public int level;
+	public int level = 0;
 	public int levelScale;
 	public int hpScale = 0xFF;
 	
 	/* exp or amount? */
 	public int exp;
 	
+	/*
 	public static final int MODEL_TYPE_MONSTER = 0;
 	public static final int MODEL_TYPE_NPC = 1;
 	public static final int MODEL_TYPE_DOOR = 2;
 	public static final int MODEL_TYPE_PC = 3;
 	public static final int MODEL_TYPE_ITEM = 4;
+	*/
 	
 	/* 模組種類辨識(取代java instanceof 效能) */
-	public int modelType;
+	//public int modelType;
 	
 	//共用功能
 	public VidarMap getCurrentMap () {
@@ -119,8 +121,24 @@ public abstract class MapModel
 		return (status & STATUS_POISON) > 0;
 	}
 	
+	public void setPoison () {
+		status |= STATUS_POISON;
+	}
+	
+	public void unsetPoison () {
+		status &= ~STATUS_POISON;
+	}
+	
 	public boolean isInvisible () {
 		return (status & STATUS_INVISIBLE) > 0;
+	}
+	
+	public void setInvisible () {
+		status |= STATUS_INVISIBLE;
+	}
+	
+	public void unsetInvisible () {
+		status &= ~STATUS_INVISIBLE;
 	}
 	
 	public boolean isPc () {
@@ -131,11 +149,11 @@ public abstract class MapModel
 		return (status & STATUS_FROZEN) > 0;
 	}
 	
-	public boolean isBraveSpeed () { //x1.33
+	public boolean isBrave () { //x1.33
 		return (status & STATUS_BRAVE) > 0;
 	}
 	
-	public boolean isElfBraveSpeed () { //x1.15
+	public boolean isElfBrave () { //x1.15
 		return (status & STATUS_ELF_BRAVE) > 0;
 	}
 	
@@ -152,6 +170,7 @@ public abstract class MapModel
 	}
 	
 	//抽象功能
+	public abstract String getName ();
 	public abstract void damage (NormalAttack atk);
 	public abstract void updateModel ();
 	public abstract boolean isParalyzed ();//{

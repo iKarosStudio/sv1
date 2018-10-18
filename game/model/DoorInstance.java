@@ -113,4 +113,9 @@ public class DoorInstance extends MapModel implements BoardcastNode
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getName () {
+		return null;
+	}
 }

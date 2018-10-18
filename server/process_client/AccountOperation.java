@@ -2,11 +2,13 @@ package vidar.server.process_client;
 
 import java.sql.*;
 
+import vidar.config.*;
 import vidar.server.*;
 import vidar.server.database.*;
 import vidar.server.packet.*;
 import vidar.server.opcodes.*;
 import vidar.server.process_server.*;
+import vidar.game.*;
 
 public class AccountOperation
 {
@@ -36,7 +38,7 @@ public class AccountOperation
 		int loginResult = account.load ();
 		
 		/* 回報登入結果 */
-		resultPacket.reset () ;
+		resultPacket.reset ();
 		resultPacket.writeByte (ServerOpcodes.LOGIN_RESULT) ;
 		resultPacket.writeByte (loginResult); //LOGIN RESULT CODE
 		resultPacket.writeDoubleWord (0x00000000);
@@ -48,9 +50,14 @@ public class AccountOperation
 			System.out.printf ("[LOGIN]") ;
 			handle.account = account;
 			
-			/* 登入公告訊息 */
-			new LoginAnnounce (handle) ;
-			handle.account.updateLastLogin ();
+			if (Vidar.getInstance ().onlinePlayers < Configurations.MAX_PLAYER) {
+				/* 登入公告訊息 */
+				new LoginAnnounce (handle);
+				handle.account.updateLastLogin ();
+			} else {
+				new LoginAnnounce (handle, "線上使用人數已滿");
+				handle.disconnect ();//bye
+			}
 			
 		} else if (loginResult == ACCOUNT_ALREADY_EXISTS) {
 			/* 帳號不存在, 建立新帳號 */
